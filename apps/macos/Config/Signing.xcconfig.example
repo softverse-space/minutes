@@ -1,0 +1,9 @@
+// Copy to Signing.xcconfig. This file is not in git.
+// Development: stable signature, macOS remembers permissions between builds.
+CODE_SIGN_IDENTITY = Apple Development
+DEVELOPMENT_TEAM = <TEAM_ID>
+
+// Distribution (ADR-0011): Developer ID + notarization.
+// CODE_SIGN_IDENTITY = Developer ID Application
+// DEVELOPMENT_TEAM = <TEAM_ID>
+// OTHER_CODE_SIGN_FLAGS = --timestamp

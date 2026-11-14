@@ -1,0 +1,40 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "NSMicrophoneUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app records your microphone during a session. The recording stays on this Mac."
+          }
+        },
+        "sk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikácia nahráva váš mikrofón počas session. Nahrávka zostáva na tomto Macu."
+          }
+        }
+      }
+    },
+    "NSScreenCaptureUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app records the selected screen and system audio during a session. The recording stays on this Mac."
+          }
+        },
+        "sk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikácia nahráva vybranú obrazovku a systémový zvuk počas session. Nahrávka zostáva na tomto Macu."
+          }
+        }
+      }
+    }
+  }
+}

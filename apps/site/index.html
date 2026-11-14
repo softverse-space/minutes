@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minutes – meeting minutes</title>
+<meta name="description" content="Minutes records your meeting, transcribes the speech and writes the minutes from a template. Video and audio stay on your local machine.">
+<link rel="icon" href="images/app-icon-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" href="images/app-icon-dark.png" media="(prefers-color-scheme: dark)">
+<style>
+  /* Tokens follow the two app icon appearances: paper (light) and ink (dark). */
+  :root {
+    --bg: #f3f4fa;          /* paper */
+    --surface: #ffffff;
+    --raised: #e9ebf5;
+    --text: #15173d;        /* ink */
+    --muted: #5d6187;
+    --line: #dadcea;
+    --wave: #3b45b8;        /* indigo */
+    --arc: #ff6b4a;         /* coral */
+    --arc-2: #ffb347;
+    --knob: #ffffff;
+    --track: rgba(27, 31, 92, .09);
+    --tick: rgba(27, 31, 92, .28);
+    --focus: #3b45b8;
+    --display: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d0f2b; --surface: #171a45; --raised: #1f2356; --text: #eceefb; --muted: #a2a6cf;
+      --line: #2a2e66; --wave: #f4f5ff; --arc: #ffb347; --arc-2: #ffd27a; --knob: #fff6e6;
+      --track: rgba(255, 255, 255, .09); --tick: rgba(255, 255, 255, .3); --focus: #ffd27a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d0f2b; --surface: #171a45; --raised: #1f2356; --text: #eceefb; --muted: #a2a6cf;
+    --line: #2a2e66; --wave: #f4f5ff; --arc: #ffb347; --arc-2: #ffd27a; --knob: #fff6e6;
+    --track: rgba(255, 255, 255, .09); --tick: rgba(255, 255, 255, .3); --focus: #ffd27a;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration-color: color-mix(in srgb, var(--arc) 70%, transparent); text-underline-offset: 3px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+  img { max-width: 100%; height: auto; display: block; }
+  code { font: .88em var(--mono); background: var(--raised); padding: 1px 6px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  /* Nav */
+  .nav { display: flex; align-items: center; gap: 24px; padding: 18px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 20px var(--display); letter-spacing: -.02em; text-decoration: none; }
+  .brand img { width: 34px; height: 34px; }
+  .nav ul { display: flex; gap: 20px; list-style: none; margin: 0 0 0 auto; padding: 0; font-size: 15px; }
+  .nav ul a { text-decoration: none; color: var(--muted); }
+  .nav ul a:hover { color: var(--text); }
+  @media (max-width: 720px) { .nav ul { display: none; } }
+  .lang { display: flex; border: 1.5px solid var(--line); border-radius: 999px; padding: 2px; }
+  .lang button { font: 600 12px var(--mono); color: var(--muted); background: none; border: 0; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+  .lang button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  @media (max-width: 720px) { .lang { margin-left: auto; } }
+
+  /* Hero: the dial fills while the meeting turns into minutes */
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 40px; align-items: center; padding: 48px 0 72px; }
+  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 24px; } }
+  .eyebrow { font: 500 13px var(--mono); color: var(--muted); letter-spacing: .02em; }
+  .eyebrow b { color: var(--arc); font-weight: 600; }
+  h1 { font: 700 clamp(42px, 6.2vw, 70px)/1.0 var(--display); letter-spacing: -.035em; margin: 14px 0 20px; }
+  h1 span { color: var(--arc); }
+  .lead { font-size: 20px; color: var(--muted); max-width: 34ch; margin: 0 0 28px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font-weight: 600; text-decoration: none; font-size: 16px; transition: transform .15s ease; }
+  .btn.primary { background: var(--text); color: var(--bg); }
+  .btn.ghost { border: 1.5px solid var(--line); }
+  .btn:hover { transform: translateY(-1px); }
+  .meta { margin-top: 18px; font: 13px var(--mono); color: var(--muted); }
+
+  .stage { position: relative; display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: center; }
+  @media (max-width: 520px) { .stage { grid-template-columns: 1fr; justify-items: center; } }
+  .dial { width: 220px; height: 220px; }
+  .dial .tick { stroke: var(--tick); stroke-width: 5; stroke-linecap: round; }
+  .dial .track { stroke: var(--track); }
+  .dial .arc { stroke: url(#arcGrad); stroke-dasharray: 100; stroke-dashoffset: 32; }
+  .dial .knob-ring { fill: var(--knob); }
+  .dial .knob-dot { fill: var(--arc); }
+  .dial .bar { fill: var(--wave); transform-box: fill-box; transform-origin: center; }
+  .feed { display: grid; gap: 8px; min-width: 0; width: 100%; }
+  .line { display: grid; grid-template-columns: auto 1fr; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; font-size: 14.5px; }
+  .line time { font: 12.5px/1.9 var(--mono); color: var(--muted); }
+  .line .who { font-weight: 600; margin-right: 4px; }
+  .minutes-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; margin-top: 4px; }
+  .minutes-card h3 { font: 700 14px var(--display); margin: 0 0 6px; letter-spacing: -.01em; }
+  /* Label and text sit in two columns, so a long line wraps under its own text. */
+  .minutes-card ul { margin: 0; padding-left: 0; list-style: none; display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; }
+  .minutes-card li { display: contents; }
+  .minutes-card li span { font: 11.5px/1.9 var(--mono); color: var(--muted); }
+
+  /* One orchestrated sequence on load. */
+  @media (prefers-reduced-motion: no-preference) {
+    .dial .arc { animation: fill 4.2s cubic-bezier(.45, .05, .3, 1) both .3s; }
+    .dial .knob { animation: orbit 4.2s cubic-bezier(.45, .05, .3, 1) both .3s; transform-origin: 120px 120px; }
+    .dial .bar { animation: talk .9s ease-in-out 5 alternate both; }
+    .dial .bar:nth-child(2) { animation-delay: .15s; } .dial .bar:nth-child(3) { animation-delay: .3s; }
+    .dial .bar:nth-child(4) { animation-delay: .05s; } .dial .bar:nth-child(5) { animation-delay: .25s; } .dial .bar:nth-child(6) { animation-delay: .4s; }
+    .feed > * { animation: arrive .5s ease-out both; }
+    .feed > :nth-child(1) { animation-delay: .9s; } .feed > :nth-child(2) { animation-delay: 1.9s; }
+    .feed > :nth-child(3) { animation-delay: 2.9s; } .feed > :nth-child(4) { animation-delay: 4.6s; }
+  }
+  @keyframes fill { from { stroke-dashoffset: 99.5; } to { stroke-dashoffset: 32; } }
+  @keyframes orbit { from { transform: rotate(-244.8deg); } to { transform: rotate(0deg); } }
+  @keyframes talk { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
+  @keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* Sections are stamped with meeting time, like lines of a transcript. */
+  section.chapter { padding: 64px 0; border-top: 1px solid var(--line); }
+  .stamp { font: 500 13px var(--mono); color: var(--muted); display: flex; gap: 10px; align-items: center; }
+  .stamp::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--arc); }
+  h2 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--display); letter-spacing: -.03em; margin: 10px 0 18px; max-width: 18ch; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 48px; align-items: start; }
+  .split.wide { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); }
+  @media (max-width: 860px) { .split, .split.wide { grid-template-columns: 1fr; } }
+  .prose p { margin: 0 0 14px; max-width: 60ch; }
+  .prose ul { margin: 0 0 14px; padding-left: 20px; max-width: 60ch; }
+  .prose li { margin-bottom: 6px; }
+  .shot { margin: 0; }
+  .shot img { border-radius: 14px; filter: drop-shadow(0 18px 30px rgba(13, 15, 43, .18)); }
+  .shot figcaption { font: 12.5px var(--mono); color: var(--muted); margin-top: 10px; text-align: center; }
+  .note { background: color-mix(in srgb, var(--arc) 10%, var(--surface)); border-radius: 12px; padding: 12px 16px; color: var(--text); font-size: 15.5px; margin: 18px 0; max-width: 60ch; }
+
+  .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; max-width: 60ch; }
+  @media (max-width: 520px) { .levels { grid-template-columns: 1fr; } }
+  .levels div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 14.5px; }
+  .levels b { display: block; font-family: var(--display); }
+
+  /* Data boundary: what stays inside the Mac */
+  .boundary { display: grid; grid-template-columns: minmax(0, 1.6fr) auto minmax(0, 1fr); gap: 16px; align-items: center; margin-top: 8px; }
+  @media (max-width: 760px) { .boundary { grid-template-columns: 1fr; } .boundary .arrow b { transform: rotate(90deg); } }
+  .mac { border: 2px dashed var(--wave); border-radius: 22px; padding: 22px 18px 18px; position: relative; }
+  .mac .label { position: absolute; top: -12px; left: 18px; background: var(--bg); padding: 0 8px; font: 600 13px var(--mono); color: var(--wave); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 14.5px; }
+  .arrow { font: 600 13px var(--mono); color: var(--muted); text-align: center; }
+  .arrow b { display: block; font-size: 26px; color: var(--arc); line-height: 1; }
+  .out { display: grid; gap: 10px; }
+  .out .chip { border-radius: 14px; }
+  .out .cloud { opacity: .75; border-style: dashed; }
+  .out small { display: block; color: var(--muted); font-size: 13px; }
+
+  /* Menu bar states: each card shows the real icon on a small menu bar, so it follows light and dark mode. */
+  .states { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .state { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 4px; align-content: start; font-size: 14.5px; color: var(--muted); }
+  .state b { font: 700 16px var(--display); color: var(--text); margin-top: 8px; letter-spacing: -.01em; }
+  .bar-chip { height: 56px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: var(--raised); color: var(--text); }
+  .bar-chip svg { width: 30px; height: 30px; overflow: visible; }
+  .rec-dot { width: 13px; height: 13px; border-radius: 50%; background: #ff3b30; }
+  .rec-time { font: 600 17px var(--body); font-variant-numeric: tabular-nums; }
+  .state .fill { stroke-dasharray: 100; stroke-dashoffset: 38; }
+  .state .orbit { transform-origin: 9px 9px; transform: rotate(223deg); }
+  @media (prefers-reduced-motion: no-preference) {
+    .state .spin { transform-origin: 9px 9px; animation: spin 1.1s linear infinite; }
+    .state .fill { animation: progress 4s linear infinite; }
+    .state .orbit { animation: orbit-knob 4s linear infinite; }
+    .state-rec .rec-dot { animation: blink 1s steps(2, jump-none) infinite; }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes progress { from { stroke-dashoffset: 97; } to { stroke-dashoffset: 0; } }
+  @keyframes orbit-knob { from { transform: rotate(11deg); } to { transform: rotate(360deg); } }
+  @keyframes blink { 50% { opacity: .35; } }
+
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 18px; }
+
+  ol.install { counter-reset: s; list-style: none; padding: 0; margin: 0; max-width: 62ch; }
+  ol.install > li { counter-increment: s; position: relative; padding: 0 0 18px 46px; }
+  ol.install > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid var(--arc); color: var(--text); font: 700 14px/26px var(--display); text-align: center; }
+  pre { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; overflow-x: auto; font: 13.5px/1.5 var(--mono); margin: 8px 0 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td, th { text-align: left; padding: 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; width: 34%; padding-right: 12px; }
+
+  details { border-bottom: 1px solid var(--line); padding: 14px 0; max-width: 70ch; }
+  summary { cursor: pointer; font: 600 17px var(--display); list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--arc); font-weight: 700; }
+  details[open] summary::after { content: "–"; }
+  details p { margin: 8px 0 0; color: var(--muted); }
+
+  /* Closing: the page ends as it should – with minutes. */
+  .closing { padding: 72px 0 40px; border-top: 1px solid var(--line); }
+  .sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; max-width: 720px; }
+  .sheet h2 { margin-top: 6px; }
+  .sheet dl { display: grid; grid-template-columns: 140px 1fr; gap: 10px 16px; margin: 0 0 22px; }
+  @media (max-width: 520px) { .sheet dl { grid-template-columns: 1fr; gap: 2px; } .sheet dd { margin-bottom: 10px; } }
+  .sheet dt { font: 500 13px/1.9 var(--mono); color: var(--muted); }
+  .sheet dd { margin: 0; }
+  footer { padding: 24px 16px 48px; font: 13px var(--mono); color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#">
+      <picture>
+        <source srcset="images/app-icon-dark.png" media="(prefers-color-scheme: dark)">
+        <img src="images/app-icon-light.png" alt="">
+      </picture>
+      Minutes
+    </a>
+    <ul>
+      <li><a href="#recording" data-i18n="nav.how">How it works</a></li>
+      <li><a href="#privacy" data-i18n="nav.privacy">Privacy</a></li>
+      <li><a href="#install" data-i18n="nav.install">Install</a></li>
+      <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+    </ul>
+    <div class="lang" role="group" aria-label="Language / Jazyk">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="sk" aria-pressed="false">SK</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow"><b>●</b> <span data-i18n="hero.eyebrow">macOS · menu bar · version 1.0.0</span></div>
+      <h1 data-i18n="hero.title">Meeting over.<br><span>Minutes</span> done.</h1>
+      <p class="lead" data-i18n="hero.lead">Minutes records your meeting, transcribes the speech and writes the minutes from a template. Video and audio stay on your local machine.</p>
+      <div class="actions">
+        <a class="btn primary" href="#install" data-i18n="cta.install">Install</a>
+        <a class="btn ghost" href="#recording" data-i18n="nav.how">How it works</a>
+      </div>
+      <div class="meta" data-i18n="hero.meta">Apple Silicon · macOS 15 or later · SK, CS, EN</div>
+    </div>
+
+    <div class="stage" data-i18n-aria="hero.stage" aria-label="Example: a meeting becomes a transcript and minutes">
+      <svg class="dial" viewBox="0 0 240 240" role="img" data-i18n-aria="hero.dial" aria-label="Dial: recorded minutes of the meeting">
+        <defs>
+          <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" style="stop-color: var(--arc-2)"/><stop offset="1" style="stop-color: var(--arc)"/>
+          </linearGradient>
+        </defs>
+        <g id="ticks"></g>
+        <circle class="track" cx="120" cy="120" r="88" fill="none" stroke-width="13"/>
+        <circle class="arc" cx="120" cy="120" r="88" fill="none" stroke-width="13" stroke-linecap="round" pathLength="100" transform="rotate(-90 120 120)"/>
+        <g class="knob"><g transform="rotate(244.8 120 120)"><circle class="knob-ring" cx="120" cy="32" r="14"/><circle class="knob-dot" cx="120" cy="32" r="8"/></g></g>
+        <g>
+          <rect class="bar" x="85" y="106" width="9" height="28" rx="4.5"/>
+          <rect class="bar" x="100" y="94" width="9" height="52" rx="4.5"/>
+          <rect class="bar" x="115" y="86" width="9" height="68" rx="4.5"/>
+          <rect class="bar" x="130" y="80" width="9" height="80" rx="4.5"/>
+          <rect class="bar" x="145" y="96" width="9" height="48" rx="4.5"/>
+          <rect class="bar" x="160" y="105" width="9" height="30" rx="4.5"/>
+        </g>
+      </svg>
+      <div class="feed">
+        <div class="line"><time>00:03:12</time><div data-i18n="demo.l1"><span class="who">others</span>Let's move the release to Thursday.</div></div>
+        <div class="line"><time>00:03:20</time><div data-i18n="demo.l2"><span class="who">me</span>OK, we finish the tests by Wednesday.</div></div>
+        <div class="line"><time>00:04:05</time><div data-i18n="demo.l3"><span class="who">others</span>Who prepares the notes for the client?</div></div>
+        <div class="minutes-card">
+          <h3 data-i18n="demo.title">Minutes</h3>
+          <ul data-i18n="demo.items">
+            <li><span>decision</span>Release on Thursday.</li>
+            <li><span>task</span>Finish the tests – me – Wednesday.</li>
+            <li><span>open</span>Who prepares the notes for the client?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+</div>
+
+<main class="wrap">
+  <section class="chapter" id="recording">
+    <div class="split">
+      <div class="prose">
+        <div class="stamp" data-i18n="rec.stamp">00:00 · recording</div>
+        <h2 data-i18n="rec.title">One click in the menu bar.</h2>
+        <p data-i18n="rec.p1">Click the Minutes icon. Select a screen and the audio sources. Then click <b>Start recording</b>.</p>
+        <ul data-i18n="rec.list">
+          <li><b>System audio</b> records the other participants from Teams, Meet or Zoom.</li>
+          <li><b>Microphone</b> records you. In the transcript you are “me”, the others are “others”.</li>
+          <li>During the recording you see the audio level. You can mute each source.</li>
+        </ul>
+        <p class="note" data-i18n="rec.note">Before you record, tell the participants that you record the meeting. Use headphones, or the microphone also picks up the speakers.</p>
+      </div>
+      <figure class="shot">
+        <img src="images/popover-new-session.png" data-i18n-alt="alt.new" alt="New session popover: screen selection, System audio and Microphone switches, Start recording button" width="1032" height="1058" loading="lazy">
+        <figcaption>New session</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="chapter" id="transcript">
+    <div class="prose">
+      <div class="stamp" data-i18n="tr.stamp">00:46 · transcript</div>
+      <h2 data-i18n="tr.title">The transcript is made on your local machine.</h2>
+      <p data-i18n="tr.p1">When you stop the recording, the transcription starts by itself. A local model transcribes each audio track separately and adds time stamps. It handles Slovak, Czech, English and a mix of them.</p>
+      <p data-i18n="tr.p2">While it runs, the ring of the menu bar icon fills. You can use your Mac as usual. The transcript is saved as Markdown, TXT, SRT, VTT and JSON.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="minutes">
+    <div class="split wide">
+      <div class="prose">
+        <div class="stamp" data-i18n="sum.stamp">00:49 · minutes</div>
+        <h2 data-i18n="sum.title">Minutes from a template, not from the model's mood.</h2>
+        <p data-i18n="sum.p1">In the session detail, select a template, a detail level, a model and a language. In <b>Extra</b>, write what to focus on. Click <b>Create summary</b>.</p>
+        <div class="levels" data-i18n="sum.levels">
+          <div><b>Brief</b>Decisions, tasks, open questions. Half a page.</div>
+          <div><b>Medium</b>2–5 points for each topic. About a page.</div>
+          <div><b>Detailed</b>Arguments, numbers and reasons for decisions.</div>
+        </div>
+        <p data-i18n="sum.p2">Templates are Markdown files: standard minutes, your own templates (for example your company's format) or a one-off instruction. When the model needs to see the screen, it cuts a frame from the video at that time.</p>
+        <p data-i18n="sum.p3">Each summary is a new file in the session folder. The old one stays.</p>
+      </div>
+      <figure class="shot">
+        <img src="images/popover-session.png" data-i18n-alt="alt.session" alt="Session detail: Transcript card, Summary card with options and the Create summary button, Outputs card" width="1032" height="1518" loading="lazy">
+        <figcaption data-i18n="cap.session">Session detail</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="chapter" id="sessions">
+    <div class="split">
+      <div class="prose">
+        <div class="stamp" data-i18n="ses.stamp">later · sessions</div>
+        <h2 data-i18n="ses.title">Every meeting has its own folder.</h2>
+        <p data-i18n="ses.p1">The <b>Sessions</b> tab lists your recordings by day. The session name is the topic from the minutes. Search by topic, date or screen.</p>
+        <p data-i18n="ses.p2"><b>Free up space</b> deletes video, audio and frames. The transcript and minutes stay. <b>Delete session</b> moves the folder to the Trash.</p>
+<pre>~/Meetings/2026-11-13_12-31-25/
+├── recording.mov · audio/ · frames/
+├── 2026-11-13_12-31-25_transcript.md
+└── outputs/2026-11-13_meetingsummary_&lt;topic&gt;.md</pre>
+      </div>
+      <figure class="shot">
+        <img src="images/popover-sessions.png" data-i18n-alt="alt.sessions" alt="Sessions tab with a list of recordings and search" width="1032" height="972" loading="lazy">
+        <figcaption>Sessions</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="chapter" id="privacy">
+    <div class="prose">
+      <div class="stamp" data-i18n="pr.stamp">privacy</div>
+      <h2 data-i18n="pr.title">What stays on your local machine, and what does not.</h2>
+    </div>
+    <div class="boundary">
+      <div class="mac">
+        <span class="label" data-i18n="pr.mac">your local machine</span>
+        <div class="chips" data-i18n="pr.chips">
+          <span class="chip">Video</span><span class="chip">Audio</span><span class="chip">Transcript</span>
+          <span class="chip">Frames</span><span class="chip">Minutes</span><span class="chip">Settings</span>
+        </div>
+      </div>
+      <div class="arrow" data-i18n="pr.arrow"><b>→</b>transcript text<br>and selected frames</div>
+      <div class="out">
+        <div class="chip" data-i18n="pr.internal">Your model in OpenCode<small>local, self-hosted or cloud – you choose</small></div>
+        <div class="chip cloud" data-i18n="pr.cloud">Claude or Codex (cloud)<small>only if you turn it on and select it</small></div>
+      </div>
+    </div>
+    <p class="note" data-i18n="pr.note">The video never leaves your local machine. The audio goes to a transcription server only if you select one in Settings → Transcription. With a local model in OpenCode, nothing leaves your local machine. The app sends no telemetry.</p>
+  </section>
+
+  <section class="chapter" id="icon">
+    <div class="prose">
+      <div class="stamp">menu bar</div>
+      <h2 data-i18n="ic.title">The icon tells you what is going on.</h2>
+    </div>
+    <ol class="states" data-i18n-aria="ic.list" aria-label="Menu bar icon states">
+      <li class="state state-ready"><div class="bar-chip"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="7" x2="6" y2="11"/><line x1="9" y1="5.25" x2="9" y2="12.75"/><line x1="12" y1="6.5" x2="12" y2="11.5"/></g></svg></div><b data-i18n="ic.ready.name">Ready</b><span data-i18n="ic.ready.text">Waits for your next meeting.</span></li>
+      <li class="state state-rec"><div class="bar-chip"><span class="rec-dot"></span><span class="rec-time">12:34</span></div><b data-i18n="ic.rec.name">Recording</b><span data-i18n="ic.rec.text">Red dot and the meeting time.</span></li>
+      <li class="state state-transcribe"><div class="bar-chip"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".3"/><circle class="fill" cx="9" cy="9" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" pathLength="100" transform="rotate(-90 9 9)"/><g class="orbit"><circle cx="9" cy="0.8" r="2.1" fill="currentColor"/></g><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="7" x2="6" y2="11"/><line x1="9" y1="5.25" x2="9" y2="12.75"/><line x1="12" y1="6.5" x2="12" y2="11.5"/></g></svg></div><b data-i18n="ic.transcribe.name">Transcribing</b><span data-i18n="ic.transcribe.text">The ring fills as the transcript grows.</span></li>
+      <li class="state state-summary"><div class="bar-chip"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".3"/><g class="spin"><circle cx="9" cy="9" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" pathLength="100" stroke-dasharray="25 75" transform="rotate(-90 9 9)"/></g><path d="M9 4.8C9.84 8.16 9.84 8.16 13.2 9C9.84 9.84 9.84 9.84 9 13.2C8.16 9.84 8.16 9.84 4.8 9C8.16 8.16 8.16 8.16 9 4.8Z" fill="currentColor"/></svg></div><b data-i18n="ic.summary.name">Writing minutes</b><span data-i18n="ic.summary.text">The arc spins while the model writes.</span></li>
+      <li class="state state-done"><div class="bar-chip"><svg viewBox="0 0 18 18" aria-hidden="true"><mask id="badgeGap"><rect width="18" height="18" fill="#fff"/><circle cx="14.6" cy="3.4" r="4.4" fill="#000"/></mask><g mask="url(#badgeGap)"><circle cx="9" cy="9" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 4.8C9.84 8.16 9.84 8.16 13.2 9C9.84 9.84 9.84 9.84 9 13.2C8.16 9.84 8.16 9.84 4.8 9C8.16 8.16 8.16 8.16 9 4.8Z" fill="currentColor"/></g><circle cx="14.6" cy="3.4" r="3" fill="currentColor"/></svg></div><b data-i18n="ic.done.name">Minutes ready</b><span data-i18n="ic.done.text">A dot waits until you open the popover.</span></li>
+      <li class="state state-busy"><div class="bar-chip"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".3"/><g class="spin"><circle cx="9" cy="9" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" pathLength="100" stroke-dasharray="25 75" transform="rotate(-90 9 9)"/></g></svg></div><b data-i18n="ic.busy.name">Starting or saving</b><span data-i18n="ic.busy.text">The arc spins for a moment.</span></li>
+    </ol>
+  </section>
+
+  <section class="chapter" id="settings">
+    <div class="prose">
+      <div class="stamp" data-i18n="st.stamp">settings</div>
+      <h2 data-i18n="st.title">Sensible defaults. You can change everything.</h2>
+      <p data-i18n="st.p1">App language (English or Slovak), sessions folder, video quality, transcription model, default template and model for minutes.</p>
+    </div>
+    <div class="gallery">
+      <figure class="shot"><img src="images/settings-general.png" data-i18n-alt="alt.general" alt="Settings, General tab" loading="lazy"><figcaption>General</figcaption></figure>
+      <figure class="shot"><img src="images/settings-transcription.png" data-i18n-alt="alt.transcription" alt="Settings, Transcription tab" loading="lazy"><figcaption>Transcription</figcaption></figure>
+      <figure class="shot"><img src="images/settings-summary.png" data-i18n-alt="alt.summary" alt="Settings, Summary tab" loading="lazy"><figcaption>Summary</figcaption></figure>
+      <figure class="shot"><img src="images/settings-about.png" data-i18n-alt="alt.about" alt="Settings, About tab" loading="lazy"><figcaption>About</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="chapter" id="install">
+    <div class="split">
+      <div class="prose">
+        <div class="stamp" data-i18n="in.stamp">install</div>
+        <h2 data-i18n="in.title">Five steps to your first minutes.</h2>
+        <ol class="install" data-i18n="in.steps">
+          <li>Open <code>Minutes-1.0.0.dmg</code> and move Minutes to Applications.</li>
+          <li>Open Minutes. The icon appears in the menu bar.</li>
+          <li>Click the icon and then <b>Allow</b>. Allow Minutes in System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording. Restart the app.</li>
+          <li>In Settings → Transcription, click <b>Download model</b>. It downloads once.</li>
+          <li>Install OpenCode and set up a model: a local one (for example Ollama), your company server or a cloud provider:
+<pre>brew install opencode ffmpeg</pre></li>
+        </ol>
+      </div>
+      <div>
+        <table data-i18n="in.req">
+          <tr><th>Mac</th><td>Apple Silicon (M1 or later)</td></tr>
+          <tr><th>System</th><td>macOS 15 Sequoia or later</td></tr>
+          <tr><th>Space</th><td>about 3 GB plus recordings</td></tr>
+          <tr><th>Network</th><td>none for local models; else what your model needs</td></tr>
+          <tr><th>Tools</th><td>OpenCode; optionally Claude Code, Codex and ffmpeg</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="faq">
+    <div class="prose">
+      <div class="stamp" data-i18n="faq.stamp">questions</div>
+      <h2 data-i18n="faq.title">Frequently asked questions</h2>
+    </div>
+    <div data-i18n="faq.items">
+      <details><summary>Does it work without internet?</summary><p>Recording and local transcription do. Minutes work offline too, with a local model in OpenCode (for example Ollama).</p></details>
+      <details><summary>How do I switch the app to Slovak?</summary><p>Settings → General → App language → Slovenčina. Then click Restart now.</p></details>
+      <details><summary>How do I add my own template?</summary><p>Copy <code>standard.md</code> and change <code>id</code>, the name and the instruction. Save it in the templates folder from Settings → Summary.</p></details>
+      <details><summary>The transcript is in the wrong language.</summary><p>In Settings → Transcription, set the speech language manually and transcribe again.</p></details>
+      <details><summary>How do I free up disk space?</summary><p>In the session detail, click Free up. The app can also delete old videos by itself (Settings → Recording).</p></details>
+      <details><summary>The app says it has no permission to record the screen.</summary><p>Allow Minutes in System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording, then restart the app.</p></details>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="sheet">
+      <div class="stamp" data-i18n="cl.stamp">minutes of this page</div>
+      <h2>Minutes 1.0.0</h2>
+      <dl data-i18n="cl.items">
+        <dt>decision</dt><dd>Minutes takes the minutes. The data stays on your local machine.</dd>
+        <dt>task</dt><dd>Install Minutes – you – before your next meeting.</dd>
+        <dt>open</dt><dd>Which template do you use first?</dd>
+      </dl>
+      <div class="actions"><a class="btn primary" href="#install" data-i18n="cta.install">Install</a></div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <span>Minutes · Softverse, spol. s r. o.</span>
+  <span data-i18n="ft.version">open source · version 1.0.0</span>
+</footer>
+
+<script>
+  // Twelve minute ticks around the dial; 12 o'clock is the arc start, 8 o'clock sits under the knob.
+  const ticks = document.getElementById('ticks');
+  for (let i = 0; i < 12; i++) {
+    if (i === 0 || i === 8) continue;
+    const a = i / 12 * Math.PI * 2 - Math.PI / 2;
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', 120 + Math.cos(a) * 106); l.setAttribute('y1', 120 + Math.sin(a) * 106);
+    l.setAttribute('x2', 120 + Math.cos(a) * 113); l.setAttribute('y2', 120 + Math.sin(a) * 113);
+    l.setAttribute('class', 'tick');
+    ticks.appendChild(l);
+  }
+
+  // English is in the markup. Slovak replaces it. Without JavaScript the page stays in English.
+  const SK = {
+    'doc.title': 'Minutes – zápisy zo stretnutí',
+    'doc.description': 'Minutes nahrá stretnutie, prepíše reč a pripraví zápis podľa šablóny. Video ani zvuk neopustia váš lokálny počítač.',
+    'nav.how': 'Ako to funguje', 'nav.privacy': 'Súkromie', 'nav.install': 'Inštalácia', 'nav.faq': 'Otázky',
+    'hero.eyebrow': 'macOS · menu bar · verzia 1.0.0',
+    'hero.title': 'Porada skončí.<br><span>Zápis</span> je hotový.',
+    'hero.lead': 'Minutes nahrá stretnutie, prepíše reč a pripraví zápis podľa šablóny. Video ani zvuk neopustia váš lokálny počítač.',
+    'cta.install': 'Nainštalovať',
+    'hero.meta': 'Apple Silicon · macOS 15 a novší · SK, CS, EN',
+    'hero.stage': 'Ukážka: zo stretnutia vznikne prepis a zápis',
+    'hero.dial': 'Ciferník: nahrané minúty stretnutia',
+    'demo.l1': '<span class="who">ostatní</span>Release posunieme na štvrtok.',
+    'demo.l2': '<span class="who">ja</span>Dobre, testy dokončíme do stredy.',
+    'demo.l3': '<span class="who">ostatní</span>Kto pripraví poznámky pre klienta?',
+    'demo.title': 'Zápis',
+    'demo.items': '<li><span>rozhodnutie</span>Release vo štvrtok.</li><li><span>úloha</span>Dokončiť testy – ja – streda.</li><li><span>otvorené</span>Kto pripraví poznámky pre klienta?</li>',
+    'rec.stamp': '00:00 · nahrávanie',
+    'rec.title': 'Jedno kliknutie v menu bare.',
+    'rec.p1': 'Kliknite na ikonu Minutes. Vyberte obrazovku a zdroje zvuku. Potom kliknite na <b>Start recording</b>.',
+    'rec.list': '<li><b>System audio</b> nahrá ostatných účastníkov z Teams, Meet alebo Zoom.</li><li><b>Microphone</b> nahrá vás. V prepise ste „ja“, ostatní sú „ostatní“.</li><li>Počas nahrávania vidíte úroveň zvuku. Každý zdroj môžete stlmiť.</li>',
+    'rec.note': 'Pred nahrávaním oznámte účastníkom, že stretnutie nahrávate. Použite slúchadlá, inak mikrofón zachytí aj reproduktory.',
+    'alt.new': 'Popover New session: výber obrazovky, prepínače System audio a Microphone, tlačidlo Start recording',
+    'tr.stamp': '00:46 · prepis',
+    'tr.title': 'Prepis vznikne na vašom lokálnom počítači.',
+    'tr.p1': 'Po zastavení nahrávania sa prepis spustí sám. Lokálny model prepíše každú zvukovú stopu zvlášť a pridá časy. Zvládne slovenčinu, češtinu, angličtinu aj ich mix.',
+    'tr.p2': 'Kým prepis beží, kruh ikony v menu bare sa plní. Mac medzitým normálne používate. Prepis sa uloží ako Markdown, TXT, SRT, VTT a JSON.',
+    'sum.stamp': '00:49 · zápis',
+    'sum.title': 'Zápis podľa šablóny, nie podľa nálady modelu.',
+    'sum.p1': 'V detaile session vyberte šablónu, úroveň detailu, model a jazyk. Do poľa <b>Extra</b> napíšte, na čo sa zamerať. Kliknite na <b>Create summary</b>.',
+    'sum.levels': '<div><b>Brief</b>Rozhodnutia, úlohy, otvorené otázky. Pol strany.</div><div><b>Medium</b>2–5 bodov ku každej téme. Asi strana.</div><div><b>Detailed</b>Argumenty, čísla a dôvody rozhodnutí.</div>',
+    'sum.p2': 'Šablóny sú Markdown súbory: štandardný zápis, vlastné šablóny (napríklad firemný formát) alebo jednorazový pokyn. Ak model potrebuje vidieť obrazovku, vyreže si snímku z videa v danom čase.',
+    'sum.p3': 'Každý zápis je nový súbor v priečinku session. Starý zostane.',
+    'alt.session': 'Detail session: karta Transcript, karta Summary s voľbami a tlačidlom Create summary, karta Outputs',
+    'cap.session': 'Detail session',
+    'ses.stamp': 'neskôr · sessions',
+    'ses.title': 'Každé stretnutie má svoj priečinok.',
+    'ses.p1': 'Záložka <b>Sessions</b> ukazuje nahrávky podľa dní. Názov session je téma zo zápisu. Hľadajte podľa témy, dátumu alebo obrazovky.',
+    'ses.p2': '<b>Free up space</b> zmaže video, zvuk a snímky. Prepis a zápisy zostanú. <b>Delete session</b> presunie priečinok do Koša.',
+    'alt.sessions': 'Záložka Sessions so zoznamom nahrávok a vyhľadávaním',
+    'pr.stamp': 'súkromie',
+    'pr.title': 'Čo zostane na vašom lokálnom počítači a čo nie.',
+    'pr.mac': 'váš lokálny počítač',
+    'pr.chips': '<span class="chip">Video</span><span class="chip">Zvuk</span><span class="chip">Prepis</span><span class="chip">Snímky</span><span class="chip">Zápisy</span><span class="chip">Nastavenia</span>',
+    'pr.arrow': '<b>→</b>text prepisu<br>a vybrané snímky',
+    'pr.internal': 'Váš model v OpenCode<small>lokálny, vlastný server alebo cloud – vyberiete si</small>',
+    'pr.cloud': 'Claude alebo Codex (cloud)<small>iba ak ich zapnete a vyberiete</small>',
+    'pr.note': 'Video nikdy neopustí váš lokálny počítač. Zvuk ide na server na prepis iba vtedy, ak ho vyberiete v Settings → Transcription. S lokálnym modelom v OpenCode neopustí váš lokálny počítač nič. Aplikácia neposiela telemetriu.',
+    'ic.title': 'Ikona hovorí, čo sa deje.',
+    'ic.list': 'Stavy ikony v menu bare',
+    'ic.ready.name': 'Pripravená', 'ic.ready.text': 'Čaká na ďalšie stretnutie.',
+    'ic.rec.name': 'Nahráva', 'ic.rec.text': 'Červená bodka a čas stretnutia.',
+    'ic.transcribe.name': 'Prepisuje', 'ic.transcribe.text': 'Kruh sa plní, ako pribúda prepis.',
+    'ic.summary.name': 'Píše zápis', 'ic.summary.text': 'Oblúk sa točí, kým model píše.',
+    'ic.done.name': 'Zápis je hotový', 'ic.done.text': 'Bodka počká, kým otvoríte popover.',
+    'ic.busy.name': 'Spúšťa alebo ukladá', 'ic.busy.text': 'Oblúk sa na chvíľu točí.',
+    'st.stamp': 'nastavenia',
+    'st.title': 'Rozumné predvoľby, všetko sa dá zmeniť.',
+    'st.p1': 'Jazyk aplikácie (English alebo Slovenčina), priečinok sessions, kvalita videa, model na prepis, predvolená šablóna a model pre zápis.',
+    'alt.general': 'Nastavenia, záložka General', 'alt.transcription': 'Nastavenia, záložka Transcription',
+    'alt.summary': 'Nastavenia, záložka Summary', 'alt.about': 'Nastavenia, záložka About',
+    'in.stamp': 'inštalácia',
+    'in.title': 'Päť krokov k prvému zápisu.',
+    'in.steps': '<li>Otvorte <code>Minutes-1.0.0.dmg</code> a presuňte Minutes do Applications.</li><li>Spustite Minutes. Ikona sa ukáže v menu bare.</li><li>Kliknite na ikonu a na <b>Allow</b>. Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording. Aplikáciu reštartujte.</li><li>V Settings → Transcription kliknite na <b>Download model</b>. Stiahne sa raz.</li><li>Nainštalujte OpenCode a nastavte model: lokálny (napríklad Ollama), firemný server alebo cloud:<pre>brew install opencode ffmpeg</pre></li>',
+    'in.req': '<tr><th>Mac</th><td>Apple Silicon (M1 a novší)</td></tr><tr><th>Systém</th><td>macOS 15 Sequoia a novší</td></tr><tr><th>Miesto</th><td>asi 3 GB a nahrávky</td></tr><tr><th>Sieť</th><td>pri lokálnom modeli žiadna; inak podľa modelu</td></tr><tr><th>Nástroje</th><td>OpenCode; voliteľne Claude Code, Codex a ffmpeg</td></tr>',
+    'faq.stamp': 'otázky',
+    'faq.title': 'Časté otázky',
+    'faq.items': '<details><summary>Funguje to bez internetu?</summary><p>Nahrávanie a lokálny prepis áno. Zápis tiež, s lokálnym modelom v OpenCode (napríklad Ollama).</p></details><details><summary>Ako prepnem aplikáciu do slovenčiny?</summary><p>Settings → General → App language → Slovenčina. Potom kliknite na Restart now.</p></details><details><summary>Ako pridám vlastnú šablónu?</summary><p>Skopírujte <code>standard.md</code>, zmeňte <code>id</code>, názov a pokyn. Uložte ju do priečinka šablón z Settings → Summary.</p></details><details><summary>Prepis je v zlom jazyku.</summary><p>V Settings → Transcription nastavte jazyk reči ručne a spustite prepis znova.</p></details><details><summary>Ako uvoľním miesto na disku?</summary><p>V detaile session kliknite na Free up. Staré videá môže aplikácia mazať sama (Settings → Recording).</p></details><details><summary>Aplikácia hlási, že nemá povolenie nahrávať obrazovku.</summary><p>Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording a aplikáciu reštartujte.</p></details>',
+    'cl.stamp': 'zápis z tejto stránky',
+    'cl.items': '<dt>rozhodnutie</dt><dd>Stretnutia zapisuje Minutes. Dáta zostávajú na vašom lokálnom počítači.</dd><dt>úloha</dt><dd>Nainštalovať Minutes – vy – pred ďalšou poradou.</dd><dt>otvorené</dt><dd>Ktorú šablónu použijete prvú?</dd>',
+    'ft.version': 'open source · verzia 1.0.0',
+  };
+
+  const nodes = [...document.querySelectorAll('[data-i18n], [data-i18n-alt], [data-i18n-aria]')];
+  const EN = new Map(nodes.map(el => [el, { html: el.innerHTML, alt: el.getAttribute('alt'), aria: el.getAttribute('aria-label') }]));
+  const EN_DOC = { title: document.title, description: document.querySelector('meta[name=description]').content };
+
+  function setLanguage(lang) {
+    const sk = lang === 'sk';
+    document.documentElement.lang = lang;
+    for (const el of nodes) {
+      const en = EN.get(el);
+      if (el.dataset.i18n) el.innerHTML = sk ? SK[el.dataset.i18n] ?? en.html : en.html;
+      if (el.dataset.i18nAlt) el.setAttribute('alt', sk ? SK[el.dataset.i18nAlt] ?? en.alt : en.alt);
+      if (el.dataset.i18nAria) el.setAttribute('aria-label', sk ? SK[el.dataset.i18nAria] ?? en.aria : en.aria);
+    }
+    document.title = sk ? SK['doc.title'] : EN_DOC.title;
+    document.querySelector('meta[name=description]').content = sk ? SK['doc.description'] : EN_DOC.description;
+    document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  }
+
+  function initialLanguage() {
+    try {
+      const saved = localStorage.getItem('minutes-site-lang');
+      if (saved === 'en' || saved === 'sk') return saved;
+    } catch (e) {}
+    const browser = (navigator.languages || [navigator.language || 'en']).map(l => l.toLowerCase());
+    return browser.some(l => l.startsWith('sk') || l.startsWith('cs')) ? 'sk' : 'en';
+  }
+
+  document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
+    setLanguage(b.dataset.lang);
+    try { localStorage.setItem('minutes-site-lang', b.dataset.lang); } catch (e) {}
+  }));
+  setLanguage(initialLanguage());
+</script>
+</body>
+</html>

@@ -1,0 +1,2654 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@" : {
+      "shouldTranslate" : false
+    },
+    "%@ (cloud)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (cloud)"
+          }
+        }
+      }
+    },
+    "%@ CLI" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ CLI"
+          }
+        }
+      }
+    },
+    "%@ default" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predvolený model %@"
+          }
+        }
+      }
+    },
+    "%@ is preparing the summary…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ pripravuje zápis…"
+          }
+        }
+      }
+    },
+    "%@ is turned off. Turn it on in Settings → Summary." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ je vypnutý. Zapnite ho v Nastaveniach → Zápis."
+          }
+        }
+      }
+    },
+    "%@ on disk" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ na disku"
+          }
+        }
+      }
+    },
+    "%@ runs in the %@ cloud. The transcript and selected frames leave the Mac. The app never selects it by itself – you select it for a specific summary." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ runs in the %2$@ cloud. The transcript and selected frames leave the Mac. The app never selects it by itself – you select it for a specific summary."
+          }
+        }
+      }
+    },
+    "%@ was not found. Install it or set its path in Settings → Summary." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sa nenašiel. Nainštalujte ho alebo nastavte cestu v Nastaveniach → Zápis."
+          }
+        }
+      }
+    },
+    "%@ · video and audio are deleted" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · video a zvuk sú zmazané"
+          }
+        }
+      }
+    },
+    "%lld segments. You can start the summary." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld segment. You can start the summary."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld segments. You can start the summary."
+                }
+              }
+            }
+          }
+        },
+        "sk" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld segmenty. Môžete spustiť zápis."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld segment. Môžete spustiť zápis."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld segmentov. Môžete spustiť zápis."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld sessions" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld session"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sessions"
+                }
+              }
+            }
+          }
+        },
+        "sk" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sessions"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld session"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sessions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld templates" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld template"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld templates"
+                }
+              }
+            }
+          }
+        },
+        "sk" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld šablóny"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld šablóna"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld šablón"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld. %2$@"
+          }
+        }
+      }
+    },
+    "A local model turns the speech into a transcript with time stamps. The audio stays on the Mac." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lokálny model prepíše reč na text s časmi. Zvuk zostane na Macu."
+          }
+        }
+      }
+    },
+    "A model writes the summary from the transcript and a template. It can look at screen frames." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model napíše zápis z prepisu podľa šablóny. Môže si pozrieť snímky obrazovky."
+          }
+        }
+      }
+    },
+    "A template is a Markdown file with the header fields id, name, description, frames, detail and language. Use standard.md as a sample." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Šablóna je Markdown súbor s hlavičkou id, name, description, frames, detail a language. Vzor je standard.md."
+          }
+        }
+      }
+    },
+    "API key" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API kľúč"
+          }
+        }
+      }
+    },
+    "About" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O aplikácii"
+          }
+        }
+      }
+    },
+    "Advanced" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokročilé"
+          }
+        }
+      }
+    },
+    "After 30 days" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Po 30 dňoch"
+          }
+        }
+      }
+    },
+    "After 7 days" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Po 7 dňoch"
+          }
+        }
+      }
+    },
+    "After 90 days" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Po 90 dňoch"
+          }
+        }
+      }
+    },
+    "Agent" : {
+      "shouldTranslate" : false
+    },
+    "Agent %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agent %@"
+          }
+        }
+      }
+    },
+    "Allow" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Povoliť"
+          }
+        }
+      }
+    },
+    "Allow it in System Settings → Privacy & Security → Screen & System Audio Recording. Then restart the app." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Povoľte ju v System Settings → Privacy & Security → Screen & System Audio Recording. Potom aplikáciu reštartujte."
+          }
+        }
+      }
+    },
+    "App data" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dáta aplikácie"
+          }
+        }
+      }
+    },
+    "App language" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jazyk aplikácie"
+          }
+        }
+      }
+    },
+    "Applies to .md, .txt, .srt, .vtt and .json files. Video opens in the default app." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platí pre súbory .md, .txt, .srt, .vtt a .json. Video sa otvára v predvolenej aplikácii."
+          }
+        }
+      }
+    },
+    "Audio" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zvuk"
+          }
+        }
+      }
+    },
+    "Audio conversion failed: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prevod zvuku zlyhal: %@"
+          }
+        }
+      }
+    },
+    "Audio, transcript and summaries stay. The app checks for old videos at launch." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zvuk, prepis a zápisy zostanú. Aplikácia kontroluje staré videá pri spustení."
+          }
+        }
+      }
+    },
+    "Automatic" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automaticky"
+          }
+        }
+      }
+    },
+    "Available (ffmpeg)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostupné (ffmpeg)"
+          }
+        }
+      }
+    },
+    "Before you record, tell the participants that you record the meeting." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pred nahrávaním oznámte účastníkom, že stretnutie nahrávate."
+          }
+        }
+      }
+    },
+    "Brief" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stručná"
+          }
+        }
+      }
+    },
+    "Built-in display" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vstavaný displej"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zrušiť"
+          }
+        }
+      }
+    },
+    "Cancelled. You can start it again." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zrušené. Môžete ho spustiť znova."
+          }
+        }
+      }
+    },
+    "Cancelling…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruší sa…"
+          }
+        }
+      }
+    },
+    "Cannot convert the audio to 16 kHz mono." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zvuk sa nedá previesť na 16 kHz mono."
+          }
+        }
+      }
+    },
+    "Cannot delete the session: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session sa nedá vymazať: %@"
+          }
+        }
+      }
+    },
+    "Cannot free up space in %@: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miesto sa nepodarilo uvoľniť v %1$@: %2$@"
+          }
+        }
+      }
+    },
+    "Cannot load screens: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obrazovky sa nedajú načítať: %@"
+          }
+        }
+      }
+    },
+    "Change" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmeniť"
+          }
+        }
+      }
+    },
+    "Check again" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skontrolovať znova"
+          }
+        }
+      }
+    },
+    "Choose another folder…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vybrať iný priečinok…"
+          }
+        }
+      }
+    },
+    "Clear search" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vymazať hľadanie"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zavrieť"
+          }
+        }
+      }
+    },
+    "Create summary" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vytvoriť zápis"
+          }
+        }
+      }
+    },
+    "Custom agent" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vlastný agent"
+          }
+        }
+      }
+    },
+    "Custom instruction…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vlastný pokyn…"
+          }
+        }
+      }
+    },
+    "Czech" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Čeština"
+          }
+        }
+      }
+    },
+    "Default" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predvolený"
+          }
+        }
+      }
+    },
+    "Default from the %@ configuration" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predvolený z konfigurácie %@"
+          }
+        }
+      }
+    },
+    "Default model" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predvolený model"
+          }
+        }
+      }
+    },
+    "Defaults" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predvolené voľby"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vymazať"
+          }
+        }
+      }
+    },
+    "Delete session" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vymazať session"
+          }
+        }
+      }
+    },
+    "Delete session…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vymazať session…"
+          }
+        }
+      }
+    },
+    "Delete the whole session, including summaries? The folder moves to the Trash." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vymazať celú session vrátane zápisov? Priečinok sa presunie do Koša."
+          }
+        }
+      }
+    },
+    "Delete video and audio in all sessions (%@)? Transcripts and summaries stay, but you cannot transcribe these sessions again." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmazať video a zvuk vo všetkých sessions (%@)? Prepisy a zápisy zostanú, ale sessions potom nejde prepísať znova."
+          }
+        }
+      }
+    },
+    "Delete video automatically" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automaticky mazať video"
+          }
+        }
+      }
+    },
+    "Delete video, audio and frames (%@)? The transcript and summaries stay." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmazať video, zvuk a snímky (%@)? Prepis a zápisy zostanú."
+          }
+        }
+      }
+    },
+    "Delete video, audio and frames. The transcript and summaries stay." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmazať video, zvuk a snímky. Prepis a zápisy zostanú."
+          }
+        }
+      }
+    },
+    "Detail" : {
+      "shouldTranslate" : false
+    },
+    "Detailed" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detailná"
+          }
+        }
+      }
+    },
+    "Display %u" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Displej %u"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hotový"
+          }
+        }
+      }
+    },
+    "Download failed: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiahnutie zlyhalo: %@"
+          }
+        }
+      }
+    },
+    "Download model" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiahnuť model"
+          }
+        }
+      }
+    },
+    "Downloaded" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiahnutý"
+          }
+        }
+      }
+    },
+    "Each session has its own folder with video, audio, transcript and summaries." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Každá session má vlastný priečinok s videom, zvukom, prepisom a zápismi."
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upraviť"
+          }
+        }
+      }
+    },
+    "Edited" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upravený"
+          }
+        }
+      }
+    },
+    "English" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angličtina"
+          }
+        }
+      }
+    },
+    "Extra" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doplnenie"
+          }
+        }
+      }
+    },
+    "File" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Súbor"
+          }
+        }
+      }
+    },
+    "Folder" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priečinok"
+          }
+        }
+      }
+    },
+    "For example: “Only a list of tasks with deadlines.”" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napr. „Iba zoznam úloh s termínmi.“"
+          }
+        }
+      }
+    },
+    "For mixed Slovak and Czech, set the language manually. Automatic detection checks the language only once at the start." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pri mixe slovenčiny a češtiny nastavte jazyk ručne. Automatika zistí jazyk iba raz na začiatku."
+          }
+        }
+      }
+    },
+    "For presentations and a shared screen, 2–5 frames per second are enough. The file is then small." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pre prezentácie a zdieľanú obrazovku stačí 2–5 snímok za sekundu. Súbor je potom malý."
+          }
+        }
+      }
+    },
+    "Found" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nájdený"
+          }
+        }
+      }
+    },
+    "Found %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Found %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Frames per second" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snímky za sekundu"
+          }
+        }
+      }
+    },
+    "Free up %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uvoľniť %@"
+          }
+        }
+      }
+    },
+    "Free up space (%@)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uvoľniť miesto (%@)"
+          }
+        }
+      }
+    },
+    "Free up space (delete video and audio)…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uvoľniť miesto (zmazať video a zvuk)…"
+          }
+        }
+      }
+    },
+    "Free up space in all (%@)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uvoľniť miesto vo všetkých (%@)"
+          }
+        }
+      }
+    },
+    "Freed: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uvoľnené: %@"
+          }
+        }
+      }
+    },
+    "General" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Všeobecné"
+          }
+        }
+      }
+    },
+    "German" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nemčina"
+          }
+        }
+      }
+    },
+    "How it works" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ako to funguje"
+          }
+        }
+      }
+    },
+    "Instruction" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokyn"
+          }
+        }
+      }
+    },
+    "Language" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jazyk"
+          }
+        }
+      }
+    },
+    "Launch at login" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spustiť pri prihlásení"
+          }
+        }
+      }
+    },
+    "Loaded" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Načítané"
+          }
+        }
+      }
+    },
+    "Loading model…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Načítavam model…"
+          }
+        }
+      }
+    },
+    "Loading screens…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Načítavam obrazovky…"
+          }
+        }
+      }
+    },
+    "Local model" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lokálny model"
+          }
+        }
+      }
+    },
+    "Locally on the Mac (WhisperKit)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lokálne na Macu (WhisperKit)"
+          }
+        }
+      }
+    },
+    "Matches the prompt" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zhoduje sa s promptom"
+          }
+        }
+      }
+    },
+    "Max. video width" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max. šírka videa"
+          }
+        }
+      }
+    },
+    "Medium" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stredná"
+          }
+        }
+      }
+    },
+    "Meeting minutes that stay on your local machine." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápisy zo stretnutí, ktoré zostanú na vašom počítači."
+          }
+        }
+      }
+    },
+    "Microphone" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofón"
+          }
+        }
+      }
+    },
+    "Microphone has no permission – open settings" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofón nemá povolenie – otvoriť nastavenia"
+          }
+        }
+      }
+    },
+    "Minutes ready" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápis je hotový"
+          }
+        }
+      }
+    },
+    "Model" : {
+      "shouldTranslate" : false
+    },
+    "Model %@ is not downloaded. Download it in Settings → Transcription." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model %@ nie je stiahnutý. Stiahnite ho v Nastaveniach → Prepis."
+          }
+        }
+      }
+    },
+    "Model name" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Názov modelu"
+          }
+        }
+      }
+    },
+    "More actions" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ďalšie akcie"
+          }
+        }
+      }
+    },
+    "Never" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nikdy"
+          }
+        }
+      }
+    },
+    "New session" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nová session"
+          }
+        }
+      }
+    },
+    "No date" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bez dátumu"
+          }
+        }
+      }
+    },
+    "No sessions yet" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatiaľ žiadne sessions"
+          }
+        }
+      }
+    },
+    "No summary" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bez zápisu"
+          }
+        }
+      }
+    },
+    "Not available – ffmpeg is missing" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nedostupné – chýba ffmpeg"
+          }
+        }
+      }
+    },
+    "Not done yet" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ešte nie je hotový"
+          }
+        }
+      }
+    },
+    "Not found" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenájdený"
+          }
+        }
+      }
+    },
+    "Not found (brew install opencode)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenájdený (brew install opencode)"
+          }
+        }
+      }
+    },
+    "Nothing found" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nič sa nenašlo"
+          }
+        }
+      }
+    },
+    "Offer %@ for summaries" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponúknuť %@ pri zápise"
+          }
+        }
+      }
+    },
+    "Open" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť"
+          }
+        }
+      }
+    },
+    "Open %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť %@"
+          }
+        }
+      }
+    },
+    "Open folder" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť priečinok"
+          }
+        }
+      }
+    },
+    "Open in Finder" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť vo Finderi"
+          }
+        }
+      }
+    },
+    "Open sessions folder" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť priečinok sessions"
+          }
+        }
+      }
+    },
+    "Open the folder with all sessions" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť priečinok so všetkými sessions"
+          }
+        }
+      }
+    },
+    "Open the session folder in Finder" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť priečinok session vo Finderi"
+          }
+        }
+      }
+    },
+    "Open the summary as Markdown. All files of a session are in one folder." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápis otvoríte ako Markdown. Všetky súbory session sú v jednom priečinku."
+          }
+        }
+      }
+    },
+    "Open with" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvárať v"
+          }
+        }
+      }
+    },
+    "OpenCode" : {
+      "shouldTranslate" : false
+    },
+    "OpenCode gets the system prompt as the agent %@. The app creates it at launch and before each summary and overwrites manual changes. Set up a custom agent under a different name." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenCode dostane systémový prompt ako agenta %@. Aplikácia ho vytvorí pri štarte a pred každým zápisom a ručné zmeny prepíše. Vlastného agenta nastavte pod iným menom."
+          }
+        }
+      }
+    },
+    "OpenCode gives the summary agent more permissions than the app allows (%@). Check your OpenCode version and configuration." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenCode dáva agentovi pre zápis viac oprávnení, ako aplikácia povoľuje (%@). Skontrolujte verziu a konfiguráciu OpenCode."
+          }
+        }
+      }
+    },
+    "Optional: what to focus on, what to leave out, who the summary is for…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voliteľne: na čo sa zamerať, čo vynechať, komu je zápis určený…"
+          }
+        }
+      }
+    },
+    "Other app…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iná aplikácia…"
+          }
+        }
+      }
+    },
+    "Other model…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iný model…"
+          }
+        }
+      }
+    },
+    "Outputs" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Výstupy"
+          }
+        }
+      }
+    },
+    "Path to %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cesta k %@"
+          }
+        }
+      }
+    },
+    "Path to opencode" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cesta k opencode"
+          }
+        }
+      }
+    },
+    "Preparing audio…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pripravujem zvuk…"
+          }
+        }
+      }
+    },
+    "Preparing…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pripravujem…"
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Súkromie"
+          }
+        }
+      }
+    },
+    "Quit" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukončiť"
+          }
+        }
+      }
+    },
+    "Ready" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pripravená"
+          }
+        }
+      }
+    },
+    "Record" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrať"
+          }
+        }
+      }
+    },
+    "Record the screen, system audio and your microphone during a meeting." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Počas stretnutia nahrajte obrazovku, systémový zvuk a svoj mikrofón."
+          }
+        }
+      }
+    },
+    "Recording" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie"
+          }
+        }
+      }
+    },
+    "Recording did not start: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie sa nespustilo: %@"
+          }
+        }
+      }
+    },
+    "Recording only" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iba nahrávka"
+          }
+        }
+      }
+    },
+    "Recording stopped unexpectedly" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie sa prerušilo"
+          }
+        }
+      }
+    },
+    "Recording stopped unexpectedly: %@. The saved part stays." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie sa prerušilo: %@. Uložená časť zostala."
+          }
+        }
+      }
+    },
+    "Reload screens" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Načítať obrazovky znova"
+          }
+        }
+      }
+    },
+    "Reload templates" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Načítať šablóny znova"
+          }
+        }
+      }
+    },
+    "Reset" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obnoviť"
+          }
+        }
+      }
+    },
+    "Reset the system prompt to the default?" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obnoviť predvolený systémový prompt?"
+          }
+        }
+      }
+    },
+    "Reset to default…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obnoviť predvolený…"
+          }
+        }
+      }
+    },
+    "Restart now" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reštartovať teraz"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uložiť"
+          }
+        }
+      }
+    },
+    "Saving recording…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukladám nahrávku…"
+          }
+        }
+      }
+    },
+    "Screen" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obrazovka"
+          }
+        }
+      }
+    },
+    "Search" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hľadať"
+          }
+        }
+      }
+    },
+    "Sending part %lld/%lld to the transcription server…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sending part %1$lld/%2$lld to the transcription server…"
+          }
+        }
+      }
+    },
+    "Server (OpenAI-compatible API)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server (API kompatibilné s OpenAI)"
+          }
+        }
+      }
+    },
+    "Sessions" : {
+      "shouldTranslate" : false
+    },
+    "Sessions folder" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priečinok sessions"
+          }
+        }
+      }
+    },
+    "Settings…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastavenia…"
+          }
+        }
+      }
+    },
+    "Show in Finder" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobraziť vo Finderi"
+          }
+        }
+      }
+    },
+    "Slovak" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slovenčina"
+          }
+        }
+      }
+    },
+    "Speech language" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jazyk reči"
+          }
+        }
+      }
+    },
+    "Start recording" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Začať nahrávanie"
+          }
+        }
+      }
+    },
+    "Start the first one on the New session tab." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prvú spustíte na záložke Nová session."
+          }
+        }
+      }
+    },
+    "Starting or saving" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spúšťa alebo ukladá"
+          }
+        }
+      }
+    },
+    "Starting…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spúšťam…"
+          }
+        }
+      }
+    },
+    "Status" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stav"
+          }
+        }
+      }
+    },
+    "Stop recording" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastaviť nahrávanie"
+          }
+        }
+      }
+    },
+    "Storage" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Úložisko"
+          }
+        }
+      }
+    },
+    "Summarize" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zhrnúť"
+          }
+        }
+      }
+    },
+    "Summary" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápis"
+          }
+        }
+      }
+    },
+    "Summary language" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jazyk zápisu"
+          }
+        }
+      }
+    },
+    "System audio" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systémový zvuk"
+          }
+        }
+      }
+    },
+    "System default app" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predvolená aplikácia systému"
+          }
+        }
+      }
+    },
+    "System language" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jazyk systému"
+          }
+        }
+      }
+    },
+    "System prompt" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systémový prompt"
+          }
+        }
+      }
+    },
+    "Teams, Meet, Zoom…" : {
+      "shouldTranslate" : false
+    },
+    "Template" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Šablóna"
+          }
+        }
+      }
+    },
+    "Templates" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Šablóny"
+          }
+        }
+      }
+    },
+    "The API key for the transcription server is missing. Enter it in Settings → Transcription." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chýba API kľúč pre server na prepis. Zadajte ho v Nastaveniach → Prepis."
+          }
+        }
+      }
+    },
+    "The agent is in ~/.config/opencode/agent/meeting-summary.md" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agent je v ~/.config/opencode/agent/meeting-summary.md"
+          }
+        }
+      }
+    },
+    "The app cannot check the permissions of the OpenCode summary agent, so it did not start the summary. Update OpenCode to version 2 or later and check its configuration." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia nevie overiť oprávnenia agenta OpenCode pre zápis, preto zápis nespustila. Aktualizujte OpenCode na verziu 2 alebo novšiu a skontrolujte jeho konfiguráciu."
+          }
+        }
+      }
+    },
+    "The app downloads the model from Hugging Face once. Then transcription runs without internet and the audio stays on the Mac." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model sa stiahne z Hugging Face raz. Potom prepis beží bez internetu a zvuk neopustí Mac."
+          }
+        }
+      }
+    },
+    "The app has no permission to record the screen." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia nemá povolené nahrávanie obrazovky."
+          }
+        }
+      }
+    },
+    "The app is missing the system prompt. Install the app again." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácii chýba systémový prompt. Nainštalujte ju znova."
+          }
+        }
+      }
+    },
+    "The audio leaves the Mac and goes to this server (OpenAI-compatible /v1/audio/transcriptions). The video stays on the Mac." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zvuk opustí Mac a pôjde na tento server (/v1/audio/transcriptions kompatibilné s OpenAI). Video zostane na Macu."
+          }
+        }
+      }
+    },
+    "The disk has less than 2 GB of free space." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na disku je menej ako 2 GB voľného miesta."
+          }
+        }
+      }
+    },
+    "The disk is almost full, so the app stopped the recording. The saved part stays." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk je takmer plný, preto aplikácia zastavila nahrávanie. Uložená časť zostala."
+          }
+        }
+      }
+    },
+    "The key is saved in Keychain" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kľúč je uložený v Keychain"
+          }
+        }
+      }
+    },
+    "The model did not finish in %lld minutes. The app stopped it." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model neskončil do %lld minút. Aplikácia ho zastavila."
+          }
+        }
+      }
+    },
+    "The model did not start: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model sa nespustil: %@"
+          }
+        }
+      }
+    },
+    "The model returned no summary. %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model nevrátil žiadny zápis. %@"
+          }
+        }
+      }
+    },
+    "The model stopped with error %d: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model skončil s chybou %1$d: %2$@"
+          }
+        }
+      }
+    },
+    "The model wrote too much output. The app stopped it." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model zapísal príliš veľa výstupu. Aplikácia ho zastavila."
+          }
+        }
+      }
+    },
+    "The new language applies after the app restarts." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nový jazyk sa prejaví po reštarte aplikácie."
+          }
+        }
+      }
+    },
+    "The recording contains no video." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávka neobsahuje žiadny obraz."
+          }
+        }
+      }
+    },
+    "The recording has no audio, so transcription is not possible." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávka nemá zvuk, prepis sa nedá spraviť."
+          }
+        }
+      }
+    },
+    "The recording was not saved completely: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávka sa neuložila celá: %@"
+          }
+        }
+      }
+    },
+    "The selected screen is not available. Select another screen." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vybraná obrazovka nie je dostupná. Vyberte inú obrazovku."
+          }
+        }
+      }
+    },
+    "The session has no transcript yet." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session ešte nemá prepis."
+          }
+        }
+      }
+    },
+    "The summary is done" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápis je hotový"
+          }
+        }
+      }
+    },
+    "The summary rules are the same for all models. The app keeps them in ~/Library/Application Support/OfflineMeetingSummary/prompts/meeting-summary.md. Your changes apply from the next summary. A new app version updates the file only when you did not edit it." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pravidlá zápisu sú rovnaké pre všetky modely. Aplikácia ich má v ~/Library/Application Support/OfflineMeetingSummary/prompts/meeting-summary.md. Vaše zmeny platia od nasledujúceho zápisu. Nová verzia aplikácie súbor aktualizuje, len keď ste ho neupravili."
+          }
+        }
+      }
+    },
+    "The summary was cancelled." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápis bol zrušený."
+          }
+        }
+      }
+    },
+    "The transcript and selected frames go to %@ (cloud). Use this only for meetings that are not sensitive." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepis a vybrané snímky odídu do %@ (cloud). Použite iba pre stretnutia, ktoré nie sú citlivé."
+          }
+        }
+      }
+    },
+    "The transcript contains no speech." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepis neobsahuje žiadnu reč."
+          }
+        }
+      }
+    },
+    "The transcript is done" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepis je hotový"
+          }
+        }
+      }
+    },
+    "The transcript is done, the summary is not" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepis je hotový, zápis ešte nie"
+          }
+        }
+      }
+    },
+    "The transcription server URL is not valid." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL servera na prepis nie je platná."
+          }
+        }
+      }
+    },
+    "The transcription server returned error %lld: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The transcription server returned error %1$lld: %2$@"
+          }
+        }
+      }
+    },
+    "The video always stays on the Mac. Transcription runs locally unless you select a server. The summary goes to the model you choose: with a local model in OpenCode, nothing leaves the Mac. The app sends no telemetry." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video zostáva vždy na Macu. Prepis beží lokálne, ak nevyberiete server. Zápis ide do modelu, ktorý si vyberiete: s lokálnym modelom v OpenCode neopustí Mac nič. Aplikácia neposiela telemetriu."
+          }
+        }
+      }
+    },
+    "Today" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dnes"
+          }
+        }
+      }
+    },
+    "Track %lld/%lld (%@): %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stopa %1$lld/%2$lld (%3$@): %4$@"
+          }
+        }
+      }
+    },
+    "Transcribe" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepísať"
+          }
+        }
+      }
+    },
+    "Transcribe again" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepísať znova"
+          }
+        }
+      }
+    },
+    "Transcribe automatically after recording" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepísať automaticky po nahrávaní"
+          }
+        }
+      }
+    },
+    "Transcribing" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepisuje"
+          }
+        }
+      }
+    },
+    "Transcribing %@…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepisujem %@…"
+          }
+        }
+      }
+    },
+    "Transcript" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepis"
+          }
+        }
+      }
+    },
+    "Transcription" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepis"
+          }
+        }
+      }
+    },
+    "Transcription failed" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepis zlyhal"
+          }
+        }
+      }
+    },
+    "Transcription method" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spôsob prepisu"
+          }
+        }
+      }
+    },
+    "Transcription server" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server na prepis"
+          }
+        }
+      }
+    },
+    "Transcription server (%@)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server na prepis (%@)"
+          }
+        }
+      }
+    },
+    "Transcripts and summaries" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepisy a zápisy"
+          }
+        }
+      }
+    },
+    "Try again" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skúsiť znova"
+          }
+        }
+      }
+    },
+    "Try to search by topic, date or screen." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skúste hľadať podľa témy, dátumu alebo obrazovky."
+          }
+        }
+      }
+    },
+    "URL" : {
+      "shouldTranslate" : false
+    },
+    "Unsupported audio format." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nepodporovaný formát zvuku."
+          }
+        }
+      }
+    },
+    "Update" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualizovať"
+          }
+        }
+      }
+    },
+    "Use" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Použiť"
+          }
+        }
+      }
+    },
+    "Version %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verzia %@"
+          }
+        }
+      }
+    },
+    "Video" : {
+      "shouldTranslate" : false
+    },
+    "Video and audio are deleted, so you cannot transcribe again" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video a zvuk sú zmazané, prepis nejde zopakovať"
+          }
+        }
+      }
+    },
+    "Video frames" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snímky z videa"
+          }
+        }
+      }
+    },
+    "Waiting for another transcription…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Čaká na iný prepis…"
+          }
+        }
+      }
+    },
+    "Write a custom instruction for the summary you want." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napíšte vlastný pokyn, aký zápis chcete."
+          }
+        }
+      }
+    },
+    "Writing minutes" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Píše zápis"
+          }
+        }
+      }
+    },
+    "Writing the recording failed: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápis nahrávky zlyhal: %@"
+          }
+        }
+      }
+    },
+    "Yes" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Áno"
+          }
+        }
+      }
+    },
+    "Yesterday" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Včera"
+          }
+        }
+      }
+    },
+    "You can change them for each summary. The model list comes from the opencode models command." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pri každom zápise ich môžete zmeniť. Zoznam modelov je z príkazu opencode models."
+          }
+        }
+      }
+    },
+    "You can create a summary only from a finished transcript." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápis sa dá vytvoriť až z hotového prepisu."
+          }
+        }
+      }
+    },
+    "Your changes in the system prompt will be lost." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaše zmeny v systémovom prompte sa stratia."
+          }
+        }
+      }
+    },
+    "automatic" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "automaticky"
+          }
+        }
+      }
+    },
+    "large-v3-turbo (approx. 1.6 GB, best quality)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "large-v3-turbo (cca 1,6 GB, najlepšia kvalita)"
+          }
+        }
+      }
+    },
+    "large-v3-turbo compressed (632 MB)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "large-v3-turbo komprimovaný (632 MB)"
+          }
+        }
+      }
+    },
+    "microphone" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mikrofón"
+          }
+        }
+      }
+    },
+    "opencode" : {
+      "shouldTranslate" : false
+    },
+    "small (quick test, lower quality)" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "small (rýchly test, nižšia kvalita)"
+          }
+        }
+      }
+    },
+    "system audio" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "systémový zvuk"
+          }
+        }
+      }
+    },
+    "unknown error" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "neznáma chyba"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

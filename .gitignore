@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Xcode / SwiftPM
+.build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Never commit recordings or outputs
+recordings/
+sessions/
+*.mov
+*.mp4
+*.wav
+*.m4a
+
+# Models
+models/
+*.bin
+*.mlmodelc/
+
+# XcodeGen generates the Xcode project from apps/macos/project.yml
+apps/macos/*.xcodeproj/
+apps/macos/build/
+apps/macos/Config/Signing.xcconfig
+
+# Internal, local-only material (templates and sources that must not be public)
+local/
