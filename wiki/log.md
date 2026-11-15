@@ -165,3 +165,8 @@
 - `Resources/Acknowledgements.txt` has the license of Minutes, the MIT license of WhisperKit and its NOTICES (swift-transformers, Apache-2.0).
 - Settings → About → Licenses opens the file.
 - Changed: pages/roadmap.md
+
+## [2026-11-15] decision | User guide on GitHub Pages
+- A GitHub Actions workflow publishes `apps/site/` to `https://softverse-space.github.io/minutes/` (ADR-0028).
+- The install step links to the latest release. The footer links to the source code (EN and SK).
+- ADR: new 0028. Changed: README.md
