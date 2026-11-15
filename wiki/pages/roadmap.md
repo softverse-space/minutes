@@ -33,7 +33,7 @@ The acceptance criteria are in the brief (the original brief, kept locally).
 - [x] Second code review: AI tool permissions, process groups, recorder errors, one operation for one session ([ADR-0023](../../docs/adr/0023-ai-tool-boundaries-and-job-safety.md))
 - [ ] Before the public release: LICENSE, SECURITY.md, CI (`swift test` and app build), check of the first commit content
 - [x] License: Apache License 2.0 (ADR-0026)
-- [ ] Publish on GitHub: support link, third-party licenses in the app (WhisperKit, MIT), Releases with a notarized `.dmg`, Homebrew tap
+- [ ] Publish on GitHub: support link, Releases with a notarized `.dmg`, Homebrew tap
 
 - [ ] Comparison of WhisperKit vs Parakeet v3 vs server (ADR-0004)
 - [ ] Process a session again with a different template, session history

@@ -1058,6 +1058,26 @@
         }
       }
     },
+    "Licenses" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licencie"
+          }
+        }
+      }
+    },
+    "Licenses of Minutes and of the third-party software in it" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licencie aplikácie Minutes a softvéru tretích strán v nej"
+          }
+        }
+      }
+    },
     "Loaded" : {
       "localizations" : {
         "sk" : {
@@ -1753,6 +1773,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nastavenia…"
+          }
+        }
+      }
+    },
+    "Show" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobraziť"
           }
         }
       }

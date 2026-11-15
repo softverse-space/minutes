@@ -49,6 +49,13 @@ struct AboutSettings: View {
                         .buttonStyle(.link)
                         .help(AppSettings.current.sessionsFolder.path)
                 }
+                if let acknowledgements = Bundle.main.url(forResource: "Acknowledgements", withExtension: "txt") {
+                    LabeledContent("Licenses") {
+                        Button("Show") { NSWorkspace.shared.open(acknowledgements) }
+                            .buttonStyle(.link)
+                            .help("Licenses of Minutes and of the third-party software in it")
+                    }
+                }
             } footer: {
                 Text(verbatim: Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as? String ?? "")
                     .font(.caption).foregroundStyle(.secondary)

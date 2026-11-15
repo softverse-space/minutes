@@ -14,6 +14,7 @@ First release for colleagues.
 - The menu bar icon shows the status: recording, transcript progress, summary writing, summary done.
 - App icon with light, dark and tinted appearance.
 - About tab and a guide with screenshots (`apps/site/index.html`).
+- About tab shows the licenses of Minutes and of WhisperKit.
 
 ### Safety and reliability
 - The model can run only the frame tool with a time, and only for the current session. OpenCode, Claude and Codex get narrower permissions ([ADR-0023](../../docs/adr/0023-ai-tool-boundaries-and-job-safety.md)).

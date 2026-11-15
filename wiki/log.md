@@ -160,3 +160,8 @@
 - Changed: pages/templates.md, index.md.
 - Added: raw/2026-11-15-output-file-name.md, ADR-0027.
 - Lint: the updated page is indexed. ADR-0027 extends the default naming convention.
+
+## [2026-11-15] update | Third-party licenses in the app
+- `Resources/Acknowledgements.txt` has the license of Minutes, the MIT license of WhisperKit and its NOTICES (swift-transformers, Apache-2.0).
+- Settings → About → Licenses opens the file.
+- Changed: pages/roadmap.md
