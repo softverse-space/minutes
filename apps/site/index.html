@@ -264,6 +264,21 @@
   .install-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 80px); margin-top: 18px; }
   @media (max-width: 900px) { .install-grid { grid-template-columns: minmax(0, 1fr); } }
 
+  .sub { font: 750 22px var(--display); letter-spacing: -.02em; margin: 0 0 18px; }
+  /* Build from source: a terminal on ink, for people who prefer to build it themselves. */
+  .build { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: center; margin-top: clamp(40px, 6vw, 72px);
+    background: var(--band); color: var(--band-text); border-radius: var(--radius); padding: clamp(24px, 4vw, 48px); }
+  @media (max-width: 900px) { .build { grid-template-columns: minmax(0, 1fr); } }
+  .build .sub { margin-bottom: 10px; }
+  .build p { color: var(--band-muted); margin: 0 0 12px; max-width: 46ch; }
+  .build p b { color: var(--band-text); }
+  .build .actions { margin-top: 22px; }
+  .build .btn.ghost { color: var(--band-text); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .25); }
+  .build .btn.ghost:hover { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .55); }
+  .term { margin: 0; max-width: none; background: rgba(255, 255, 255, .05); color: var(--band-text); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); padding: 18px 20px; font-size: 13px; line-height: 1.8; }
+  .term .c { color: var(--band-muted); }
+  .term .p { color: var(--coral); user-select: none; }
+
   /* ---------- FAQ ---------- */
   .faq { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(24px, 6vw, 80px); align-items: start; }
   @media (max-width: 900px) { .faq { grid-template-columns: minmax(0, 1fr); } }
@@ -314,6 +329,7 @@
         <li><a href="#privacy" data-i18n="nav.privacy">Privacy</a></li>
         <li><a href="#install" data-i18n="nav.install">Install</a></li>
         <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+        <li><a href="https://github.com/softverse-space/minutes">GitHub ↗</a></li>
       </ul>
     </nav>
     <div class="tray">
@@ -338,7 +354,7 @@
         <a class="btn primary" href="#install"><span data-i18n="cta.install">Install</span> <span class="arr" aria-hidden="true">→</span></a>
         <a class="btn ghost" href="#recording" data-i18n="nav.how">How it works</a>
       </div>
-      <div class="meta" data-i18n="hero.meta">Apple Silicon · macOS 15 or later · SK, CS, EN</div>
+      <div class="meta" data-i18n="hero.meta">Apple Silicon · macOS 15 or later · SK, CS, EN · <a href="https://github.com/softverse-space/minutes">open source on GitHub</a></div>
     </div>
 
     <div class="desk" role="img" data-i18n-aria="hero.stage" aria-label="Example: a meeting becomes a transcript and minutes">
@@ -522,6 +538,8 @@
       <div class="stamp" data-i18n="in.stamp">install</div>
       <h2 data-i18n="in.title">Five steps to your first minutes.</h2>
       <div class="install-grid">
+        <div>
+        <h3 class="sub" data-i18n="in.dl">Download the app</h3>
         <ol class="steps" data-i18n="in.steps">
           <li>Download <a href="https://github.com/softverse-space/minutes/releases/latest"><code>Minutes-1.0.0.dmg</code></a> from GitHub. Open it and move Minutes to Applications.</li>
           <li>Open Minutes. The icon appears in the menu bar.</li>
@@ -530,6 +548,7 @@
           <li>Install OpenCode and set up a model: a local one (for example Ollama), your company server or a cloud provider:
 <pre>brew install opencode ffmpeg</pre></li>
         </ol>
+        </div>
         <div class="req">
           <h3 data-i18n="in.req.title">What you need</h3>
           <table data-i18n="in.req">
@@ -541,6 +560,25 @@
           </table>
           <a class="btn primary" href="https://github.com/softverse-space/minutes/releases/latest"><span data-i18n="cta.download">Download Minutes 1.0.0</span> <span class="arr" aria-hidden="true">↓</span></a>
         </div>
+      </div>
+      <div class="build" id="build">
+        <div>
+          <h3 class="sub" data-i18n="bd.title">Or build it yourself.</h3>
+          <p data-i18n="bd.p1">Minutes is open source. Clone the repository and build the app with Xcode. You need <b>Xcode 26</b> or later and <b>XcodeGen</b>.</p>
+          <p data-i18n="bd.p2">Your build has your own signature. macOS asks for the screen recording permission again.</p>
+          <div class="actions">
+            <a class="btn primary" href="https://github.com/softverse-space/minutes"><span data-i18n="bd.repo">Open the repository</span> <span class="arr" aria-hidden="true">↗</span></a>
+            <a class="btn ghost" href="https://github.com/softverse-space/minutes#build-from-source" data-i18n="bd.guide">Build guide</a>
+          </div>
+        </div>
+<pre class="term" data-i18n-aria="bd.term" aria-label="Commands to build Minutes from source"><span class="p">$ </span>git clone https://github.com/softverse-space/minutes.git
+<span class="p">$ </span>cd minutes/apps/macos
+<span class="p">$ </span>brew install xcodegen &amp;&amp; xcodegen generate
+<span class="p">$ </span>xcodebuild -scheme OfflineMeetingSummary \
+    -configuration Debug -derivedDataPath build/DerivedData build
+<span class="p">$ </span>open build/DerivedData/Build/Products/Debug/Minutes.app
+<span class="c"># logic tests</span>
+<span class="p">$ </span>cd OMSCore &amp;&amp; swift test</pre>
       </div>
     </div>
   </section>
@@ -692,7 +730,7 @@
   document.querySelectorAll('.reveal').forEach(s => revealer.observe(s));
 
   // The nav marks the section you read.
-  const navLinks = [...document.querySelectorAll('.menu a')];
+  const navLinks = [...document.querySelectorAll('.menu a[href^="#"]')];
   const navTargets = navLinks.map(a => document.querySelector(a.getAttribute('href')));
   const spy = new IntersectionObserver(entries => entries.forEach(e => {
     if (!e.isIntersecting) return;
@@ -734,7 +772,7 @@
     'hero.eyebrow': 'aplikácia do menu baru macOS · verzia 1.0.0',
     'hero.title': 'Porada skončí.<br><em>Zápis</em> je hotový.',
     'hero.lead': 'Minutes nahrá stretnutie, prepíše reč a pripraví zápis podľa šablóny. Video ani zvuk neopustia váš lokálny počítač.',
-    'hero.meta': 'Apple Silicon · macOS 15 a novší · SK, CS, EN',
+    'hero.meta': 'Apple Silicon · macOS 15 a novší · SK, CS, EN · <a href="https://github.com/softverse-space/minutes">open source na GitHube</a>',
     'hero.stage': 'Ukážka: zo stretnutia vznikne prepis a zápis',
     'demo.l1': '<span class="who">ostatní</span>Release posunieme na štvrtok.',
     'demo.l2': '<span class="who">ja</span>Dobre, testy dokončíme do stredy.',
@@ -795,6 +833,13 @@
     'in.title': 'Päť krokov k prvému zápisu.',
     'in.steps': '<li>Stiahnite <a href="https://github.com/softverse-space/minutes/releases/latest"><code>Minutes-1.0.0.dmg</code></a> z GitHubu. Otvorte ho a presuňte Minutes do Applications.</li><li>Spustite Minutes. Ikona sa ukáže v menu bare.</li><li>Kliknite na ikonu a na <b>Allow</b>. Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording. Aplikáciu reštartujte.</li><li>V Settings → Transcription kliknite na <b>Download model</b>. Stiahne sa raz.</li><li>Nainštalujte OpenCode a nastavte model: lokálny (napríklad Ollama), firemný server alebo cloud:<pre>brew install opencode ffmpeg</pre></li>',
     'in.req.title': 'Čo potrebujete',
+    'in.dl': 'Stiahnite si aplikáciu',
+    'bd.title': 'Alebo si ju zostavte sami.',
+    'bd.p1': 'Minutes je open source. Naklonujte repozitár a zostavte aplikáciu v Xcode. Potrebujete <b>Xcode 26</b> alebo novší a <b>XcodeGen</b>.',
+    'bd.p2': 'Váš build má vlastný podpis. macOS si znova vypýta povolenie nahrávať obrazovku.',
+    'bd.repo': 'Otvoriť repozitár',
+    'bd.guide': 'Návod na build',
+    'bd.term': 'Príkazy na zostavenie Minutes zo zdrojového kódu',
     'in.req': '<tr><th>Mac</th><td>Apple Silicon (M1 a novší)</td></tr><tr><th>Systém</th><td>macOS 15 Sequoia a novší</td></tr><tr><th>Miesto</th><td>asi 3 GB a nahrávky</td></tr><tr><th>Sieť</th><td>pri lokálnom modeli žiadna; inak podľa modelu</td></tr><tr><th>Nástroje</th><td>OpenCode; voliteľne Claude Code, Codex a ffmpeg</td></tr>',
     'faq.stamp': 'otázky',
     'faq.title': 'Časté otázky',
