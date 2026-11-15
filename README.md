@@ -13,7 +13,7 @@ A macOS menu bar app. It records a meeting, transcribes the speech locally and w
 
 ![macOS 15+](https://img.shields.io/badge/macOS-15%2B-15173d) ![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-M1%2B-15173d) ![Swift](https://img.shields.io/badge/Swift-SwiftUI-ff6b4a) ![version](https://img.shields.io/badge/version-1.0.0-ffb347) ![license](https://img.shields.io/badge/license-Apache--2.0-15173d)
 
-[User guide](apps/site/index.html) · [Changelog](apps/macos/CHANGELOG.md) · [Decisions (ADR)](docs/adr/README.md)
+[User guide](https://softverse-space.github.io/minutes/) · [Changelog](apps/macos/CHANGELOG.md) · [Decisions (ADR)](docs/adr/README.md)
 
 </div>
 
@@ -54,7 +54,7 @@ Requirements: Apple Silicon Mac, macOS 15 or later, about 3 GB of disk space, [O
 4. Install OpenCode and set up a model, for example a local one with Ollama: `brew install opencode ffmpeg`.
 5. Optional: install Claude Code or Codex and turn them on in Settings → Summary.
 
-Full guide: [apps/site/index.html](apps/site/index.html#install).
+Full guide: [softverse-space.github.io/minutes](https://softverse-space.github.io/minutes/#install).
 
 ## Build from source
 
