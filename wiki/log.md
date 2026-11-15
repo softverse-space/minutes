@@ -155,3 +155,8 @@
 - The project uses Apache License 2.0. `LICENSE` and `NOTICE` are in the repository root (ADR-0026).
 - The names "Minutes" and "Softverse" and the app icon are not licensed.
 - ADR: new 0026. Changed: pages/roadmap.md, README.md
+
+## [2026-11-15] ingest | Output file name from Extra
+- Changed: pages/templates.md, index.md.
+- Added: raw/2026-11-15-output-file-name.md, ADR-0027.
+- Lint: the updated page is indexed. ADR-0027 extends the default naming convention.

@@ -99,15 +99,15 @@ enum SummaryService {
                              model: options.model.model, frames: frames)
         let output = try await SummaryRunners.runner(for: options.model.engine, settings: settings).run(job)
 
-        let (topic, body) = SummaryOutput.extractTopic(from: output)
+        let (topic, proposedName, body) = SummaryOutput.extract(from: output)
         guard !body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw SummaryError.emptyOutput("") }
 
         try FileManager.default.createDirectory(at: session.outputsDirectory, withIntermediateDirectories: true)
         let existing = Set(session.outputFiles().map(\.lastPathComponent))
         let fallbackTopic = options.template?.id ?? "custom"
-        let name = SessionNaming.summaryFileName(date: metadata.startedAt, topic: topic ?? fallbackTopic, existing: existing)
+        let name = SessionNaming.summaryFileName(date: metadata.startedAt, topic: topic ?? fallbackTopic, existing: existing, proposedName: proposedName)
         let url = session.outputsDirectory.appending(path: name)
-        try body.write(to: url, atomically: true, encoding: .utf8)
+        try Data(body.utf8).write(to: url, options: .withoutOverwriting)
 
         try session.updateMetadata { $0.outputs.append("outputs/\(name)") }
         return url

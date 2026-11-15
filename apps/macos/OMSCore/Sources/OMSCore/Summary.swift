@@ -42,6 +42,7 @@ public struct SummaryRequest: Sendable {
 }
 
 public enum PromptBuilder {
+    public static let filenameMarker = "<!-- filename:"
     public static let topicMarker = "<!-- topic:"
 
     public static func build(_ request: SummaryRequest, details: DetailLevelCatalog) -> String {
@@ -90,6 +91,10 @@ public enum PromptBuilder {
         parts.append("""
         The first line of the output must be: `\(topicMarker) <topic> -->`
         `<topic>` is 2–3 words without diacritics, in lowercase, joined with underscores (for example `sprint_planning`).
+        If the user requests an output file name, put a second line: `<!-- filename: <name>.md -->`.
+        Follow file naming instructions in the additional or custom instruction. Use the meeting date above.
+        Preserve the requested spelling. Return only a file name, without a folder or path, with the .md extension.
+        If no file name is requested, omit this line. The app saves the file; do not write it yourself.
         Then write the minutes.
         """)
 
@@ -98,6 +103,23 @@ public enum PromptBuilder {
 }
 
 public enum SummaryOutput {
+    /// Reads optional file metadata without treating comments in the minutes as metadata.
+    public static func extract(from output: String) -> (topic: String?, fileName: String?, body: String) {
+        var lines = output.components(separatedBy: "\n")
+        var fileName: String?
+        if let index = lines.prefix(5).firstIndex(where: {
+            $0.trimmingCharacters(in: .whitespaces).hasPrefix(PromptBuilder.filenameMarker)
+        }) {
+            let line = lines.remove(at: index).trimmingCharacters(in: .whitespaces)
+            if line.hasSuffix("-->") {
+                fileName = String(line.dropFirst(PromptBuilder.filenameMarker.count).dropLast(3))
+                    .trimmingCharacters(in: .whitespaces)
+            }
+        }
+        let result = extractTopic(from: lines.joined(separator: "\n"))
+        return (result.topic, fileName, result.body)
+    }
+
     /// Removes the topic marker line and returns the topic slug.
     public static func extractTopic(from output: String) -> (topic: String?, body: String) {
         var lines = output.components(separatedBy: "\n")

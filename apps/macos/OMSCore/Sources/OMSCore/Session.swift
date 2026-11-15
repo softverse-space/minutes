@@ -77,14 +77,25 @@ public enum SessionNaming {
     }
 
     /// `<date>_meetingsummary_<topic>.md`, with `_v2`, `_v3` … when the name exists.
-    public static func summaryFileName(date: Date, topic: String, existing: Set<String>) -> String {
-        let base = "\(day(date))_meetingsummary_\(topic.isEmpty ? "meeting" : topic)"
+    public static func summaryFileName(date: Date, topic: String, existing: Set<String>, proposedName: String? = nil) -> String {
+        let proposed = proposedName.flatMap(validSummaryFileName)
+        let base = proposed.map { String($0.dropLast(3)) } ?? "\(day(date))_meetingsummary_\(topic.isEmpty ? "meeting" : topic)"
         var name = "\(base).md"
         var version = 2
-        while existing.contains(name) {
+        while existing.contains(where: { $0.compare(name, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame }) {
             name = "\(base)_v\(version).md"
             version += 1
         }
+        return name
+    }
+
+    /// Reject paths, hidden files, control characters and names too long for version suffixes.
+    public static func validSummaryFileName(_ name: String) -> String? {
+        guard name.hasSuffix(".md"), name.count > 3, name.utf8.count <= 220,
+              !name.hasPrefix("."), !name.contains("/"), !name.contains("\\"),
+              !name.contains(":"),
+              !name.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) })
+        else { return nil }
         return name
     }
 

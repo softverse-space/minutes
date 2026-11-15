@@ -72,3 +72,21 @@ struct SummaryOutputTests {
         #expect(SummaryOutput.slugify(text) == expected)
     }
 }
+
+@Test func requestedOutputName() {
+    let result = SummaryOutput.extract(from: "<!-- topic: retro -->\n<!-- filename: 2026-11-13_meeting_sumamry_v3_candidate.md -->\n# Minutes")
+    #expect(result.topic == "retro")
+    #expect(result.fileName == "2026-11-13_meeting_sumamry_v3_candidate.md")
+    #expect(result.body == "# Minutes\n")
+    let name = SessionNaming.summaryFileName(date: Date(), topic: "retro", existing: [], proposedName: result.fileName)
+    #expect(name == result.fileName)
+    #expect(SessionNaming.summaryFileName(date: Date(), topic: "retro", existing: [name.uppercased()], proposedName: name) == "2026-11-13_meeting_sumamry_v3_candidate_v2.md")
+}
+
+@Test func invalidOutputNames() {
+    for name in ["../escape.md", "/tmp/file.md", "folder\\file.md", ".hidden.md", "file.txt", "a\nb.md", "a:b.md", String(repeating: "x", count: 221) + ".md"] {
+        #expect(SessionNaming.validSummaryFileName(name) == nil)
+        #expect(SessionNaming.summaryFileName(date: Date(), topic: "retro", existing: [], proposedName: name).hasSuffix("_meetingsummary_retro.md"))
+    }
+    #expect(SummaryOutput.extract(from: "# Minutes").fileName == nil)
+}

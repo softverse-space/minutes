@@ -30,3 +30,4 @@ Each decision is a separate file. [ADR-0001](0001-record-decisions-in-adr.md) gi
 | [0024](0024-apps-folder-per-platform.md) | One folder for each app in `apps/` | Accepted |
 | [0025](0025-user-editable-system-prompt.md) | The user edits a copy of the system prompt | Accepted |
 | [0026](0026-apache-2-license.md) | Apache License 2.0 | Accepted |
+| [0027](0027-model-output-file-name.md) | Model output file name from user instructions | Accepted |

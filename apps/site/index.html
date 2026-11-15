@@ -23,6 +23,9 @@
     --track: rgba(27, 31, 92, .09);
     --tick: rgba(27, 31, 92, .28);
     --focus: #3b45b8;
+    --glass: rgba(243, 244, 250, .72);
+    --shadow: 0 1px 2px rgba(21, 23, 61, .04), 0 8px 24px rgba(21, 23, 61, .06);
+    --ease-out: cubic-bezier(.22, 1, .36, 1);   /* critically damped feel, no overshoot */
     --display: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
     --body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -32,33 +35,48 @@
       --bg: #0d0f2b; --surface: #171a45; --raised: #1f2356; --text: #eceefb; --muted: #a2a6cf;
       --line: #2a2e66; --wave: #f4f5ff; --arc: #ffb347; --arc-2: #ffd27a; --knob: #fff6e6;
       --track: rgba(255, 255, 255, .09); --tick: rgba(255, 255, 255, .3); --focus: #ffd27a;
+      --glass: rgba(13, 15, 43, .7); --shadow: 0 1px 2px rgba(0, 0, 0, .2), 0 10px 30px rgba(0, 0, 0, .25);
     }
   }
   :root[data-theme="dark"] {
     --bg: #0d0f2b; --surface: #171a45; --raised: #1f2356; --text: #eceefb; --muted: #a2a6cf;
     --line: #2a2e66; --wave: #f4f5ff; --arc: #ffb347; --arc-2: #ffd27a; --knob: #fff6e6;
     --track: rgba(255, 255, 255, .09); --tick: rgba(255, 255, 255, .3); --focus: #ffd27a;
+    --glass: rgba(13, 15, 43, .7); --shadow: 0 1px 2px rgba(0, 0, 0, .2), 0 10px 30px rgba(0, 0, 0, .25);
   }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  html { scroll-padding-top: 80px; -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 1.0625rem/1.6 var(--body); -webkit-font-smoothing: antialiased; font-optical-sizing: auto; }
+  h1, h2, h3, summary { text-wrap: balance; }
+  p, li, dd { text-wrap: pretty; }
+  .skip { position: absolute; left: 16px; top: -60px; z-index: 100; background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-weight: 600; text-decoration: none; transition: top .2s var(--ease-out); }
+  .skip:focus { top: 12px; }
   a { color: inherit; text-decoration-color: color-mix(in srgb, var(--arc) 70%, transparent); text-underline-offset: 3px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+  a:focus-visible, summary:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
   img { max-width: 100%; height: auto; display: block; }
   code { font: .88em var(--mono); background: var(--raised); padding: 1px 6px; border-radius: 6px; }
   .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
 
   /* Nav */
-  .nav { display: flex; align-items: center; gap: 24px; padding: 18px 0; }
+  .topbar { position: sticky; top: 0; z-index: 40; background: var(--glass);
+    -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid transparent; transition: border-color .3s var(--ease-out), box-shadow .3s var(--ease-out); }
+  .topbar.scrolled { border-bottom-color: color-mix(in srgb, var(--line) 70%, transparent); box-shadow: 0 6px 20px -12px rgba(13, 15, 43, .25); }
+  @media (prefers-reduced-transparency: reduce) { .topbar { background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+  @media (prefers-contrast: more) { .topbar { background: var(--bg); border-bottom-color: var(--text); } }
+  .nav { display: flex; align-items: center; gap: 24px; padding: 10px 0; min-height: 60px; }
   .brand { display: flex; align-items: center; gap: 10px; font: 700 20px var(--display); letter-spacing: -.02em; text-decoration: none; }
   .brand img { width: 34px; height: 34px; }
-  .nav ul { display: flex; gap: 20px; list-style: none; margin: 0 0 0 auto; padding: 0; font-size: 15px; }
-  .nav ul a { text-decoration: none; color: var(--muted); }
+  .nav ul { display: flex; gap: 4px; list-style: none; margin: 0 0 0 auto; padding: 0; font-size: 15px; }
+  .nav ul a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 999px; text-decoration: none; color: var(--muted); transition: color .2s var(--ease-out), background-color .2s var(--ease-out); }
   .nav ul a:hover { color: var(--text); }
+  .nav ul a[aria-current="true"] { color: var(--text); background: color-mix(in srgb, var(--text) 7%, transparent); }
   @media (max-width: 720px) { .nav ul { display: none; } }
   .lang { display: flex; border: 1.5px solid var(--line); border-radius: 999px; padding: 2px; }
-  .lang button { font: 600 12px var(--mono); color: var(--muted); background: none; border: 0; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+  .lang button { font: 600 12px var(--mono); color: var(--muted); background: none; border: 0; min-height: 32px; padding: 5px 12px; border-radius: 999px; cursor: pointer; transition: background-color .25s var(--ease-out), color .25s var(--ease-out); }
+  .lang button:active { transform: scale(.94); }
   .lang button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
   .lang button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   @media (max-width: 720px) { .lang { margin-left: auto; } }
@@ -68,57 +86,67 @@
   @media (max-width: 900px) { .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 24px; } }
   .eyebrow { font: 500 13px var(--mono); color: var(--muted); letter-spacing: .02em; }
   .eyebrow b { color: var(--arc); font-weight: 600; }
-  h1 { font: 700 clamp(42px, 6.2vw, 70px)/1.0 var(--display); letter-spacing: -.035em; margin: 14px 0 20px; }
+  h1 { font: 700 clamp(42px, 6.2vw, 72px)/1.0 var(--display); letter-spacing: -.035em; margin: 14px 0 20px; }
   h1 span { color: var(--arc); }
-  .lead { font-size: 20px; color: var(--muted); max-width: 34ch; margin: 0 0 28px; }
+  .lead { font-size: clamp(18px, 1.6vw, 21px); line-height: 1.5; letter-spacing: -.005em; color: var(--muted); max-width: 34ch; margin: 0 0 28px; }
   .actions { display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font-weight: 600; text-decoration: none; font-size: 16px; transition: transform .15s ease; }
-  .btn.primary { background: var(--text); color: var(--bg); }
+  /* Feedback lives on the press: instant scale-down, release settles back without overshoot. */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 22px; border-radius: 999px; font-weight: 600; text-decoration: none; font-size: 16px;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: transform .35s var(--ease-out), background-color .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .35s var(--ease-out); }
+  .btn.primary { background: var(--text); color: var(--bg); box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--text) 60%, transparent); }
   .btn.ghost { border: 1.5px solid var(--line); }
-  .btn:hover { transform: translateY(-1px); }
+  .btn.ghost:hover { border-color: color-mix(in srgb, var(--text) 35%, transparent); }
+  .btn:active { transform: scale(.97); transition-duration: .1s; }
   .meta { margin-top: 18px; font: 13px var(--mono); color: var(--muted); }
 
   .stage { position: relative; display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: center; }
   @media (max-width: 520px) { .stage { grid-template-columns: 1fr; justify-items: center; } }
-  .dial { width: 220px; height: 220px; }
+  .dial-wrap { position: relative; width: 220px; height: 220px; }
+  .dial-wrap::before { content: ""; position: absolute; inset: 14%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--arc) 22%, transparent), transparent 70%); filter: blur(18px); }
+  .dial { position: relative; width: 220px; height: 220px; }
   .dial .tick { stroke: var(--tick); stroke-width: 5; stroke-linecap: round; }
   .dial .track { stroke: var(--track); }
-  .dial .arc { stroke: url(#arcGrad); stroke-dasharray: 100; stroke-dashoffset: 32; }
+  .dial .arc { stroke: url(#arcGrad); stroke-dasharray: 68 100; stroke-dashoffset: 0; }
   .dial .knob-ring { fill: var(--knob); }
   .dial .knob-dot { fill: var(--arc); }
   .dial .bar { fill: var(--wave); transform-box: fill-box; transform-origin: center; }
   .feed { display: grid; gap: 8px; min-width: 0; width: 100%; }
-  .line { display: grid; grid-template-columns: auto 1fr; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; font-size: 14.5px; }
+  .line { display: grid; grid-template-columns: auto 1fr; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 9px 12px; font-size: 14.5px; box-shadow: var(--shadow); }
   .line time { font: 12.5px/1.9 var(--mono); color: var(--muted); }
   .line .who { font-weight: 600; margin-right: 4px; }
-  .minutes-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; margin-top: 4px; }
+  .minutes-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: 14.5px; margin-top: 4px; box-shadow: var(--shadow); }
   .minutes-card h3 { font: 700 14px var(--display); margin: 0 0 6px; letter-spacing: -.01em; }
   /* Label and text sit in two columns, so a long line wraps under its own text. */
   .minutes-card ul { margin: 0; padding-left: 0; list-style: none; display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; }
   .minutes-card li { display: contents; }
   .minutes-card li span { font: 11.5px/1.9 var(--mono); color: var(--muted); }
 
-  /* One orchestrated sequence on load. */
+  /* One orchestrated sequence on load: the script fills the arc once, the bars talk for a few seconds.
+     The bars have different rhythms, so the motion does not look mechanical. Then the dial rests.
+     With reduced motion the dial shows the still frame at once. */
   @media (prefers-reduced-motion: no-preference) {
-    .dial .arc { animation: fill 4.2s cubic-bezier(.45, .05, .3, 1) both .3s; }
-    .dial .knob { animation: orbit 4.2s cubic-bezier(.45, .05, .3, 1) both .3s; transform-origin: 120px 120px; }
-    .dial .bar { animation: talk .9s ease-in-out 5 alternate both; }
-    .dial .bar:nth-child(2) { animation-delay: .15s; } .dial .bar:nth-child(3) { animation-delay: .3s; }
-    .dial .bar:nth-child(4) { animation-delay: .05s; } .dial .bar:nth-child(5) { animation-delay: .25s; } .dial .bar:nth-child(6) { animation-delay: .4s; }
-    .feed > * { animation: arrive .5s ease-out both; }
-    .feed > :nth-child(1) { animation-delay: .9s; } .feed > :nth-child(2) { animation-delay: 1.9s; }
-    .feed > :nth-child(3) { animation-delay: 2.9s; } .feed > :nth-child(4) { animation-delay: 4.6s; }
+    .dial .bar { animation: talk 1s ease-in-out 6 alternate both; }
+    .dial .bar:nth-child(1) { animation-duration: .82s; animation-delay: -.2s; }
+    .dial .bar:nth-child(2) { animation-duration: 1.06s; animation-delay: -.5s; }
+    .dial .bar:nth-child(3) { animation-duration: .74s; animation-delay: -.1s; }
+    .dial .bar:nth-child(4) { animation-duration: .95s; animation-delay: -.7s; }
+    .dial .bar:nth-child(5) { animation-duration: .88s; animation-delay: -.35s; }
+    .dial .bar:nth-child(6) { animation-duration: 1.12s; animation-delay: -.6s; }
+    .feed > * { animation: arrive .6s var(--ease-out) both; }
+    .feed > :nth-child(1) { animation-delay: .5s; } .feed > :nth-child(2) { animation-delay: 1.3s; }
+    .feed > :nth-child(3) { animation-delay: 2.1s; } .feed > :nth-child(4) { animation-delay: 3.2s; }
+    /* Sections settle in once as they enter the view. Without JavaScript they are visible at once. */
+    .js .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+    .js .reveal.in { opacity: 1; transform: none; }
   }
-  @keyframes fill { from { stroke-dashoffset: 99.5; } to { stroke-dashoffset: 32; } }
-  @keyframes orbit { from { transform: rotate(-244.8deg); } to { transform: rotate(0deg); } }
-  @keyframes talk { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
-  @keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes talk { from { transform: scaleY(1); } to { transform: scaleY(.4); } }
+  @keyframes arrive { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
 
   /* Sections are stamped with meeting time, like lines of a transcript. */
-  section.chapter { padding: 64px 0; border-top: 1px solid var(--line); }
+  section.chapter { padding: clamp(56px, 8vw, 96px) 0; border-top: 1px solid var(--line); }
   .stamp { font: 500 13px var(--mono); color: var(--muted); display: flex; gap: 10px; align-items: center; }
   .stamp::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--arc); }
-  h2 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--display); letter-spacing: -.03em; margin: 10px 0 18px; max-width: 18ch; }
+  h2 { font: 700 clamp(30px, 4.4vw, 48px)/1.06 var(--display); letter-spacing: -.03em; margin: 10px 0 18px; max-width: 18ch; }
   .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 48px; align-items: start; }
   .split.wide { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); }
   @media (max-width: 860px) { .split, .split.wide { grid-template-columns: 1fr; } }
@@ -126,13 +154,14 @@
   .prose ul { margin: 0 0 14px; padding-left: 20px; max-width: 60ch; }
   .prose li { margin-bottom: 6px; }
   .shot { margin: 0; }
-  .shot img { border-radius: 14px; filter: drop-shadow(0 18px 30px rgba(13, 15, 43, .18)); }
+  .shot img { border-radius: 14px; filter: drop-shadow(0 18px 30px rgba(13, 15, 43, .18)); transition: transform .5s var(--ease-out); }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) { .shot:hover img { transform: translateY(-3px) scale(1.01); } }
   .shot figcaption { font: 12.5px var(--mono); color: var(--muted); margin-top: 10px; text-align: center; }
   .note { background: color-mix(in srgb, var(--arc) 10%, var(--surface)); border-radius: 12px; padding: 12px 16px; color: var(--text); font-size: 15.5px; margin: 18px 0; max-width: 60ch; }
 
   .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; max-width: 60ch; }
   @media (max-width: 520px) { .levels { grid-template-columns: 1fr; } }
-  .levels div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 14.5px; }
+  .levels div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px; font-size: 14.5px; box-shadow: var(--shadow); }
   .levels b { display: block; font-family: var(--display); }
 
   /* Data boundary: what stays inside the Mac */
@@ -151,7 +180,7 @@
 
   /* Menu bar states: each card shows the real icon on a small menu bar, so it follows light and dark mode. */
   .states { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
-  .state { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 4px; align-content: start; font-size: 14.5px; color: var(--muted); }
+  .state { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 16px; padding: 14px; display: grid; gap: 4px; align-content: start; font-size: 14.5px; color: var(--muted); }
   .state b { font: 700 16px var(--display); color: var(--text); margin-top: 8px; letter-spacing: -.01em; }
   .bar-chip { height: 56px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;
     background: var(--raised); color: var(--text); }
@@ -183,15 +212,16 @@
   th { color: var(--muted); font-weight: 500; width: 34%; padding-right: 12px; }
 
   details { border-bottom: 1px solid var(--line); padding: 14px 0; max-width: 70ch; }
-  summary { cursor: pointer; font: 600 17px var(--display); list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary { cursor: pointer; font: 600 17px var(--display); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: "+"; color: var(--arc); font-weight: 700; }
-  details[open] summary::after { content: "–"; }
+  summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: color-mix(in srgb, var(--arc) 12%, transparent);
+    color: var(--arc); font-weight: 700; font-size: 18px; line-height: 1; transition: transform .35s var(--ease-out); }
+  details[open] summary::after { transform: rotate(45deg); }
   details p { margin: 8px 0 0; color: var(--muted); }
 
   /* Closing: the page ends as it should – with minutes. */
   .closing { padding: 72px 0 40px; border-top: 1px solid var(--line); }
-  .sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; max-width: 720px; }
+  .sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: clamp(22px, 4vw, 36px); max-width: 720px; box-shadow: var(--shadow); }
   .sheet h2 { margin-top: 6px; }
   .sheet dl { display: grid; grid-template-columns: 140px 1fr; gap: 10px 16px; margin: 0 0 22px; }
   @media (max-width: 520px) { .sheet dl { grid-template-columns: 1fr; gap: 2px; } .sheet dd { margin-bottom: 10px; } }
@@ -201,6 +231,8 @@
 </style>
 </head>
 <body>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+<div class="topbar" id="topbar">
 <div class="wrap">
   <nav class="nav" aria-label="Main">
     <a class="brand" href="#">
@@ -221,7 +253,10 @@
       <button type="button" data-lang="sk" aria-pressed="false">SK</button>
     </div>
   </nav>
+</div>
+</div>
 
+<div class="wrap">
   <header class="hero">
     <div>
       <div class="eyebrow"><b>●</b> <span data-i18n="hero.eyebrow">macOS · menu bar · version 1.0.0</span></div>
@@ -235,6 +270,7 @@
     </div>
 
     <div class="stage" data-i18n-aria="hero.stage" aria-label="Example: a meeting becomes a transcript and minutes">
+      <div class="dial-wrap">
       <svg class="dial" viewBox="0 0 240 240" role="img" data-i18n-aria="hero.dial" aria-label="Dial: recorded minutes of the meeting">
         <defs>
           <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
@@ -244,7 +280,7 @@
         <g id="ticks"></g>
         <circle class="track" cx="120" cy="120" r="88" fill="none" stroke-width="13"/>
         <circle class="arc" cx="120" cy="120" r="88" fill="none" stroke-width="13" stroke-linecap="round" pathLength="100" transform="rotate(-90 120 120)"/>
-        <g class="knob"><g transform="rotate(244.8 120 120)"><circle class="knob-ring" cx="120" cy="32" r="14"/><circle class="knob-dot" cx="120" cy="32" r="8"/></g></g>
+        <g class="knob"><g id="knobTurn" transform="rotate(244.8 120 120)"><circle class="knob-ring" cx="120" cy="32" r="14"/><circle class="knob-dot" cx="120" cy="32" r="8"/></g></g>
         <g>
           <rect class="bar" x="85" y="106" width="9" height="28" rx="4.5"/>
           <rect class="bar" x="100" y="94" width="9" height="52" rx="4.5"/>
@@ -254,6 +290,7 @@
           <rect class="bar" x="160" y="105" width="9" height="30" rx="4.5"/>
         </g>
       </svg>
+      </div>
       <div class="feed">
         <div class="line"><time>00:03:12</time><div data-i18n="demo.l1"><span class="who">others</span>Let's move the release to Thursday.</div></div>
         <div class="line"><time>00:03:20</time><div data-i18n="demo.l2"><span class="who">me</span>OK, we finish the tests by Wednesday.</div></div>
@@ -271,7 +308,7 @@
   </header>
 </div>
 
-<main class="wrap">
+<main class="wrap" id="main" tabindex="-1">
   <section class="chapter" id="recording">
     <div class="split">
       <div class="prose">
@@ -465,9 +502,56 @@
     ticks.appendChild(l);
   }
 
+  document.documentElement.classList.add('js');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  // The dial fills once on load: the arc grows to 68 % and the knob rides on its head.
+  // With reduced motion the dial shows the end frame at once.
+  const arc = document.querySelector('.dial .arc');
+  const knob = document.getElementById('knobTurn');
+  const REST = 68, DELAY = 300, DURATION = 4200;
+  const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function drawDial(head) {
+    arc.style.strokeDasharray = `${head} 100`;
+    knob.setAttribute('transform', `rotate(${head * 3.6} 120 120)`);
+  }
+  if (!reducedMotion.matches) {
+    drawDial(0);
+    let start = 0;
+    const frame = now => {
+      if (!start) start = now + DELAY;
+      const t = Math.min(Math.max((now - start) / DURATION, 0), 1);
+      drawDial(easeInOut(t) * REST);
+      if (t < 1) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+
+  // Translucent bar: a soft edge shows only when content scrolls under it.
+  const topbar = document.getElementById('topbar');
+  const onScroll = () => topbar.classList.toggle('scrolled', scrollY > 4);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // Sections settle in once. The nav marks the section you read.
+  document.querySelectorAll('section.chapter, section.closing').forEach(s => s.classList.add('reveal'));
+  const revealer = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); revealer.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -10% 0px' });
+  document.querySelectorAll('.reveal').forEach(s => revealer.observe(s));
+
+  const navLinks = [...document.querySelectorAll('.nav ul a')];
+  const navTargets = navLinks.map(a => document.querySelector(a.getAttribute('href')));
+  const spy = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    navLinks.forEach((a, i) => navTargets[i] === e.target ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current'));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  // The hero has no link, so it clears the mark when you scroll back to the top.
+  [document.querySelector('.hero'), ...navTargets].forEach(t => t && spy.observe(t));
+
   // English is in the markup. Slovak replaces it. Without JavaScript the page stays in English.
   const SK = {
     'doc.title': 'Minutes – zápisy zo stretnutí',
+    'skip': 'Preskočiť na obsah',
     'doc.description': 'Minutes nahrá stretnutie, prepíše reč a pripraví zápis podľa šablóny. Video ani zvuk neopustia váš lokálny počítač.',
     'nav.how': 'Ako to funguje', 'nav.privacy': 'Súkromie', 'nav.install': 'Inštalácia', 'nav.faq': 'Otázky',
     'hero.eyebrow': 'macOS · menu bar · verzia 1.0.0',

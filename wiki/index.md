@@ -7,7 +7,7 @@
 | [ui](pages/ui.md) | Menu bar popover, session states, Settings |
 | [architecture](pages/architecture.md) | App components and their connections |
 | [pipeline](pages/pipeline.md) | Session processing steps from Stop to summary |
-| [templates](pages/templates.md) | The `standard` template, detail levels, custom template |
+| [templates](pages/templates.md) | The `standard` template, detail levels, custom template and output file names |
 | [roadmap](pages/roadmap.md) | Development phases and milestones |
 | [open-questions](pages/open-questions.md) | Open questions and risks |
 | [glossary](pages/glossary.md) | Terms used in the project |
