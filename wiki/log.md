@@ -243,3 +243,5 @@
 ## [2026-11-17] release | Minutes 1.2.0
 - New: audio-only recording (ADR-0032) and the menu of the menu bar icon (ADR-0033).
 - Version 1.2.0, build 3. The first update through Sparkle, from 1.1.0.
+- Published: GitHub release v1.2.0, appcast item (EdDSA signature checked), website and README (EN and SK, FAQ about audio only).
+- Fixed: `release.sh` wrote the full local path into the `.sha256` file. It now writes only the file name.

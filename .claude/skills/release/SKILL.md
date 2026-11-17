@@ -51,9 +51,9 @@ Do not change the website or the README version yet. The website must not name a
    xcrun notarytool submit apps/macos/build/release/Minutes-X.Y.Z.dmg --keychain-profile minutes-notary --wait
    xcrun stapler staple apps/macos/build/release/Minutes-X.Y.Z.dmg
    spctl --assess --type open --context context:primary-signature --verbose apps/macos/build/release/Minutes-X.Y.Z.dmg
-   shasum -a 256 apps/macos/build/release/Minutes-X.Y.Z.dmg | tee apps/macos/build/release/Minutes-X.Y.Z.dmg.sha256
+   (cd apps/macos/build/release && shasum -a 256 Minutes-X.Y.Z.dmg | tee Minutes-X.Y.Z.dmg.sha256)
    ```
-   The checksum must come after `stapler`, because `stapler` changes the file.
+   The checksum must come after `stapler`, because `stapler` changes the file. The `.sha256` file must contain only the file name, not a path.
 4. If notarization is `Invalid`, get the log (`xcrun notarytool log <id> --keychain-profile minutes-notary`) and fix the cause. Do not continue.
 
 ## Step 3 – GitHub release
