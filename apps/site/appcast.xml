@@ -6,5 +6,30 @@
     <link>https://softverse-space.github.io/minutes/appcast.xml</link>
     <description>Updates of Minutes</description>
     <language>en</language>
+    <item>
+      <title>Minutes 1.1.0</title>
+      <pubDate>Tue, 17 Nov 2026 20:57:35 GMT</pubDate>
+      <sparkle:version>2</sparkle:version>
+      <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>https://github.com/softverse-space/minutes/releases/tag/v1.1.0</sparkle:fullReleaseNotesLink>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+<li><strong>Continue recording:</strong> a stopped or interrupted session gets a new part. Start it from the session detail, the session list, a banner on the New session tab or the notification after an unexpected stop.</li>
+<li><strong>Merge with previous session:</strong> two sessions of one meeting become one session with one transcript and one summary. Finished part transcripts are reused.</li>
+<li>The session detail and the list show the number of parts and an interrupted recording.</li>
+<li><strong>Updates:</strong> the app checks for a new version once a day and installs it with one click (Sparkle, <a href="https://github.com/softverse-space/minutes/blob/main/docs/adr/0031-app-updates-sparkle.md">ADR-0031</a>). A blue dot next to the menu bar icon and a row in the popover show a new version. The app does not restart during a recording or a job. Settings → General turns the checks and the automatic install on or off. Version 1.0.0 has no updater: install this version manually one time.</li>
+<li><strong>Open source in About:</strong> links to the source code, the release notes of the running version, the user guide and a problem report with the app and macOS versions filled in.</li>
+</ul>
+<h3>Safety and reliability</h3>
+<ul>
+<li>Video and audio are written with movie fragments every 10 seconds. After a crash or a power loss, the recording stays readable (<a href="https://github.com/softverse-space/minutes/blob/main/docs/adr/0030-crash-resilient-recording.md">ADR-0030</a>).</li>
+<li>The app stops the recording correctly before it quits, before a restart or a shut down of the Mac, and before sleep.</li>
+<li>At launch, the app repairs interrupted sessions and resets a transcription that a crash stopped.</li>
+</ul>
+      ]]></description>
+      <enclosure url="https://github.com/softverse-space/minutes/releases/download/v1.1.0/Minutes-1.1.0.dmg" length="6143061" type="application/x-apple-diskimage" sparkle:edSignature="IFHcClOznlfU9BGhVTp+6eLrTkrk3gWnGMCsQB3X+mVWL79FbvPv1ELRbRibjWVqVIeJ4gIms/ej3afiiKF3Bw=="/>
+    </item>
   </channel>
 </rss>
