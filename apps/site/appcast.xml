@@ -7,6 +7,22 @@
     <description>Updates of Minutes</description>
     <language>en</language>
     <item>
+      <title>Minutes 1.2.0</title>
+      <pubDate>Tue, 17 Nov 2026 22:59:48 GMT</pubDate>
+      <sparkle:version>3</sparkle:version>
+      <sparkle:shortVersionString>1.2.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>https://github.com/softverse-space/minutes/releases/tag/v1.2.0</sparkle:fullReleaseNotesLink>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+<li><strong>Audio only:</strong> turn off the Screen switch on the New session tab. The app records system audio and the microphone without a video (<a href="https://github.com/softverse-space/minutes/blob/main/docs/adr/0032-audio-only-recording.md">ADR-0032</a>).</li>
+<li><strong>Menu of the menu bar icon:</strong> a right click or a Control-click opens a menu with Start or Stop recording, Stop transcription, Stop writing minutes, Settings and Quit (<a href="https://github.com/softverse-space/minutes/blob/main/docs/adr/0033-menu-bar-icon-context-menu.md">ADR-0033</a>).</li>
+</ul>
+      ]]></description>
+      <enclosure url="https://github.com/softverse-space/minutes/releases/download/v1.2.0/Minutes-1.2.0.dmg" length="6137854" type="application/x-apple-diskimage" sparkle:edSignature="43gXTmhE04JJcSZgkRcygXD2sF1ltVbBfkGdAQFzuEP9zRUJAcPJmiPpJEvPpU1SA/VaTpZRCtSU2LVW+fgIAA=="/>
+    </item>
+    <item>
       <title>Minutes 1.1.0</title>
       <pubDate>Tue, 17 Nov 2026 20:57:35 GMT</pubDate>
       <sparkle:version>2</sparkle:version>

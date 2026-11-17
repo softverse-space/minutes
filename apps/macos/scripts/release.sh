@@ -106,5 +106,6 @@ else
   echo "==> Notarization skipped. Do not distribute this .dmg."
 fi
 
-shasum -a 256 "$DMG" | tee "$DMG.sha256"
+# Only the file name in the checksum file: it goes public with the release, and a full path shows the local home folder.
+(cd "$(dirname "$DMG")" && shasum -a 256 "$(basename "$DMG")") | tee "$DMG.sha256"
 echo "==> Done: $DMG"
