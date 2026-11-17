@@ -206,3 +206,8 @@
 - Site: a paragraph about continue and merge (EN and SK).
 - Open: the manual tests of the specification (section 14.2) with a real recording.
 - Changed: pages/ui.md, pages/pipeline.md, pages/architecture.md, pages/glossary.md, pages/roadmap.md
+
+## [2026-11-17] ingest | App updates
+- Source: request from the user (notify about a new version, install it from the app).
+- Added: docs/specs/app-updates.md, ADR-0031 (proposed). Not implemented yet.
+- Changed: pages/roadmap.md, docs/adr/README.md.
