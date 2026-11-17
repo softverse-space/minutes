@@ -1,11 +1,13 @@
 # Changes – Minutes
 
-## Unreleased
+## 1.1.0 – 2026-11-17
 
 ### New
 - **Continue recording:** a stopped or interrupted session gets a new part. Start it from the session detail, the session list, a banner on the New session tab or the notification after an unexpected stop.
 - **Merge with previous session:** two sessions of one meeting become one session with one transcript and one summary. Finished part transcripts are reused.
 - The session detail and the list show the number of parts and an interrupted recording.
+- **Updates:** the app checks for a new version once a day and installs it with one click (Sparkle, [ADR-0031](../../docs/adr/0031-app-updates-sparkle.md)). A blue dot next to the menu bar icon and a row in the popover show a new version. The app does not restart during a recording or a job. Settings → General turns the checks and the automatic install on or off. Version 1.0.0 has no updater: install this version manually one time.
+- **Open source in About:** links to the source code, the release notes of the running version, the user guide and a problem report with the app and macOS versions filled in.
 
 ### Safety and reliability
 - Video and audio are written with movie fragments every 10 seconds. After a crash or a power loss, the recording stays readable ([ADR-0030](../../docs/adr/0030-crash-resilient-recording.md)).

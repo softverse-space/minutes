@@ -43,6 +43,8 @@ Decisions: [ADR-0002](../../docs/adr/0002-native-macos-menu-bar-app.md), [ADR-00
 | `SessionMerge` (OMSCore) | Moves the parts of a later session into an earlier one. A journal completes a merge that a crash interrupted |
 | `SessionRecovery` (OMSCore) | At launch: gives an interrupted recording its end and its audio tracks, and resets a stuck transcription ([ADR-0030](../../docs/adr/0030-crash-resilient-recording.md)) |
 | `AppDelegate` | Stops the recording correctly before the app quits |
+| `UpdateController` | Sparkle updater: gentle reminders, postpones the restart while `AppModel.hasRunningWork` is `true`. Off without a feed URL and a public key ([ADR-0031](../../docs/adr/0031-app-updates-sparkle.md)) |
+| `ProjectLinks` (OMSCore) | Addresses of the repository, releases, user guide, appcast and the problem report URL |
 | `TemplateStore` | Loads templates from `apps/macos/templates` and from Application Support |
 | `Settings` | See [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md). API key in Keychain |
 

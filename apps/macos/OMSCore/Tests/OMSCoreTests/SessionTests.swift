@@ -160,6 +160,15 @@ struct SessionOperationsTests {
         #expect(operations.operation(for: other) == .transcription)
     }
 
+    @Test func isEmptyOnlyWithoutOperations() {
+        var operations = SessionOperations()
+        #expect(operations.isEmpty)
+        _ = operations.begin(.summary, for: session)
+        #expect(operations.isEmpty == false)
+        operations.end(.summary, for: session)
+        #expect(operations.isEmpty)
+    }
+
     @Test func endingAnotherOperationKeepsTheSessionBusy() {
         var operations = SessionOperations()
         let began6 = operations.begin(.summary, for: session)

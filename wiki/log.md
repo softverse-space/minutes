@@ -211,3 +211,18 @@
 - Source: request from the user (notify about a new version, install it from the app).
 - Added: docs/specs/app-updates.md, ADR-0031 (proposed). Not implemented yet.
 - Changed: pages/roadmap.md, docs/adr/README.md.
+
+## [2026-11-17] decision | App updates – project links
+- The user asked for an open-source section with a link to GitHub in the app.
+- Added to docs/specs/app-updates.md: section 7a (About → Open source, problem report, `ProjectLinks`), step 8 of the plan, Q5 (GitHub Issues are off, Discussions are on).
+- Changed: docs/adr/0031-app-updates-sparkle.md (proposed).
+
+## [2026-11-17] decision | App updates – implementation
+- The user accepted the proposals for Q1–Q5 and asked for the implementation. ADR-0031 is accepted.
+- Added: `UpdateController` (Sparkle 2.10.1), `ProjectLinks` in OMSCore with tests, About → Open source, Settings → General → Updates, the popover update row, the blue dot on the menu bar icon, `apps/site/appcast.xml`, `scripts/appcast.sh`, `scripts/appcast_item.py`, the issue template.
+- Changed: pages/ui.md, pages/architecture.md, pages/roadmap.md, docs/specs/app-updates.md, docs/adr/README.md, README.md, apps/macos/README.md, CHANGELOG.md, apps/site/index.html (FAQ in EN and SK).
+- Open: the EdDSA key pair, GitHub Issues on, the release 1.1.0.
+
+## [2026-11-17] decision | App updates – local releases
+- The user decided: releases stay local on the author's Mac. The team has one person.
+- GitHub Actions releases are possible later with a new ADR (environment with a reviewer, protected tags, 2FA, pinned actions). Changed: docs/adr/0031-app-updates-sparkle.md.

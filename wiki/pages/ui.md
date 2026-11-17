@@ -1,6 +1,6 @@
 # App controls
 
-Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md) · Updated: 2026-11-17
+Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md), [app updates](../../docs/specs/app-updates.md) · Updated: 2026-11-17
 
 Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md).
 
@@ -70,10 +70,20 @@ The icon is a circle with a sound wave (proposal C). `MenuBarIcon.swift` draws i
 | Transcribing | The circle fills with the transcription progress of all tracks. The arc has a dot at its end |
 | Writing summary | The arc spins. A spark is in the center |
 | Summary is done | Spark and dot at the top right, until the user opens the popover |
+| Update available | Idle icon and a small blue dot next to it, until the user looks at the update ([ADR-0031](../../docs/adr/0031-app-updates-sparkle.md)) |
 
 ## About
 
 Settings has an About tab: icon, the name Minutes, version, tagline, a short workflow in 4 steps, and links to the app data and the sessions. See [ADR-0019](../../docs/adr/0019-product-name-minutes.md).
+
+The header has the link "Free and open source" and the button **Check for Updates…**. The section **Open source** links to the source code, the release notes of the running version, the user guide and a problem report on GitHub. The problem report gets only the app version, the macOS version and the Mac type ([ADR-0031](../../docs/adr/0031-app-updates-sparkle.md)).
+
+## Updates
+
+- A scheduled check that finds a new version shows a row "Minutes x.y.z is available" with **Update** above the popover footer, and the blue dot next to the menu bar icon.
+- **Update** opens the Sparkle window: release notes, Install Update, Remind Me Later, Skip This Version.
+- When a job runs, the popover shows "The update installs when the current job is done." The app restarts when no job runs.
+- Settings → General → Updates: **Check for updates automatically** and **Download and install updates automatically**. In the Debug build, the switches and Check for Updates… are off, and a note says that this build does not check for updates.
 
 ## UI language
 

@@ -30,5 +30,13 @@
 	<string>The app records your microphone during a session. The recording stays on this Mac.</string>
 	<key>NSScreenCaptureUsageDescription</key>
 	<string>The app records the selected screen and system audio during a session. The recording stays on this Mac.</string>
+	<key>SUEnableSystemProfiling</key>
+	<false/>
+	<key>SUFeedURL</key>
+	<string>$(SPARKLE_FEED_URL)</string>
+	<key>SUPublicEDKey</key>
+	<string>$(SPARKLE_PUBLIC_ED_KEY)</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
 </dict>
 </plist>

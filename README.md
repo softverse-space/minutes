@@ -112,6 +112,7 @@ The **Sessions** tab lists your recordings by day. The session name is the topic
 | Audio | on your Mac; goes to a transcription server (OpenAI-compatible API) only if you select one |
 | Transcript and selected frames | go to the model you set up in OpenCode – with a local model they stay on your Mac; to Claude (Anthropic) or Codex (OpenAI) only if you turn them on and select them for a specific summary |
 | Telemetry | none |
+| Update check | once a day the app downloads the public list of versions from GitHub; turn it off in Settings → General |
 
 Details: [ADR-0008](docs/adr/0008-data-boundary.md), [ADR-0017](docs/adr/0017-model-choice-and-claude.md).
 
@@ -147,6 +148,14 @@ App language (English or Slovak), sessions folder, video quality, transcription 
 6. Optional: install Claude Code or Codex and turn them on in Settings → Summary.
 
 Full guide and FAQ: [softverse-space.github.io/minutes](https://softverse-space.github.io/minutes/#install).
+
+### Updates
+
+From version 1.1.0, Minutes checks for updates once a day and installs them with one click ([ADR-0031](docs/adr/0031-app-updates-sparkle.md)). A blue dot next to the menu bar icon tells you about a new version. The app does not restart during a recording or a job. From version 1.0.0, download the new `.dmg` one time.
+
+### Report a problem
+
+In Settings → About, click **Report a problem on GitHub**. The report gets the app and macOS versions. Do not attach recordings, transcripts, summaries or screenshots of real meetings.
 
 ### Build from source
 

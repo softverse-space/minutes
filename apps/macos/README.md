@@ -43,6 +43,18 @@ apps/macos/scripts/release.sh
 ```
 
 5. Check the `.dmg` on a different Mac: open it, move Minutes to Applications and start it.
+6. Create the GitHub release `v<version>` with the `.dmg` and the `.sha256` file.
+7. Add the update to the feed. The script checks that GitHub serves the `.dmg`, signs it with the EdDSA key and adds an item to `apps/site/appcast.xml` ([ADR-0031](../../docs/adr/0031-app-updates-sparkle.md)):
+
+```
+apps/macos/scripts/appcast.sh
+```
+
+8. Commit `apps/site/appcast.xml` and push it to `main`. The Pages workflow publishes it. The installed apps find the update within one day.
+
+**Update key (one time).** Sparkle needs an EdDSA key pair. Run `generate_keys` from the Sparkle package (`build/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/`). It saves the private key in your Keychain and prints the public key. Put the public key in `SPARKLE_PUBLIC_ED_KEY` in `project.yml`. Back up the private key with `generate_keys -x <file>` to a safe place outside the repository. Without it, you cannot sign updates for the installed apps. `release.sh` refuses to notarize a build without the public key.
+
+The Debug build has no update feed. It never replaces itself with a release build.
 
 ### Icon
 

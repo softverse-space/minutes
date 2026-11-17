@@ -3,6 +3,7 @@ import SwiftUI
 
 struct PopoverView: View {
     @Environment(AppModel.self) private var model
+    @Environment(UpdateController.self) private var updates
     @Environment(\.openSettings) private var openSettings
 
     var body: some View {
@@ -46,6 +47,12 @@ struct PopoverView: View {
                 .padding(.bottom, 12)
             }
 
+            if let version = updates.availableVersion {
+                UpdateRow(version: version) { updates.checkForUpdates() }
+            } else if updates.isWaitingForIdle {
+                UpdateRow(version: nil, action: nil)
+            }
+
             Divider()
             HStack {
                 Button {
@@ -71,5 +78,29 @@ struct PopoverView: View {
             await model.refreshSources()
             await models
         }
+    }
+}
+
+/// A new version, or an update that waits for the end of the current job (ADR-0031).
+private struct UpdateRow: View {
+    let version: String?
+    let action: (() -> Void)?
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "arrow.down.circle.fill").foregroundStyle(.blue)
+            if let version {
+                Text("Minutes \(version) is available").font(.callout)
+            } else {
+                Text("The update installs when the current job is done.")
+                    .font(.callout).fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer()
+            if let action {
+                Button("Update", action: action).controlSize(.small)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 12)
     }
 }

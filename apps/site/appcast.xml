@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Update feed for Minutes (Sparkle, ADR-0031). apps/macos/scripts/appcast.sh adds the items. Do not edit by hand. -->
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Minutes</title>
+    <link>https://softverse-space.github.io/minutes/appcast.xml</link>
+    <description>Updates of Minutes</description>
+    <language>en</language>
+  </channel>
+</rss>

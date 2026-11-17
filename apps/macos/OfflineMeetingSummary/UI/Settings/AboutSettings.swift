@@ -1,12 +1,31 @@
 import AppKit
+import OMSCore
 import SwiftUI
 
 struct AboutSettings: View {
+    @Environment(UpdateController.self) private var updates
+
+    private var shortVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "–"
+    }
+
     private var version: String {
-        let info = Bundle.main.infoDictionary
-        let short = info?["CFBundleShortVersionString"] as? String ?? "–"
-        let build = info?["CFBundleVersion"] as? String ?? "–"
-        return "\(short) (\(build))"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "–"
+        return "\(shortVersion) (\(build))"
+    }
+
+    private var problemReportURL: URL {
+        let os = ProcessInfo.processInfo.operatingSystemVersion
+        #if arch(arm64)
+        let architecture = "Apple silicon"
+        #else
+        let architecture = "Intel"
+        #endif
+        return ProjectLinks.problemReport(
+            appVersion: version,
+            macOSVersion: "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)",
+            architecture: architecture
+        )
     }
 
     var body: some View {
@@ -20,7 +39,13 @@ struct AboutSettings: View {
                         Text(verbatim: "Minutes").font(.title.weight(.semibold))
                         Text("Version \(version)").foregroundStyle(.secondary).monospacedDigit()
                         Text("Meeting minutes that stay on your local machine.").foregroundStyle(.secondary)
+                        Link("Free and open source", destination: ProjectLinks.repository)
+                            .help(ProjectLinks.repository.absoluteString)
                     }
+                    Spacer()
+                    Button("Check for Updates…") { updates.checkForUpdates() }
+                        .disabled(!updates.isEnabled || !updates.canCheckForUpdates)
+                        .help(updates.isEnabled ? "" : String(localized: "This build does not check for updates. Only the released app from GitHub updates itself."))
                 }
                 .padding(.vertical, 4)
             }
@@ -36,6 +61,22 @@ struct AboutSettings: View {
                           text: "Open the summary as Markdown. All files of a session are in one folder.")
             } header: {
                 Text("How it works")
+            }
+
+            Section {
+                Text("Minutes is free and open source under the Apache License 2.0.")
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                LinkRow(title: "Source code", label: "GitHub", url: ProjectLinks.repository)
+                LinkRow(title: "What's new", label: "Release notes for version \(shortVersion)",
+                        url: ProjectLinks.release(version: shortVersion))
+                LinkRow(title: "User guide", label: "Open the guide", url: ProjectLinks.site)
+                LinkRow(title: "Report a problem", label: "Report a problem on GitHub", url: problemReportURL)
+            } header: {
+                Text("Open source")
+            } footer: {
+                Text("Do not attach recordings, transcripts, summaries or screenshots of real meetings to a report.")
+                    .font(.caption).foregroundStyle(.secondary)
             }
 
             Section {
@@ -63,6 +104,19 @@ struct AboutSettings: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+/// A label on the left and a link on the right. The tooltip shows the address.
+private struct LinkRow: View {
+    let title: LocalizedStringKey
+    let label: LocalizedStringKey
+    let url: URL
+
+    var body: some View {
+        LabeledContent(title) {
+            Link(label, destination: url).help(url.absoluteString)
+        }
     }
 }
 
