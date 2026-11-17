@@ -226,3 +226,8 @@
 ## [2026-11-17] decision | App updates – local releases
 - The user decided: releases stay local on the author's Mac. The team has one person.
 - GitHub Actions releases are possible later with a new ADR (environment with a reviewer, protected tags, 2FA, pinned actions). Changed: docs/adr/0031-app-updates-sparkle.md.
+
+## [2026-11-17] release | Minutes 1.1.0 and the release skill
+- Minutes 1.1.0 (build 2) is on GitHub. The appcast announces it.
+- The website and the README showed 1.0.0 after the release. Fixed: they show 1.1.0.
+- Added: the project skill `.claude/skills/release/SKILL.md` (complete release procedure), `scripts/set-version.sh`, `scripts/sync-site-version.sh`, `scripts/release_notes.py`.

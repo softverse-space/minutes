@@ -28,6 +28,8 @@ Logic tests: `cd apps/macos/OMSCore && swift test`.
 
 `apps/macos/scripts/release.sh` makes the release ([ADR-0021](../../docs/adr/0021-first-release-packaging.md)). The result is `apps/macos/build/release/Minutes-<version>.dmg`.
 
+The complete procedure, with the version change, the website and the checks, is the project skill [`.claude/skills/release/SKILL.md`](../../.claude/skills/release/SKILL.md). Ask Claude Code "release a new version". Helper scripts: `set-version.sh` (version and build), `release_notes.py` (GitHub release notes), `sync-site-version.sh` (website and README).
+
 1. Increase `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml`.
 2. Add the changes to [CHANGELOG.md](CHANGELOG.md).
 3. Create the notarization profile one time. Enter the app-specific password yourself. Do not save it anywhere:
