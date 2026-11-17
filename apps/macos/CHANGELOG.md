@@ -1,5 +1,17 @@
 # Changes – Minutes
 
+## Unreleased
+
+### New
+- **Continue recording:** a stopped or interrupted session gets a new part. Start it from the session detail, the session list, a banner on the New session tab or the notification after an unexpected stop.
+- **Merge with previous session:** two sessions of one meeting become one session with one transcript and one summary. Finished part transcripts are reused.
+- The session detail and the list show the number of parts and an interrupted recording.
+
+### Safety and reliability
+- Video and audio are written with movie fragments every 10 seconds. After a crash or a power loss, the recording stays readable ([ADR-0030](../../docs/adr/0030-crash-resilient-recording.md)).
+- The app stops the recording correctly before it quits, before a restart or a shut down of the Mac, and before sleep.
+- At launch, the app repairs interrupted sessions and resets a transcription that a crash stopped.
+
 ## 1.0.0 – 2026-11-14
 
 First release for colleagues.

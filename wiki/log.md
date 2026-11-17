@@ -199,3 +199,10 @@
 - The user accepted a loss of up to 10 s after a crash. ADR-0030 and the specification now use a fragment interval of 10 s (was 5 s).
 - Clarified: fragments are inside one file, and the AAC start offset (43 ms) is constant. Checked on a file with 16 fragments.
 - Changed: docs/adr/0030-crash-resilient-recording.md, docs/specs/continue-and-merge-sessions.md, raw/2026-11-17-crash-recording-spike.md
+
+## [2026-11-17] update | Continue and merge sessions implemented
+- OMSCore: session parts, combined transcript, merge with a journal, recovery of interrupted sessions. 111 tests pass.
+- App: Continue recording (session detail, list, banner, notification action), Merge with previous session, transcription per part, fragmented video and audio, heartbeat with `F_FULLFSYNC`, correct stop before quit and sleep, recovery at launch, Slovak texts.
+- Site: a paragraph about continue and merge (EN and SK).
+- Open: the manual tests of the specification (section 14.2) with a real recording.
+- Changed: pages/ui.md, pages/pipeline.md, pages/architecture.md, pages/glossary.md, pages/roadmap.md

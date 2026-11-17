@@ -1,6 +1,6 @@
 # Specification: continue and merge sessions
 
-- **Status:** Draft, not implemented
+- **Status:** Implemented on 2026-11-17. The manual tests (14.2) are open. See section 17
 - **Date:** 2026-11-17
 - **Branch:** `feature/continue-and-merge-sessions`
 - **Decisions:** [ADR-0029](../adr/0029-session-parts-continue-and-merge.md) (parts, continue, merge), [ADR-0030](../adr/0030-crash-resilient-recording.md) (crash-resilient recording, recovery)
@@ -438,3 +438,16 @@ Steps 9 and 11 do not depend on the spike. Each step is one commit on `feature/c
 | Q5 | Merge from a multi-select in the list instead of "with previous session"? | **Decided (2026-11-17):** no. The popover list has no multi-select. Repeat the merge for 3+ sessions |
 | Q6 | A notification action **Continue** after an unexpected stop (S2)? | **Decided (2026-11-17):** yes, in the first version. See F5 and 10.5 |
 | Q7 | Audio after a crash: fragments or 60-second chunks? | **Decided by the spike (2026-11-17):** video and audio with movie fragments every 10 s (the user accepted a loss of up to 10 s); audio stays AAC `.m4a`. See [ADR-0030](../adr/0030-crash-resilient-recording.md) |
+
+## 17. Implementation notes (2026-11-17)
+
+The implementation follows this specification with these differences:
+
+1. **Commits:** the steps are grouped in three commits: the specification, OMSCore (steps 2–5, 7 and the logic of 10), and the app (steps 6–11).
+2. **Quit (10.2):** the **Quit** button in the popover was already disabled during a recording. It stays so. The confirmation "A recording runs. Stop it and quit?" is not necessary. Manual test 13 checks that the button is disabled. `applicationShouldTerminate` covers a restart, a shut down and a log out.
+3. **Notification (F5, steps 5 and 6):** an app cannot open its menu bar popover. A failed continue from a notification posts a second notification with the reason. A click on the notification selects the session detail for the next opening of the popover.
+4. **Unfinished merge (8.3):** the message is "A merge did not finish. No file was deleted. Check the session <name>." The target session knows its journal, but not the reliable name of the source.
+5. **Audio offsets (ADR-0030):** the heartbeat writes the offsets of the audio tracks every 10 seconds, not at the first sample.
+6. **Old summaries:** the outputs list marks each summary that is older than the session transcript with a clock. One explanation line is under the list.
+7. **Tests:** OMSCore has 111 tests. A separate harness checked the new `AudioTrackWriter` with buffers in the ScreenCaptureKit format: after `SIGKILL` 30 of 35 seconds were readable with `AVAudioFile`; gaps are filled with silence; mute writes silence.
+

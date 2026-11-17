@@ -15,8 +15,8 @@ Updated: 2026-11-17
 | Keyframe | A frame at a large change of the image (new slide) |
 | Engine | Transcription model: local (WhisperKit, whisper.cpp, Parakeet) or a server with an API compatible with OpenAI |
 | Track | A separate audio channel: microphone or system |
-| Part | One recording from Start (or Continue) to Stop inside a session. Planned, see [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md) |
-| Continue | Record a new part into an existing session. Planned |
-| Merge | Move all parts of a later session into an earlier session. Planned |
-| Interrupted session | A session whose last part has no end, because the app or the Mac stopped. Planned, see [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md) |
-| Combined timeline | The timeline of a session with parts. Time 0 is the start of the first part. Planned |
+| Part | One recording from Start (or Continue) to Stop inside a session. See [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md) |
+| Continue | Record a new part into an existing session. |
+| Merge | Move all parts of a later session into an earlier session. |
+| Interrupted session | A session whose last part has no end, because the app or the Mac stopped. See [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md) |
+| Combined timeline | The timeline of a session with parts. Time 0 is the start of the first part. |

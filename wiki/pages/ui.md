@@ -1,8 +1,8 @@
 # App controls
 
-Sources: brief (kept locally), feedback from Henrich (2026-11-13) · Updated: 2026-11-13
+Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md) · Updated: 2026-11-17
 
-Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md).
+Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md).
 
 The popover has two tabs: **New session** and **Sessions**. The recent sessions are no longer below the Start button.
 
@@ -42,6 +42,18 @@ You can repeat each step without a new recording. "Transcribed" does not mean "c
 - **Free up space in all sessions:** deletes the video, audio and frames. The transcript and the summaries stay.
 - **Delete session:** moves the whole folder to the Trash.
 - The confirmation is directly in the popover. An alert would close the popover.
+- Right-click also has **Continue recording** and **Merge with previous session…**. The merge panel shows both sessions and the break.
+- An interrupted session (crash or restart during the recording) has an orange icon.
+
+## Continue and merge
+
+Specification: [continue-and-merge-sessions](../../docs/specs/continue-and-merge-sessions.md).
+
+- **Continue recording** in the session detail records a new part into the same session. The recording view shows "Part N". The timer shows the time of the whole session.
+- The New session tab shows a banner when the newest session stopped less than 30 minutes ago, or was interrupted less than 12 hours ago.
+- After an unexpected stop (stream error, full disk, sleep, crash found at launch), the notification has the action **Continue recording**.
+- A summary made before a merge or a continue has a clock icon in the outputs list.
+- Before the app quits (also for a restart or a shut down of the Mac) and before sleep, the app stops the recording correctly.
 
 ## Opening files
 

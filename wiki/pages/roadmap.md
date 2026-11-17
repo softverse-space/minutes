@@ -39,8 +39,8 @@ The acceptance criteria are in the brief (the original brief, kept locally).
 - [ ] Process a session again with a different template, session history
 - [ ] Check unclear sections with a second transcription
 - [ ] Automatic updates (Sparkle)
-- [ ] Continue a session and merge sessions into one summary – specification [continue-and-merge-sessions](../../docs/specs/continue-and-merge-sessions.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md) (proposed)
-- [ ] Recording that survives a crash or a restart, recovery of interrupted sessions – [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md) (proposed)
+- [x] Continue a session and merge sessions into one summary – specification [continue-and-merge-sessions](../../docs/specs/continue-and-merge-sessions.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md) (manual tests open)
+- [x] Recording that survives a crash or a restart, recovery of interrupted sessions – [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md) (manual tests open)
 
 ## Phase 3 – later
 
