@@ -1,6 +1,6 @@
 # Changes – Minutes
 
-## Unreleased
+## 1.2.0 – 2026-11-17
 
 ### New
 - **Audio only:** turn off the Screen switch on the New session tab. The app records system audio and the microphone without a video ([ADR-0032](../../docs/adr/0032-audio-only-recording.md)).

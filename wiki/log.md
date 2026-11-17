@@ -239,3 +239,7 @@
 - Site: two points in the recording chapter (EN and SK).
 - Open: manual tests with a real recording (audio only, continue, right click).
 - Changed: pages/ui.md, pages/architecture.md
+
+## [2026-11-17] release | Minutes 1.2.0
+- New: audio-only recording (ADR-0032) and the menu of the menu bar icon (ADR-0033).
+- Version 1.2.0, build 3. The first update through Sparkle, from 1.1.0.
