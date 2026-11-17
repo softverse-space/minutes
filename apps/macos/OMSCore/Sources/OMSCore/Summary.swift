@@ -26,10 +26,12 @@ public struct SummaryRequest: Sendable {
     public var timeZone: TimeZone
     /// Path to `frame-at.sh`. `nil` when frames are not available.
     public var frameToolPath: String?
+    /// Number of recordings in the session (ADR-0029).
+    public var partCount: Int
 
     public init(template: SummaryTemplate?, customInstruction: String = "", detail: DetailLevel, language: String,
                 extraInstruction: String = "", meetingDate: Date, timeZone: TimeZone = .current,
-                frameToolPath: String?) {
+                frameToolPath: String?, partCount: Int = 1) {
         self.template = template
         self.customInstruction = customInstruction
         self.detail = detail
@@ -38,6 +40,7 @@ public struct SummaryRequest: Sendable {
         self.meetingDate = meetingDate
         self.timeZone = timeZone
         self.frameToolPath = frameToolPath
+        self.partCount = partCount
     }
 }
 
@@ -66,6 +69,14 @@ public enum PromptBuilder {
         Output language: \(OutputLanguage.name(for: request.language)) (\(request.language)).
         Meeting date: \(formatter.string(from: request.meetingDate)).
         """)
+
+        if request.partCount > 1 {
+            parts.append("""
+            The recording has \(request.partCount) parts. The recording stopped between the parts.
+            Lines that start with `---` mark the start of a part. Speech near a break can be cut off.
+            Treat all parts as one meeting.
+            """)
+        }
 
         let extra = request.extraInstruction.trimmingCharacters(in: .whitespacesAndNewlines)
         if !extra.isEmpty {

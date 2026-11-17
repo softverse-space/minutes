@@ -3,6 +3,8 @@ import Foundation
 /// Work that reads or writes the files of one session.
 public enum SessionOperation: String, Sendable, CaseIterable {
     case recording, transcription, summary, cleanup
+    /// Holds both sessions of a merge (ADR-0029).
+    case merge
 }
 
 /// Decides which operations may run on a session (ADR-0023).
@@ -27,6 +29,19 @@ public struct SessionOperations: Sendable {
         let key = Self.key(session)
         guard running[key] == nil else { return false }
         running[key] = operation
+        return true
+    }
+
+    /// Starts the operation on all sessions, or on none of them when one is busy.
+    public mutating func begin(_ operation: SessionOperation, for sessions: [URL]) -> Bool {
+        var started: [URL] = []
+        for session in sessions {
+            guard begin(operation, for: session) else {
+                for done in started { end(operation, for: done) }
+                return false
+            }
+            started.append(session)
+        }
         return true
     }
 

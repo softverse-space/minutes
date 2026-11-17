@@ -146,4 +146,58 @@ struct FrameToolTests {
             #expect(result.stdout.hasSuffix("/frames/at_00-07-42.jpg\n"))
         }
     }
+    // MARK: Sessions with parts (ADR-0029)
+
+    /// Part 1: 0–600 s, a break, part 2: 700–1000 s. Each part has a fake video.
+    private func sessionWithParts(map: String = "0.000\t600.000\t01\n700.000\t300.000\t02\n") throws -> TemporaryDirectory {
+        let root = try TemporaryDirectory()
+        for part in ["01", "02"] {
+            let folder = root.url.appending(path: "parts/\(part)")
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            try Data("video".utf8).write(to: folder.appending(path: "recording.mov"))
+        }
+        try FileManager.default.createDirectory(at: root.url.appending(path: "frames"), withIntermediateDirectories: true)
+        try Data(map.utf8).write(to: root.url.appending(path: "parts.tsv"))
+        return root
+    }
+
+    @Test(arguments: ["00:05:00", "00:11:40", "00:16:39"])
+    func aTimeInAPartFindsItsVideo(time: String) async throws {
+        let root = try sessionWithParts()
+        // A cached frame: the script checks the part first and does not need ffmpeg then.
+        let frame = "at_\(time.replacingOccurrences(of: ":", with: "-")).jpg"
+        try Data("jpg".utf8).write(to: root.url.appending(path: "frames/\(frame)"))
+        let result = try await run([time], in: root.url)
+        #expect(result.exitCode == 0)
+        #expect(result.stdout.hasSuffix("/frames/\(frame)\n"))
+    }
+
+    @Test(arguments: ["00:10:00", "00:11:00", "00:16:40", "01:00:00"])
+    func aTimeInABreakOrAfterTheEndIsAnError(time: String) async throws {
+        let root = try sessionWithParts()
+        let result = try await run([time], in: root.url)
+        #expect(result.exitCode == 1)
+        #expect(result.stderr.contains("break between parts"))
+        #expect(try FileManager.default.contentsOfDirectory(atPath: root.url.appending(path: "frames").path).isEmpty)
+    }
+
+    @Test(arguments: [
+        "0\t600\t../../etc\n", "0\t600\t1\n", "0\t600\t01\textra\n", "x\t600\t01\n", "0;rm\t600\t01\n", "-1\t600\t01\n",
+    ])
+    func aDamagedMapIsAnError(map: String) async throws {
+        let root = try sessionWithParts(map: map)
+        let result = try await run(["00:00:01"], in: root.url)
+        #expect(result.exitCode == 1)
+        #expect(result.stderr.contains("damaged"))
+    }
+
+    @Test func aPartFolderThatIsALinkIsAnError() async throws {
+        let root = try sessionWithParts()
+        let elsewhere = try TemporaryDirectory()
+        try Data("video".utf8).write(to: elsewhere.url.appending(path: "recording.mov"))
+        try FileManager.default.removeItem(at: root.url.appending(path: "parts/02"))
+        try FileManager.default.createSymbolicLink(at: root.url.appending(path: "parts/02"), withDestinationURL: elsewhere.url)
+        let result = try await run(["00:12:00"], in: root.url)
+        #expect(result.exitCode == 1)
+    }
 }

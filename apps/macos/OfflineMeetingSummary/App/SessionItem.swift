@@ -9,6 +9,8 @@ struct SessionItem: Identifiable, Sendable {
     let outputs: [URL]
     let topic: String?
     let hasTranscript: Bool
+    /// Summaries older than the session transcript of a session with parts: made before a merge or a continue.
+    let staleOutputs: Set<URL>
     /// Whole folder on disk.
     let size: Int64
     /// Video, audio and frames: what "Free up space" removes.
@@ -30,6 +32,14 @@ struct SessionItem: Identifiable, Sendable {
         outputs = session.outputFiles()
         topic = outputs.lazy.compactMap { SessionNaming.topic(fromSummaryFileName: $0.lastPathComponent) }.first
         hasTranscript = FileManager.default.fileExists(atPath: session.transcriptURL("md").path)
+        if let metadata, metadata.parts.count > 1 {
+            let date = { (url: URL) in (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate }
+            // Without a session transcript (a new part is not transcribed yet), every summary is older than the parts.
+            let transcriptDate = date(session.transcriptURL("md")) ?? .distantFuture
+            staleOutputs = Set(outputs.filter { (date($0) ?? .distantPast) < transcriptDate })
+        } else {
+            staleOutputs = []
+        }
         let sizes = measuringStorage ? session.storageSizes() : (total: 0, media: 0)
         size = sizes.total
         mediaSize = sizes.media

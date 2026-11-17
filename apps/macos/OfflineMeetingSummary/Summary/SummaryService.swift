@@ -79,7 +79,11 @@ enum SummaryService {
         }
 
         let metadata = try session.loadMetadata()
-        let hasVideo = FileManager.default.fileExists(atPath: session.videoURL.path)
+        // A session with parts needs the part map; the frame tool finds the video of each part through it (ADR-0029).
+        let hasVideo = metadata.hasParts
+            ? FileManager.default.fileExists(atPath: session.partsMapURL.path)
+                && metadata.parts.contains { FileManager.default.fileExists(atPath: session.partVideoURL($0).path) }
+            : FileManager.default.fileExists(atPath: session.videoURL.path)
         var frames: EngineInvocation.FrameAccess?
         if hasVideo, isFfmpegAvailable {
             try FileManager.default.createDirectory(at: session.framesDirectory, withIntermediateDirectories: true)
@@ -93,7 +97,8 @@ enum SummaryService {
             extraInstruction: options.extraInstruction,
             meetingDate: metadata.startedAt,
             timeZone: TimeZone(identifier: metadata.timeZone) ?? .current,
-            frameToolPath: frames?.toolPath
+            frameToolPath: frames?.toolPath,
+            partCount: max(1, metadata.parts.count)
         )
         let job = SummaryJob(session: session, prompt: PromptBuilder.build(request, details: BundledResources.loadDetailLevels()),
                              model: options.model.model, frames: frames)

@@ -42,6 +42,7 @@ struct RecordingResult {
 
 /// Records one display with system audio and microphone using ScreenCaptureKit.
 /// Video goes to a .mov file (H.264, low frame rate). Each audio source goes to its own .m4a file.
+/// All files have movie fragments every 10 seconds, so they stay readable after a crash (ADR-0030).
 ///
 /// Thread safety: writers and timestamps belong to `queue`. `start` sets them up before the stream
 /// delivers any sample, and `stop` tears them down in one block on `queue`. Audio levels are published
@@ -121,8 +122,8 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         // One block on the sample queue, so no sample can arrive between the steps.
         let (writer, start, system, microphone) = queue.sync { () -> (AVAssetWriter?, CMTime?, AudioTrackWriter?, AudioTrackWriter?) in
             isStopping = true
-            systemWriter?.close()
-            microphoneWriter?.close()
+            systemWriter?.markAsFinished()
+            microphoneWriter?.markAsFinished()
             // A writer that failed or never started accepts no more calls; they raise an exception.
             if let writer, let videoInput, let start = videoStartPTS, writer.status == .writing {
                 videoInput.markAsFinished()
@@ -133,6 +134,8 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         meter.withLock { $0 = (0, 0) }
 
         if let writer, writer.status == .writing { await writer.finishWriting() }
+        await system?.finish()
+        await microphone?.finish()
         var videoError: Error?
         if let writer, writer.status == .failed {
             videoError = RecorderError.writerFailed(writer.error?.localizedDescription ?? String(localized: "unknown error"))
@@ -153,6 +156,33 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     }
 
     // MARK: Live controls
+
+    /// Offset (seconds) of each audio track from the video start, when its first sample arrived.
+    /// The app saves it during the recording, so a recovered session has the right offsets.
+    func trackOffsets() -> (system: Double?, microphone: Double?) {
+        queue.sync {
+            func offset(_ track: AudioTrackWriter?) -> Double? {
+                guard let first = track?.firstPTS, let start = videoStartPTS else { return nil }
+                return CMTimeGetSeconds(CMTimeSubtract(first, start))
+            }
+            return (offset(systemWriter), offset(microphoneWriter))
+        }
+    }
+
+    /// Writes the recorded data of all files to the disk with `F_FULLFSYNC`, off the sample queue.
+    /// A power loss then loses at most the time since the last call (ADR-0030).
+    func flushToDisk() {
+        guard let configuration else { return }
+        let urls = [configuration.videoURL, configuration.systemAudioURL, configuration.microphoneURL]
+        DispatchQueue.global(qos: .utility).async {
+            for url in urls {
+                let descriptor = open(url.path, O_RDONLY)
+                guard descriptor >= 0 else { continue }
+                _ = fcntl(descriptor, F_FULLFSYNC)
+                close(descriptor)
+            }
+        }
+    }
 
     func setMuted(_ muted: Bool, microphone: Bool) {
         queue.async {
@@ -186,6 +216,7 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     private func setUpWriter(url: URL, width: Int, height: Int, fps: Int) throws {
         try? FileManager.default.removeItem(at: url)
         let writer = try AVAssetWriter(outputURL: url, fileType: .mov)
+        writer.movieFragmentInterval = AudioTrackWriter.fragmentInterval
         let settings: [String: Any] = [
             AVVideoCodecKey: AVVideoCodecType.h264,
             AVVideoWidthKey: width,

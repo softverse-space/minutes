@@ -13,8 +13,13 @@ struct RecordingView: View {
                 Text(model.elapsedText).font(.title2.monospacedDigit())
             }
 
-            if let display = model.selectedDisplay {
-                Label(display.name, systemImage: "display").foregroundStyle(.secondary)
+            HStack(spacing: 12) {
+                if let display = model.selectedDisplay {
+                    Label(display.name, systemImage: "display").foregroundStyle(.secondary)
+                }
+                if let number = model.activePartNumber, number > 1 {
+                    Label("Part \(number)", systemImage: "square.stack").foregroundStyle(.secondary)
+                }
             }
 
             SectionTitle(text: "Audio")

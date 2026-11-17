@@ -170,3 +170,44 @@
 - A GitHub Actions workflow publishes `apps/site/` to `https://softverse-space.github.io/minutes/` (ADR-0028).
 - The install step links to the latest release. The footer links to the source code (EN and SK).
 - ADR: new 0028. Changed: README.md
+
+## [2026-11-17] ingest | Continue and merge sessions
+- Source: raw/2026-11-17-continue-and-merge-sessions.md (request from the user).
+- Added: docs/specs/continue-and-merge-sessions.md, ADR-0029 and ADR-0030 (both proposed). Not implemented yet.
+- Changed: pages/glossary.md, pages/roadmap.md, pages/open-questions.md, docs/adr/README.md.
+- Finding: the recorder writes the header of `recording.mov` and of the `.m4a` tracks only at Stop. A crash probably leaves unreadable files. ADR-0030 plans a spike.
+- Lint: no new wiki page. The pages ui.md, pipeline.md and architecture.md describe the current state. Update them in step 10 of the implementation plan.
+
+## [2026-11-17] decision | Continue and merge sessions – open questions
+- The user accepted the proposals for Q1 (offer to continue: 30 min, 12 h for an interrupted session), Q2 (timeline with real breaks) and Q4 (no Split in the first version).
+- Q3, Q5, Q6 and Q7 stay open. Changed: docs/specs/continue-and-merge-sessions.md
+
+## [2026-11-17] decision | Continue and merge sessions – Q3, Q5, Q6, Q7
+- Accepted: Q3 (older summaries to `outputs/` of the target), Q5 (merge with the previous session only).
+- Q6 changed: the notification action **Continue recording** is in the first version (flow F5).
+- Q7: ADR-0030 now has the list of events (crash, Quit, restart, sleep, power loss), the options for video and audio, and the spike matrix. The app stops the recording correctly on Quit, restart and sleep. Audio format: the spike decides between fragmented `.mov` and 16 kHz WAV.
+- Changed: docs/specs/continue-and-merge-sessions.md, docs/adr/0030-crash-resilient-recording.md
+
+## [2026-11-17] ingest | Spike: media files after a crash
+- Source: raw/2026-11-17-crash-recording-spike.md. Code: docs/spikes/2026-11-17-crash-recording/.
+- Confirmed: today's `recording.mov` and `.m4a` are not readable after `kill -9`.
+- Movie fragments make video and AAC `.m4a` readable after a crash (loss ≤ fragment interval). `AVAudioFile` reads the fragmented `.m4a`, so the audio conversion stays.
+- ADR-0030: decision completed (fragments every 5 s, AAC `.m4a`, `F_FULLFSYNC` every 10 s). App tests E2–E5 are open.
+- Changed: docs/adr/0030-crash-resilient-recording.md, docs/specs/continue-and-merge-sessions.md, pages/open-questions.md
+
+## [2026-11-17] decision | Fragment interval 10 s
+- The user accepted a loss of up to 10 s after a crash. ADR-0030 and the specification now use a fragment interval of 10 s (was 5 s).
+- Clarified: fragments are inside one file, and the AAC start offset (43 ms) is constant. Checked on a file with 16 fragments.
+- Changed: docs/adr/0030-crash-resilient-recording.md, docs/specs/continue-and-merge-sessions.md, raw/2026-11-17-crash-recording-spike.md
+
+## [2026-11-17] update | Continue and merge sessions implemented
+- OMSCore: session parts, combined transcript, merge with a journal, recovery of interrupted sessions. 111 tests pass.
+- App: Continue recording (session detail, list, banner, notification action), Merge with previous session, transcription per part, fragmented video and audio, heartbeat with `F_FULLFSYNC`, correct stop before quit and sleep, recovery at launch, Slovak texts.
+- Site: a paragraph about continue and merge (EN and SK).
+- Open: the manual tests of the specification (section 14.2) with a real recording.
+- Changed: pages/ui.md, pages/pipeline.md, pages/architecture.md, pages/glossary.md, pages/roadmap.md
+
+## [2026-11-17] ingest | App updates
+- Source: request from the user (notify about a new version, install it from the app).
+- Added: docs/specs/app-updates.md, ADR-0031 (proposed). Not implemented yet.
+- Changed: pages/roadmap.md, docs/adr/README.md.
