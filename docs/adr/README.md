@@ -9,7 +9,7 @@ Each decision is a separate file. [ADR-0001](0001-record-decisions-in-adr.md) gi
 | [0003](0003-screencapturekit-recording.md) | Recording with ScreenCaptureKit and separate audio tracks | Accepted |
 | [0004](0004-local-transcription-engine.md) | Local transcription engine | Accepted |
 | [0005](0005-llm-processing-via-opencode.md) | Transcript processing with OpenCode CLI and an internal model | Accepted, amended by 0015, 0017, 0022, 0023 |
-| [0006](0006-session-folder-layout.md) | Session folder structure | Accepted |
+| [0006](0006-session-folder-layout.md) | Session folder structure | Accepted, amended by 0029 (proposed) |
 | [0007](0007-output-templates.md) | Templates, detail level and custom instruction | Accepted, amended by 0022 |
 | [0008](0008-data-boundary.md) | Data boundary – what runs where | Superseded by 0010 |
 | [0009](0009-llm-wiki.md) | LLM wiki as project memory | Accepted |
@@ -32,3 +32,5 @@ Each decision is a separate file. [ADR-0001](0001-record-decisions-in-adr.md) gi
 | [0026](0026-apache-2-license.md) | Apache License 2.0 | Accepted |
 | [0027](0027-model-output-file-name.md) | Model output file name from user instructions | Accepted |
 | [0028](0028-site-on-github-pages.md) | User guide on GitHub Pages | Accepted |
+| [0029](0029-session-parts-continue-and-merge.md) | Sessions with parts – continue a recording and merge sessions | Proposed |
+| [0030](0030-crash-resilient-recording.md) | Recording that survives a crash and recovery of interrupted sessions | Proposed |

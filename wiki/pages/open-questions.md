@@ -1,6 +1,6 @@
 # Open questions and risks
 
-Sources: requirements (kept locally), brief (kept locally) · Updated: 2026-11-14
+Sources: requirements (kept locally), brief (kept locally), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md) · Updated: 2026-11-17
 
 ## Questions
 
@@ -12,6 +12,7 @@ Sources: requirements (kept locally), brief (kept locally) · Updated: 2026-11-1
 6. Default sessions folder: `~/Meetings`?
 7. How long do we keep the video? Delete it automatically after N days?
 8. Must the MVP already have live transcription? (The brief puts it outside the first version.)
+9. Continue and merge sessions: the open questions Q1–Q7 are in the [specification](../../docs/specs/continue-and-merge-sessions.md#16-open-questions).
 
 ## Resolved
 
@@ -27,4 +28,6 @@ Sources: requirements (kept locally), brief (kept locally) · Updated: 2026-11-1
 - **Double audio:** with speakers, the microphone also records the system audio. Recommend headphones.
 - **Long meetings:** test a recording of 2+ h (stability, audio drift against the video).
 - **macOS permissions:** system updates can reset Screen Recording.
+- **Crash during a recording:** the video and audio writers write the file header only at Stop. After a crash, the files are not readable (confirmed by the [spike](../raw/2026-11-17-crash-recording-spike.md)). Movie fragments fix it. See [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md).
+- **Stuck transcription state:** after a crash during a transcription, `session.json` keeps `transcription: running`. ADR-0030 proposes a fix at launch.
 - **Prompt injection:** a transcript is not trusted input. The engines get narrow tool permissions, but the user's own CLI configuration is outside the app. Not verified yet: a real summary run with each engine after [ADR-0023](../../docs/adr/0023-ai-tool-boundaries-and-job-safety.md), and Cancel with the OpenCode 2.x background service. The managed OpenCode agent needs OpenCode 2.x, because the app cannot check the permissions of OpenCode 1.x.

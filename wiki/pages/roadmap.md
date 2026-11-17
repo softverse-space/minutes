@@ -1,6 +1,6 @@
 # Roadmap
 
-Sources: requirements (kept locally), brief (kept locally) · Updated: 2026-11-14
+Sources: requirements (kept locally), brief (kept locally), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md) · Updated: 2026-11-17
 
 ## Phase 0 – script
 
@@ -39,6 +39,8 @@ The acceptance criteria are in the brief (the original brief, kept locally).
 - [ ] Process a session again with a different template, session history
 - [ ] Check unclear sections with a second transcription
 - [ ] Automatic updates (Sparkle)
+- [ ] Continue a session and merge sessions into one summary – specification [continue-and-merge-sessions](../../docs/specs/continue-and-merge-sessions.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md) (proposed)
+- [ ] Recording that survives a crash or a restart, recovery of interrupted sessions – [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md) (proposed)
 
 ## Phase 3 – later
 
