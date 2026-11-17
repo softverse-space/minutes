@@ -10,6 +10,8 @@ enum SettingsKey {
     static let videoRetentionDays = "videoRetentionDays"
     static let captureMicrophone = "captureMicrophone"
     static let captureSystemAudio = "captureSystemAudio"
+    /// `false` is the audio-only mode (ADR-0032).
+    static let captureScreen = "captureScreen"
     static let microphoneID = "microphoneID"
     static let displayID = "displayID"
     // Transcription
@@ -172,6 +174,7 @@ struct AppSettings {
             SettingsKey.videoRetentionDays: 0,
             SettingsKey.captureMicrophone: true,
             SettingsKey.captureSystemAudio: true,
+            SettingsKey.captureScreen: true,
             SettingsKey.asrMode: AsrMode.local.rawValue,
             SettingsKey.whisperModel: defaultWhisperModel,
             SettingsKey.speechLanguage: "auto",

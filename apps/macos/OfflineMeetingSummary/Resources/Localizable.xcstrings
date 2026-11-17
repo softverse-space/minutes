@@ -511,6 +511,16 @@
         }
       }
     },
+    "Audio only" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iba zvuk"
+          }
+        }
+      }
+    },
     "Audio, transcript and summaries stay. The app checks for old videos at launch." : {
       "localizations" : {
         "sk" : {
@@ -1607,6 +1617,16 @@
         }
       }
     },
+    "Open Minutes and select what to record." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvorte Minutes a vyberte, čo chcete nahrávať."
+          }
+        }
+      }
+    },
     "Open folder" : {
       "localizations" : {
         "sk" : {
@@ -1840,6 +1860,16 @@
         }
       }
     },
+    "Quit Minutes" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukončiť Minutes"
+          }
+        }
+      }
+    },
     "Ready" : {
       "localizations" : {
         "sk" : {
@@ -1870,6 +1900,16 @@
         }
       }
     },
+    "Record the screen" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávať obrazovku"
+          }
+        }
+      }
+    },
     "Record the screen, system audio and your microphone during a meeting." : {
       "localizations" : {
         "sk" : {
@@ -1886,6 +1926,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nahrávanie"
+          }
+        }
+      }
+    },
+    "Recording did not start" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie sa nespustilo"
           }
         }
       }
@@ -2223,6 +2273,26 @@
         }
       }
     },
+    "Stop transcription" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastaviť prepis"
+          }
+        }
+      }
+    },
+    "Stop writing minutes" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastaviť písanie zápisu"
+          }
+        }
+      }
+    },
     "Storage" : {
       "localizations" : {
         "sk" : {
@@ -2402,6 +2472,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aplikácii chýba systémový prompt. Nainštalujte ju znova."
+          }
+        }
+      }
+    },
+    "The app records no video. The minutes cannot use pictures of the screen." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia nenahráva video. Zápis nemôže použiť obrázky z obrazovky."
           }
         }
       }
@@ -2972,6 +3052,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skúste hľadať podľa témy, dátumu alebo obrazovky."
+          }
+        }
+      }
+    },
+    "Turn on system audio or the microphone on the New session tab." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapnite systémový zvuk alebo mikrofón na karte Nová session."
           }
         }
       }

@@ -35,3 +35,5 @@ Each decision is a separate file. [ADR-0001](0001-record-decisions-in-adr.md) gi
 | [0029](0029-session-parts-continue-and-merge.md) | Sessions with parts – continue a recording and merge sessions | Proposed |
 | [0030](0030-crash-resilient-recording.md) | Recording that survives a crash and recovery of interrupted sessions | Proposed |
 | [0031](0031-app-updates-sparkle.md) | App updates with Sparkle and an appcast on GitHub Pages | Accepted |
+| [0032](0032-audio-only-recording.md) | Audio-only recording | Proposed |
+| [0033](0033-menu-bar-icon-context-menu.md) | Menu of the menu bar icon | Proposed |

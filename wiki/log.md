@@ -231,3 +231,11 @@
 - Minutes 1.1.0 (build 2) is on GitHub. The appcast announces it.
 - The website and the README showed 1.0.0 after the release. Fixed: they show 1.1.0.
 - Added: the project skill `.claude/skills/release/SKILL.md` (complete release procedure), `scripts/set-version.sh`, `scripts/sync-site-version.sh`, `scripts/release_notes.py`.
+
+## [2026-11-17] update | Audio-only recording and the menu of the menu bar icon
+- Source: request from the user (record without the screen; quick actions on a right click on the icon).
+- App: a Screen switch on the New session tab (audio only, no `recording.mov`); a menu on a right click or a Control-click with Start/Stop recording, Stop transcription, Stop writing minutes, Settings and Quit.
+- ADR: new 0032 and 0033 (proposed).
+- Site: two points in the recording chapter (EN and SK).
+- Open: manual tests with a real recording (audio only, continue, right click).
+- Changed: pages/ui.md, pages/architecture.md

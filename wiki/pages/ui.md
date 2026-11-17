@@ -2,7 +2,7 @@
 
 Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md), [app updates](../../docs/specs/app-updates.md) · Updated: 2026-11-17
 
-Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md).
+Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md), [ADR-0032](../../docs/adr/0032-audio-only-recording.md), [ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md).
 
 The popover has two tabs: **New session** and **Sessions**. The recent sessions are no longer below the Start button.
 
@@ -28,6 +28,16 @@ The app runs in the background, without a Dock icon. You control it only through
                                         │      [ Start summarizing ]    │
                                         └───────────────────────────────┘
 ```
+
+## Audio only
+
+The **Screen** section of the New session tab has a switch. When you turn it off, the app records only audio ([ADR-0032](../../docs/adr/0032-audio-only-recording.md)).
+
+- The screen previews change to the note "Audio only". The recording view shows "Audio only" in place of the screen name.
+- You must turn on system audio or the microphone. Else Start recording is not available.
+- The app still needs the Screen Recording permission, because ScreenCaptureKit captures system audio only through it.
+- The session has no `recording.mov`. The summary then has no frame tool.
+- The app keeps the switch for the next sessions. Continue recording also uses it.
 
 ## Session states
 
@@ -71,6 +81,17 @@ The icon is a circle with a sound wave (proposal C). `MenuBarIcon.swift` draws i
 | Writing summary | The arc spins. A spark is in the center |
 | Summary is done | Spark and dot at the top right, until the user opens the popover |
 | Update available | Idle icon and a small blue dot next to it, until the user looks at the update ([ADR-0031](../../docs/adr/0031-app-updates-sparkle.md)) |
+
+## Menu of the menu bar icon
+
+A left click opens the popover. A right click or a Control-click opens a menu ([ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md)):
+
+- **Start recording** with the sources from the New session tab, or **Stop recording**.
+- **Stop transcription** cancels the running transcription and the waiting ones.
+- **Stop writing minutes** cancels all running summaries.
+- **Settings…** and **Quit Minutes**. A running recording stops correctly before the app quits.
+
+When a start from the menu fails, the app posts a notification, because the popover is closed.
 
 ## About
 
