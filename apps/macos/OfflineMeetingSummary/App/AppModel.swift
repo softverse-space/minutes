@@ -46,6 +46,10 @@ final class AppModel {
     var captureSystemAudio: Bool {
         didSet { UserDefaults.standard.set(captureSystemAudio, forKey: SettingsKey.captureSystemAudio) }
     }
+    /// `false` records only audio, without a video of the screen (ADR-0032).
+    var captureScreen: Bool {
+        didSet { UserDefaults.standard.set(captureScreen, forKey: SettingsKey.captureScreen) }
+    }
     var hasScreenPermission = SourceCatalog.hasScreenRecordingPermission
     var microphoneDenied = false
 
@@ -61,6 +65,8 @@ final class AppModel {
     var iconPhase: TimeInterval = 0
     var microphoneLevel: Float = 0
     var systemLevel: Float = 0
+    /// The running recording has a video. `false` in the audio-only mode (ADR-0032).
+    var recordingCapturesScreen = true
     /// Number of the part that records now, in a session with parts (ADR-0029).
     var activePartNumber: Int?
     /// Recorded time of the earlier parts. The timer shows the time of the whole session.
@@ -129,6 +135,7 @@ final class AppModel {
         let defaults = UserDefaults.standard
         captureMicrophone = defaults.bool(forKey: SettingsKey.captureMicrophone)
         captureSystemAudio = defaults.bool(forKey: SettingsKey.captureSystemAudio)
+        captureScreen = defaults.bool(forKey: SettingsKey.captureScreen)
         selectedMicrophoneID = defaults.string(forKey: SettingsKey.microphoneID)
         let storedDisplay = defaults.integer(forKey: SettingsKey.displayID)
         selectedDisplayID = storedDisplay > 0 ? CGDirectDisplayID(storedDisplay) : nil
@@ -208,8 +215,14 @@ final class AppModel {
 
     var selectedDisplay: DisplayInfo? { displays.first { $0.id == selectedDisplayID } }
 
+    /// The selected sources are enough for a recording: a screen, or in the audio-only mode at least one audio source.
+    var hasRecordingSources: Bool {
+        captureScreen ? selectedDisplay != nil : (captureSystemAudio || captureMicrophone)
+    }
+
+    /// ScreenCaptureKit needs the Screen Recording permission also for system audio, so the audio-only mode needs it too.
     var canStart: Bool {
-        phase == .idle && hasScreenPermission && selectedDisplay != nil
+        phase == .idle && hasScreenPermission && hasRecordingSources
     }
 
     func template(id: String) -> SummaryTemplate? { templates.first { $0.id == id } }
@@ -243,7 +256,8 @@ final class AppModel {
     // MARK: Recording
 
     func startSession() async {
-        guard phase == .idle, let display = selectedDisplay else { return }
+        guard phase == .idle, hasRecordingSources else { return }
+        let display = captureScreen ? selectedDisplay : nil
         errorMessage = nil
         phase = .starting
         let microphoneAllowed = await prepareMicrophone()
@@ -259,7 +273,7 @@ final class AppModel {
             _ = operations.begin(.recording, for: session.url)
             startedSession = session
             var metadata = SessionMetadata(startedAt: startedAt)
-            metadata.displayName = display.name
+            metadata.displayName = display?.name
             metadata.microphoneName = microphoneName(allowed: microphoneAllowed)
             metadata.appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
             // Known at the start, so a session that a crash interrupts still lists its audio (ADR-0030).
@@ -276,10 +290,14 @@ final class AppModel {
     /// `fromNotification`: the menu bar popover may be closed, so a failure also posts a notification.
     func continueSession(_ session: SessionFolder, fromNotification: Bool = false) async {
         guard phase == .idle, !isRecovering else { return }
-        guard let display = selectedDisplay else {
-            reportContinueFailure(String(localized: "Select a screen on the New session tab."), notify: fromNotification)
+        guard hasRecordingSources else {
+            let message = captureScreen
+                ? String(localized: "Select a screen on the New session tab.")
+                : String(localized: "Turn on system audio or the microphone on the New session tab.")
+            reportContinueFailure(message, notify: fromNotification)
             return
         }
+        let display = captureScreen ? selectedDisplay : nil
         errorMessage = nil
         // The transcription that started after Stop must not block the continue. It runs again after the new part.
         if operations.operation(for: session.url) == .transcription {
@@ -304,7 +322,7 @@ final class AppModel {
             let folder = SessionFolder.partFolderName(number)
             let startedAt = Date()
             var part = SessionPart(folder: folder, startedAt: startedAt, origin: .continued)
-            part.displayName = display.name
+            part.displayName = display?.name
             part.microphoneName = microphoneName(allowed: microphoneAllowed)
             part.audioTracks = plannedTracks(microphoneAllowed: microphoneAllowed)
             try FileManager.default.createDirectory(at: session.url.appending(path: "\(folder)/audio"), withIntermediateDirectories: true)
@@ -325,7 +343,8 @@ final class AppModel {
     }
 
     /// Starts the recorder into the session root or into a part folder. The caller holds `.recording`.
-    private func beginRecording(session: SessionFolder, part: (folder: String, number: Int)?, display: DisplayInfo,
+    /// `display` is `nil` in the audio-only mode (ADR-0032).
+    private func beginRecording(session: SessionFolder, part: (folder: String, number: Int)?, display: DisplayInfo?,
                                 microphoneAllowed: Bool, startedAt: Date) async throws {
         let settings = AppSettings.current
         let base = part.map { session.url.appending(path: $0.folder) } ?? session.url
@@ -336,7 +355,8 @@ final class AppModel {
         startingRecorder = recorder
         pendingStreamError = nil
         try await recorder.start(RecordingConfiguration(
-            displayID: display.id,
+            displayID: display?.id,
+            captureVideo: display != nil,
             captureSystemAudio: captureSystemAudio,
             captureMicrophone: captureMicrophone && microphoneAllowed,
             microphoneID: selectedMicrophoneID,
@@ -352,6 +372,7 @@ final class AppModel {
         activeSession = session
         activePart = part?.folder
         activePartNumber = part?.number
+        recordingCapturesScreen = display != nil
         microphoneMuted = false
         systemMuted = false
         recordingStartedAt = startedAt
@@ -729,17 +750,47 @@ final class AppModel {
     }
 
     /// Cancels the jobs of a session. The UI shows "Cancelling…" until the job stops, so a second click is not necessary.
-    func cancelJobs(for session: SessionFolder) {
-        for kind in JobKey.Kind.allCases {
+    func cancelJobs(for session: SessionFolder, kinds: [JobKey.Kind] = JobKey.Kind.allCases) {
+        for kind in kinds {
             let key = JobKey(kind: kind, session: session.url)
             guard let task = tasks[key], !cancelling.contains(key) else { continue }
             cancelling.insert(key)
             task.cancel()
         }
         // A waiting transcription cannot see the cancel before the running one ends. Free the session now.
-        if transcriptionTokens[session.url] != nil, activeTranscription != session.url {
+        if kinds.contains(.transcription), transcriptionTokens[session.url] != nil, activeTranscription != session.url {
             transcriptionJobs[session.url] = .cancelled
             releaseTranscription(session)
+        }
+    }
+
+    /// A transcription runs or waits in the queue.
+    var isTranscribing: Bool { transcriptionJobs.values.contains(where: \.isRunning) }
+    var isSummarizing: Bool { summaryJobs.values.contains(where: \.isRunning) }
+
+    /// Cancels all transcriptions or all summaries: the running one and the waiting ones.
+    func cancelAll(_ kind: JobKey.Kind) {
+        let jobs = kind == .transcription ? transcriptionJobs : summaryJobs
+        for (url, state) in jobs where state.isRunning {
+            cancelJobs(for: SessionFolder(url: url), kinds: [kind])
+        }
+    }
+
+    /// Starts a recording from the menu of the menu bar icon (ADR-0033). The popover can be closed,
+    /// so the sources may not be loaded yet, and a failure also posts a notification.
+    func startFromMenu() async {
+        guard phase == .idle else { return }
+        if displays.isEmpty || microphones.isEmpty { await refreshSources() }
+        guard canStart else {
+            let message = hasScreenPermission
+                ? String(localized: "Open Minutes and select what to record.")
+                : String(localized: "The app has no permission to record the screen.")
+            Notifier.shared.post(title: String(localized: "Recording did not start"), body: message)
+            return
+        }
+        await startSession()
+        if phase == .idle, let message = errorMessage {
+            Notifier.shared.post(title: String(localized: "Recording did not start"), body: message)
         }
     }
 

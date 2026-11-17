@@ -20,7 +20,10 @@ enum RecorderError: LocalizedError {
 }
 
 struct RecordingConfiguration {
-    var displayID: CGDirectDisplayID
+    /// `nil` in the audio-only mode: the recorder then uses the main display only for the capture filter.
+    var displayID: CGDirectDisplayID?
+    /// `false` records only audio. No video file is written (ADR-0032).
+    var captureVideo: Bool
     var captureSystemAudio: Bool
     var captureMicrophone: Bool
     var microphoneID: String?
@@ -44,6 +47,10 @@ struct RecordingResult {
 /// Video goes to a .mov file (H.264, low frame rate). Each audio source goes to its own .m4a file.
 /// All files have movie fragments every 10 seconds, so they stay readable after a crash (ADR-0030).
 ///
+/// In the audio-only mode (ADR-0032) the stream still needs a display, because ScreenCaptureKit captures
+/// system audio only through a display filter. The recorder asks for very small frames and ignores them.
+/// The timeline then starts at the first audio sample instead of the first video frame.
+///
 /// Thread safety: writers and timestamps belong to `queue`. `start` sets them up before the stream
 /// delivers any sample, and `stop` tears them down in one block on `queue`. Audio levels are published
 /// through a `Mutex`, so the main actor never waits for the sample queue.
@@ -60,7 +67,8 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     private var videoInput: AVAssetWriterInput?
     private var systemWriter: AudioTrackWriter?
     private var microphoneWriter: AudioTrackWriter?
-    private var videoStartPTS: CMTime?
+    /// Time zero of the recording: the first video frame, or in the audio-only mode the first audio sample.
+    private var timelineStartPTS: CMTime?
     private var lastVideoPTS: CMTime?
     private var configuration: RecordingConfiguration?
 
@@ -70,17 +78,26 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     func start(_ configuration: RecordingConfiguration) async throws {
         self.configuration = configuration
         let displays = try await SourceCatalog.shareableDisplays()
-        guard let display = displays.first(where: { $0.displayID == configuration.displayID }) else {
-            throw RecorderError.displayNotFound
+        let display: SCDisplay
+        if let displayID = configuration.displayID {
+            guard let match = displays.first(where: { $0.displayID == displayID }) else { throw RecorderError.displayNotFound }
+            display = match
+        } else {
+            guard let main = displays.first(where: { $0.displayID == CGMainDisplayID() }) ?? displays.first else {
+                throw RecorderError.displayNotFound
+            }
+            display = main
         }
 
         let filter = SCContentFilter(display: display, excludingWindows: [])
         let scale = Double(filter.pointPixelScale)
         var width = Int(Double(display.width) * scale)
         var height = Int(Double(display.height) * scale)
-        if width > configuration.maxWidth {
-            height = Int(Double(height) * Double(configuration.maxWidth) / Double(width))
-            width = configuration.maxWidth
+        // Audio only: the frames are not used, so keep them as small as possible.
+        let maxWidth = configuration.captureVideo ? configuration.maxWidth : 64
+        if width > maxWidth {
+            height = max(2, Int(Double(height) * Double(maxWidth) / Double(width)))
+            width = maxWidth
         }
         width -= width % 2
         height -= height % 2
@@ -88,9 +105,11 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         let streamConfiguration = SCStreamConfiguration()
         streamConfiguration.width = width
         streamConfiguration.height = height
-        streamConfiguration.minimumFrameInterval = CMTime(value: 1, timescale: CMTimeScale(configuration.fps))
-        streamConfiguration.queueDepth = 6
-        streamConfiguration.showsCursor = true
+        streamConfiguration.minimumFrameInterval = configuration.captureVideo
+            ? CMTime(value: 1, timescale: CMTimeScale(configuration.fps))
+            : CMTime(value: 1, timescale: 1)
+        streamConfiguration.queueDepth = configuration.captureVideo ? 6 : 3
+        streamConfiguration.showsCursor = configuration.captureVideo
         streamConfiguration.pixelFormat = kCVPixelFormatType_32BGRA
         streamConfiguration.capturesAudio = configuration.captureSystemAudio
         streamConfiguration.excludesCurrentProcessAudio = true
@@ -101,7 +120,10 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
             streamConfiguration.microphoneCaptureDeviceID = microphoneID
         }
 
-        try setUpWriter(url: configuration.videoURL, width: width, height: height, fps: configuration.fps)
+        resetState()
+        if configuration.captureVideo {
+            try setUpWriter(url: configuration.videoURL, width: width, height: height, fps: configuration.fps)
+        }
         if configuration.captureSystemAudio { systemWriter = AudioTrackWriter(url: configuration.systemAudioURL) }
         if configuration.captureMicrophone { microphoneWriter = AudioTrackWriter(url: configuration.microphoneURL) }
 
@@ -125,11 +147,11 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
             systemWriter?.markAsFinished()
             microphoneWriter?.markAsFinished()
             // A writer that failed or never started accepts no more calls; they raise an exception.
-            if let writer, let videoInput, let start = videoStartPTS, writer.status == .writing {
+            if let writer, let videoInput, let start = timelineStartPTS, writer.status == .writing {
                 videoInput.markAsFinished()
                 writer.endSession(atSourceTime: lastVideoPTS ?? start)
             }
-            return (writer, videoStartPTS, systemWriter, microphoneWriter)
+            return (writer, timelineStartPTS, systemWriter, microphoneWriter)
         }
         meter.withLock { $0 = (0, 0) }
 
@@ -137,7 +159,9 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         await system?.finish()
         await microphone?.finish()
         var videoError: Error?
-        if let writer, writer.status == .failed {
+        if configuration?.captureVideo == false {
+            // Audio only: no video was planned, so a missing video is not an error.
+        } else if let writer, writer.status == .failed {
             videoError = RecorderError.writerFailed(writer.error?.localizedDescription ?? String(localized: "unknown error"))
         } else if writer?.status != .completed {
             videoError = RecorderError.noVideoFrames
@@ -148,7 +172,7 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
             return (url, CMTimeGetSeconds(CMTimeSubtract(first, start)))
         }
         return RecordingResult(
-            videoURL: videoError == nil ? configuration?.videoURL : nil,
+            videoURL: videoError == nil && configuration?.captureVideo == true ? configuration?.videoURL : nil,
             videoError: videoError,
             systemAudio: track(system, configuration?.systemAudioURL),
             microphone: track(microphone, configuration?.microphoneURL)
@@ -162,7 +186,7 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     func trackOffsets() -> (system: Double?, microphone: Double?) {
         queue.sync {
             func offset(_ track: AudioTrackWriter?) -> Double? {
-                guard let first = track?.firstPTS, let start = videoStartPTS else { return nil }
+                guard let first = track?.firstPTS, let start = timelineStartPTS else { return nil }
                 return CMTimeGetSeconds(CMTimeSubtract(first, start))
             }
             return (offset(systemWriter), offset(microphoneWriter))
@@ -233,7 +257,12 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         writer.add(input)
         self.writer = writer
         self.videoInput = input
-        videoStartPTS = nil
+    }
+
+    private func resetState() {
+        writer = nil
+        videoInput = nil
+        timelineStartPTS = nil
         lastVideoPTS = nil
         isStopping = false
         didReportError = false
@@ -247,14 +276,14 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
               let status = SCFrameStatus(rawValue: rawStatus) else { return }
 
         guard status == .complete, sampleBuffer.imageBuffer != nil else {
-            if videoStartPTS != nil, pts.isValid { lastVideoPTS = pts }
+            if timelineStartPTS != nil, pts.isValid { lastVideoPTS = pts }
             return
         }
 
         if writer.status == .unknown {
             guard writer.startWriting() else { return reportWriterFailure(writer) }
             writer.startSession(atSourceTime: pts)
-            videoStartPTS = pts
+            timelineStartPTS = pts
         }
         // The writer fails in the background, for example when the disk is full. The status shows it.
         guard writer.status == .writing else { return reportWriterFailure(writer) }
@@ -269,8 +298,15 @@ final class ScreenRecorder: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     }
 
     private func append(_ sampleBuffer: CMSampleBuffer, to track: AudioTrackWriter?) {
+        guard let track else { return }
+        if configuration?.captureVideo == false, timelineStartPTS == nil {
+            // Audio only: the first audio sample of any track starts the timeline.
+            let pts = sampleBuffer.presentationTimeStamp
+            guard pts.isValid else { return }
+            timelineStartPTS = pts
+        }
         // Audio before the first video frame has no place on the video timeline.
-        guard let track, videoStartPTS != nil else { return }
+        guard timelineStartPTS != nil else { return }
         do {
             try track.append(sampleBuffer)
             meter.withLock { $0 = (systemWriter?.level ?? 0, microphoneWriter?.level ?? 0) }

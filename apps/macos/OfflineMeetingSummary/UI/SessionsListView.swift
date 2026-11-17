@@ -133,7 +133,7 @@ struct SessionRow: View {
             Button("Open folder") { model.openFolder(session.url) }
             Button("Show in Finder") { model.reveal(session.url) }
             Button("Continue recording") { Task { await model.continueSession(session) } }
-                .disabled(!model.canContinue(item) || model.selectedDisplay == nil)
+                .disabled(!model.canContinue(item) || !model.hasRecordingSources)
             Button("Merge with previous session…") { model.confirm(.merge, for: session) }
                 .disabled(model.mergeProblem(item) != nil)
             Divider()

@@ -79,7 +79,7 @@ struct SessionView: View {
                     .buttonStyle(.bordered)
                     .controlSize(.small)
                     .tint(.red)
-                    .disabled(model.selectedDisplay == nil)
+                    .disabled(!model.hasRecordingSources)
                     .help("Record a new part into this session")
                 }
 

@@ -14,13 +14,22 @@ struct IdleView: View {
                     HStack {
                         SectionTitle(text: "Screen")
                         Spacer()
-                        Button("Reload screens", systemImage: "arrow.clockwise") { Task { await model.refreshSources() } }
-                            .labelStyle(.iconOnly)
-                            .buttonStyle(.borderless)
-                            .foregroundStyle(.secondary)
-                            .help("Reload screens")
+                        if model.captureScreen {
+                            Button("Reload screens", systemImage: "arrow.clockwise") { Task { await model.refreshSources() } }
+                                .labelStyle(.iconOnly)
+                                .buttonStyle(.borderless)
+                                .foregroundStyle(.secondary)
+                                .help("Reload screens")
+                        }
+                        Toggle("Record the screen", isOn: $model.captureScreen.animation(.spring(duration: 0.25, bounce: 0)))
+                            .toggleStyle(.switch)
+                            .labelsHidden()
+                            .controlSize(.small)
+                            .help("Record the screen")
                     }
-                    if model.displays.isEmpty {
+                    if !model.captureScreen {
+                        AudioOnlyNote()
+                    } else if model.displays.isEmpty {
                         HStack(spacing: 8) {
                             ProgressView().controlSize(.small)
                             Text("Loading screens…").font(.callout).foregroundStyle(.secondary)
@@ -81,6 +90,28 @@ struct IdleView: View {
     }
 }
 
+/// Shows in place of the screens when the user records only audio (ADR-0032).
+struct AudioOnlyNote: View {
+    var body: some View {
+        Card {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: "waveform")
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 20)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Audio only")
+                    Text("The app records no video. The minutes cannot use pictures of the screen.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
 /// Offer to continue the last session instead of starting a new one (ADR-0029, flow F2).
 struct ContinueBanner: View {
     @Environment(AppModel.self) private var model
@@ -97,7 +128,7 @@ struct ContinueBanner: View {
                 Text(message).font(.callout).fixedSize(horizontal: false, vertical: true)
                 Button("Continue") { Task { await model.continueSession(item.session) } }
                     .buttonStyle(.bordered)
-                    .disabled(model.selectedDisplay == nil)
+                    .disabled(!model.hasRecordingSources)
             }
             Spacer(minLength: 0)
             Button("Close", systemImage: "xmark") { model.dismissedContinueOffers.insert(item.id) }

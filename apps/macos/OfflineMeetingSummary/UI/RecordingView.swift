@@ -14,7 +14,9 @@ struct RecordingView: View {
             }
 
             HStack(spacing: 12) {
-                if let display = model.selectedDisplay {
+                if !model.recordingCapturesScreen {
+                    Label("Audio only", systemImage: "waveform").foregroundStyle(.secondary)
+                } else if let display = model.selectedDisplay {
                     Label(display.name, systemImage: "display").foregroundStyle(.secondary)
                 }
                 if let number = model.activePartNumber, number > 1 {

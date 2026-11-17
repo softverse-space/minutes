@@ -1,5 +1,11 @@
 # Changes – Minutes
 
+## Unreleased
+
+### New
+- **Audio only:** turn off the Screen switch on the New session tab. The app records system audio and the microphone without a video ([ADR-0032](../../docs/adr/0032-audio-only-recording.md)).
+- **Menu of the menu bar icon:** a right click or a Control-click opens a menu with Start or Stop recording, Stop transcription, Stop writing minutes, Settings and Quit ([ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md)).
+
 ## 1.1.0 – 2026-11-17
 
 ### New

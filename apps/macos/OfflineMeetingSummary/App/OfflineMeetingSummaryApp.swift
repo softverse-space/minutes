@@ -5,6 +5,8 @@ import SwiftUI
 /// log out of the Mac. Without it the files would lose their end (ADR-0030).
 final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor static weak var model: AppModel?
+    /// The menu of a right click on the menu bar icon (ADR-0033). The app keeps it for its whole run.
+    @MainActor static var statusMenu: StatusItemMenu?
 
     @MainActor
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -47,6 +49,9 @@ struct OfflineMeetingSummaryApp: App {
         AppLanguage.apply()
         let model = AppModel()
         AppDelegate.model = model
+        let statusMenu = StatusItemMenu(model: model)
+        statusMenu.install()
+        AppDelegate.statusMenu = statusMenu
         _model = State(initialValue: model)
         _updates = State(initialValue: UpdateController(hasRunningWork: { [weak model] in model?.hasRunningWork ?? false }))
     }
@@ -73,6 +78,7 @@ struct OfflineMeetingSummaryApp: App {
 
 struct MenuBarLabel: View {
     @Environment(AppModel.self) private var model
+    @Environment(\.openSettings) private var openSettings
     @Environment(UpdateController.self) private var updates
 
     var body: some View {
@@ -94,6 +100,10 @@ struct MenuBarLabel: View {
         }
         .accessibilityLabel(Text(verbatim: "Minutes"))
         .accessibilityValue(statusText)
+        .onAppear {
+            let openSettings = openSettings
+            AppDelegate.statusMenu?.openSettings = { openSettings() }
+        }
     }
 
     /// Spoken by VoiceOver: what the app is doing now.
