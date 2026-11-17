@@ -31,15 +31,50 @@ public struct TranscriptSegment: Codable, Hashable, Sendable {
     }
 }
 
+/// Where one part starts and ends on the combined timeline (ADR-0029).
+public struct TranscriptPart: Codable, Hashable, Sendable {
+    public var number: Int
+    public var folder: String
+    public var start: Double
+    public var end: Double
+    /// Break before this part, in seconds. `nil` for the first part.
+    public var breakBefore: Double?
+
+    public init(number: Int, folder: String, start: Double, end: Double, breakBefore: Double?) {
+        self.number = number
+        self.folder = folder
+        self.start = start
+        self.end = end
+        self.breakBefore = breakBefore
+    }
+}
+
 public struct Transcript: Codable, Sendable {
     public var engine: String
     public var language: String?
     public var segments: [TranscriptSegment]
+    /// Part boundaries of a session with parts. `nil` for a session with one recording.
+    public var parts: [TranscriptPart]?
 
-    public init(engine: String, language: String? = nil, segments: [TranscriptSegment]) {
+    public init(engine: String, language: String? = nil, segments: [TranscriptSegment], parts: [TranscriptPart]? = nil) {
         self.engine = engine
         self.language = language
         self.segments = segments
+        self.parts = parts
+    }
+
+    /// Joins part transcripts on the combined timeline. Each part transcript has times relative to its part.
+    public static func combined(parts: [(part: TranscriptPart, transcript: Transcript)]) -> Transcript {
+        let sorted = parts.sorted { $0.part.start < $1.part.start }
+        var engines: [String] = []
+        for engine in sorted.map(\.transcript.engine) where !engines.contains(engine) { engines.append(engine) }
+        var result = merged(
+            engine: engines.joined(separator: ", "),
+            language: sorted.lazy.compactMap(\.transcript.language).first,
+            tracks: sorted.map { (speaker: nil, offset: $0.part.start, segments: $0.transcript.segments) }
+        )
+        result.parts = sorted.map(\.part)
+        return result
     }
 
     /// Merges per-track segments into one timeline.
@@ -85,8 +120,26 @@ public struct Transcript: Codable, Sendable {
     }
 
     /// Readable transcript for the model: `[hh:mm:ss] ja: text`.
+    /// A session with parts gets a marker line at the start of each part after the first.
     public func markdown() -> String {
-        segments.map { "[\(Timecode.format($0.start))] \(label($0))\($0.text)" }.joined(separator: "\n") + "\n"
+        var markers = (parts ?? []).filter { $0.number > 1 || $0.breakBefore != nil }.sorted { $0.start < $1.start }[...]
+        var lines: [String] = []
+        for segment in segments {
+            while let marker = markers.first, marker.start <= segment.start {
+                lines.append(Self.markerLine(marker))
+                markers = markers.dropFirst()
+            }
+            lines.append("[\(Timecode.format(segment.start))] \(label(segment))\(segment.text)")
+        }
+        lines += markers.map(Self.markerLine)
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    /// `[00:33:10] --- Part 2. The recording continued after a break of 2 min 36 s. ---`
+    static func markerLine(_ part: TranscriptPart) -> String {
+        let gap = Int((part.breakBefore ?? 0).rounded())
+        let pause = gap >= 60 ? "\(gap / 60) min \(gap % 60) s" : "\(gap) s"
+        return "[\(Timecode.format(part.start))] --- Part \(part.number). The recording continued after a break of \(pause). ---"
     }
 
     public func json() throws -> Data {

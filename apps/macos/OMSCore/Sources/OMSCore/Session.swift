@@ -30,6 +30,83 @@ public struct AudioTrackInfo: Codable, Sendable, Hashable {
     }
 }
 
+/// How a part came into its session (ADR-0029).
+public enum PartOrigin: String, Codable, Sendable {
+    case recorded, continued, merged
+}
+
+/// Why a recording ended (ADR-0030). `nil` in sessions recorded before this field existed.
+public enum PartEndReason: String, Codable, Sendable {
+    case stop, crash, quit, sleep, streamError, diskFull
+}
+
+/// One recording from Start (or Continue) to Stop inside a session with parts (ADR-0029).
+/// File paths are relative to the part folder; source event times are relative to the part start.
+public struct SessionPart: Codable, Sendable, Hashable {
+    /// `parts/01`, `parts/02` …, relative to the session folder.
+    public var folder: String
+    public var startedAt: Date
+    public var endedAt: Date?
+    public var timeZone: String
+    public var origin: PartOrigin
+    /// Name of the session folder that a merge took this part from.
+    public var mergedFrom: String?
+    public var video: String?
+    public var audioTracks: [AudioTrackInfo]
+    public var sourceEvents: [SourceEvent]
+    public var displayName: String?
+    public var microphoneName: String?
+    public var transcription: StepState
+    public var transcriptionEngine: String?
+    public var lastAliveAt: Date?
+    public var interrupted: Bool
+    public var endReason: PartEndReason?
+
+    public init(folder: String, startedAt: Date, timeZone: String = TimeZone.current.identifier, origin: PartOrigin) {
+        self.folder = folder
+        self.startedAt = startedAt
+        self.timeZone = timeZone
+        self.origin = origin
+        audioTracks = []
+        sourceEvents = []
+        transcription = .pending
+        interrupted = false
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case folder, startedAt, endedAt, timeZone, origin, mergedFrom, video, audioTracks, sourceEvents,
+             displayName, microphoneName, transcription, transcriptionEngine, lastAliveAt, interrupted, endReason
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        folder = try c.decode(String.self, forKey: .folder)
+        startedAt = try c.decode(Date.self, forKey: .startedAt)
+        endedAt = try c.decodeIfPresent(Date.self, forKey: .endedAt)
+        timeZone = try c.decodeIfPresent(String.self, forKey: .timeZone) ?? TimeZone.current.identifier
+        origin = try c.decodeIfPresent(PartOrigin.self, forKey: .origin) ?? .recorded
+        mergedFrom = try c.decodeIfPresent(String.self, forKey: .mergedFrom)
+        video = try c.decodeIfPresent(String.self, forKey: .video)
+        audioTracks = try c.decodeIfPresent([AudioTrackInfo].self, forKey: .audioTracks) ?? []
+        sourceEvents = try c.decodeIfPresent([SourceEvent].self, forKey: .sourceEvents) ?? []
+        displayName = try c.decodeIfPresent(String.self, forKey: .displayName)
+        microphoneName = try c.decodeIfPresent(String.self, forKey: .microphoneName)
+        transcription = try c.decodeIfPresent(StepState.self, forKey: .transcription) ?? .pending
+        transcriptionEngine = try c.decodeIfPresent(String.self, forKey: .transcriptionEngine)
+        lastAliveAt = try c.decodeIfPresent(Date.self, forKey: .lastAliveAt)
+        interrupted = try c.decodeIfPresent(Bool.self, forKey: .interrupted) ?? false
+        endReason = try c.decodeIfPresent(PartEndReason.self, forKey: .endReason)
+    }
+
+    /// Recorded time of the part, without breaks. `nil` while it records.
+    public var duration: TimeInterval? {
+        endedAt.map { max(0, $0.timeIntervalSince(startedAt)) }
+    }
+
+    /// Part number from the folder name: `parts/02` → 2.
+    public var number: Int? { Int(folder.split(separator: "/").last ?? "") }
+}
+
 public struct SessionMetadata: Codable, Sendable {
     public var id: UUID
     public var startedAt: Date
@@ -47,6 +124,13 @@ public struct SessionMetadata: Codable, Sendable {
     public var appVersion: String?
     /// When video and audio were removed to free space.
     public var mediaRemovedAt: Date?
+    /// Parts of the session (ADR-0029). Empty: one recording in the layout of ADR-0006.
+    public var parts: [SessionPart]
+    /// Heartbeat of a running recording without parts (ADR-0030).
+    public var lastAliveAt: Date?
+    /// The recording (or the last part) ended without Stop.
+    public var interrupted: Bool
+    public var endReason: PartEndReason?
 
     public init(id: UUID = UUID(), startedAt: Date, timeZone: TimeZone = .current) {
         self.id = id
@@ -56,10 +140,65 @@ public struct SessionMetadata: Codable, Sendable {
         self.sourceEvents = []
         self.transcription = .pending
         self.outputs = []
+        self.parts = []
+        self.interrupted = false
     }
 
+    enum CodingKeys: String, CodingKey {
+        case id, startedAt, endedAt, timeZone, displayName, microphoneName, video, audioTracks, sourceEvents,
+             transcription, transcriptionEngine, transcriptionError, outputs, appVersion, mediaRemovedAt,
+             parts, lastAliveAt, interrupted, endReason
+    }
+
+    /// Fields added after version 1.0.0 are optional, so old `session.json` files still load.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        startedAt = try c.decode(Date.self, forKey: .startedAt)
+        endedAt = try c.decodeIfPresent(Date.self, forKey: .endedAt)
+        timeZone = try c.decode(String.self, forKey: .timeZone)
+        displayName = try c.decodeIfPresent(String.self, forKey: .displayName)
+        microphoneName = try c.decodeIfPresent(String.self, forKey: .microphoneName)
+        video = try c.decodeIfPresent(String.self, forKey: .video)
+        audioTracks = try c.decode([AudioTrackInfo].self, forKey: .audioTracks)
+        sourceEvents = try c.decode([SourceEvent].self, forKey: .sourceEvents)
+        transcription = try c.decode(StepState.self, forKey: .transcription)
+        transcriptionEngine = try c.decodeIfPresent(String.self, forKey: .transcriptionEngine)
+        transcriptionError = try c.decodeIfPresent(String.self, forKey: .transcriptionError)
+        outputs = try c.decode([String].self, forKey: .outputs)
+        appVersion = try c.decodeIfPresent(String.self, forKey: .appVersion)
+        mediaRemovedAt = try c.decodeIfPresent(Date.self, forKey: .mediaRemovedAt)
+        parts = try c.decodeIfPresent([SessionPart].self, forKey: .parts) ?? []
+        lastAliveAt = try c.decodeIfPresent(Date.self, forKey: .lastAliveAt)
+        interrupted = try c.decodeIfPresent(Bool.self, forKey: .interrupted) ?? false
+        endReason = try c.decodeIfPresent(PartEndReason.self, forKey: .endReason)
+    }
+
+    public var hasParts: Bool { !parts.isEmpty }
+
+    /// Recorded time without breaks.
     public var duration: TimeInterval? {
+        guard hasParts else { return endedAt.map { $0.timeIntervalSince(startedAt) } }
+        let durations = parts.compactMap(\.duration)
+        return durations.isEmpty ? nil : durations.reduce(0, +)
+    }
+
+    /// Time from the first start to the last end, with breaks.
+    public var span: TimeInterval? {
         endedAt.map { $0.timeIntervalSince(startedAt) }
+    }
+
+    /// `true` when at least one recording of the session has an audio track.
+    public var hasAudioTracks: Bool {
+        hasParts ? parts.contains { !$0.audioTracks.isEmpty } : !audioTracks.isEmpty
+    }
+
+    /// The recording, or its last part, ended without Stop.
+    public var isInterrupted: Bool { hasParts ? (parts.last?.interrupted ?? false) : interrupted }
+
+    /// Offset of each part on the combined timeline: its start minus the start of the first part (ADR-0029).
+    public func partOffset(_ part: SessionPart) -> TimeInterval {
+        max(0, part.startedAt.timeIntervalSince(parts.first?.startedAt ?? startedAt))
     }
 }
 
@@ -192,10 +331,11 @@ public enum SessionLibrary {
         var removed: [URL] = []
         let limit = now.addingTimeInterval(-Double(days) * 86_400)
         for session in list(in: root, limit: .max) {
-            guard let metadata = try? session.loadMetadata(), metadata.startedAt < limit,
-                  FileManager.default.fileExists(atPath: session.videoURL.path) else { continue }
-            if (try? FileManager.default.removeItem(at: session.videoURL)) != nil {
-                removed.append(session.videoURL)
+            guard let metadata = try? session.loadMetadata(), metadata.startedAt < limit else { continue }
+            // The root video of a session with one recording, and the video of each part (ADR-0029).
+            let videos = [session.videoURL] + session.partFoldersOnDisk.map { $0.appending(path: "recording.mov") }
+            for video in videos where FileManager.default.fileExists(atPath: video.path) {
+                if (try? FileManager.default.removeItem(at: video)) != nil { removed.append(video) }
             }
         }
         return removed
@@ -212,6 +352,12 @@ public extension SessionFolder {
         var urls = [videoURL, audioDirectory, framesDirectory]
         let files = (try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)) ?? []
         urls += files.filter { Self.mediaExtensions.contains($0.pathExtension.lowercased()) }
+        // Parts: video, audio and old frames. The part transcript stays (ADR-0029).
+        for part in partFoldersOnDisk {
+            urls += [part.appending(path: "audio"), part.appending(path: "frames")]
+            let partFiles = (try? fileManager.contentsOfDirectory(at: part, includingPropertiesForKeys: nil)) ?? []
+            urls += partFiles.filter { Self.mediaExtensions.contains($0.pathExtension.lowercased()) }
+        }
         var seen = Set<String>()
         return urls.filter { fileManager.fileExists(atPath: $0.path) && seen.insert($0.standardizedFileURL.path).inserted }
     }
@@ -232,15 +378,22 @@ public extension SessionFolder {
             let bytes = Int64(values.totalFileAllocatedSize ?? values.fileAllocatedSize ?? 0)
             total += bytes
             let relative = item.standardizedFileURL.pathComponents.dropFirst(root.count)
-            let isMedia = relative.count == 1
-                ? Self.mediaExtensions.contains(item.pathExtension.lowercased())
-                : ["audio", "frames"].contains(relative.first)
+            let isMedia = Self.isMedia(relative: Array(relative), pathExtension: item.pathExtension.lowercased())
             if isMedia { media += bytes }
         }
         return (total, media)
     }
 
     private static let mediaExtensions: Set<String> = ["wav", "m4a", "mov", "mp4", "mkv"]
+
+    /// `relative` is the path inside the session folder. Media: video and audio files in the root or in a part,
+    /// and everything in `audio/` and `frames/` of the root or of a part.
+    private static func isMedia(relative: [String], pathExtension: String) -> Bool {
+        var path = relative[...]
+        if path.count >= 3, path.first == "parts" { path = path.dropFirst(2) }
+        if path.count == 1 { return mediaExtensions.contains(pathExtension) }
+        return ["audio", "frames"].contains(path.first)
+    }
 
     /// Removes video, audio and frames. Returns freed bytes.
     @discardableResult
@@ -253,6 +406,9 @@ public extension SessionFolder {
         }
         try FileManager.default.createDirectory(at: audioDirectory, withIntermediateDirectories: true)
         try FileManager.default.createDirectory(at: framesDirectory, withIntermediateDirectories: true)
+        for part in partFoldersOnDisk {
+            try FileManager.default.createDirectory(at: part.appending(path: "audio"), withIntermediateDirectories: true)
+        }
         if FileManager.default.fileExists(atPath: metadataURL.path) {
             try updateMetadata { $0.mediaRemovedAt = Date() }
         }
