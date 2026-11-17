@@ -28,6 +28,8 @@ struct SessionView: View {
                             pending = nil
                             model.deleteSession(session)
                         }
+                    case .merge:
+                        MergePanel(item: item) { pending = nil }
                     case nil:
                         EmptyView()
                     }
@@ -36,7 +38,7 @@ struct SessionView: View {
                     SummaryCard(item: item)
 
                     if item.hasOutputs {
-                        OutputsCard(outputs: item.outputs)
+                        OutputsCard(outputs: item.outputs, stale: item.staleOutputs)
                     }
                 }
             }
@@ -70,6 +72,17 @@ struct SessionView: View {
 
                 Spacer()
 
+                if model.canContinue(item) {
+                    Button { Task { await model.continueSession(session) } } label: {
+                        Label("Continue recording", systemImage: "record.circle")
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .tint(.red)
+                    .disabled(model.selectedDisplay == nil)
+                    .help("Record a new part into this session")
+                }
+
                 Button { model.openFolder(session.url) } label: {
                     Label("Open folder", systemImage: "folder")
                 }
@@ -80,6 +93,8 @@ struct SessionView: View {
                 Menu("More actions", systemImage: "ellipsis.circle") {
                     Button("Open folder", systemImage: "folder") { model.openFolder(session.url) }
                     Button("Show in Finder", systemImage: "magnifyingglass") { model.reveal(session.url) }
+                    Button("Merge with previous session…", systemImage: "arrow.triangle.merge") { pending = .merge }
+                        .disabled(model.mergeProblem(item) != nil)
                     Divider()
                     Button("Free up space (\(FileStorage.format(item.mediaSize)))",
                            systemImage: "externaldrive.badge.minus") { pending = .cleanUp }
@@ -101,8 +116,15 @@ struct SessionView: View {
                     if let duration = item.metadata?.duration {
                         Label(SessionFormat.duration(duration), systemImage: "clock")
                     }
-                    if let display = item.metadata?.displayName, !display.isEmpty {
+                    if let count = item.metadata?.parts.count, count > 1 {
+                        Label("\(count) parts", systemImage: "square.stack")
+                    }
+                    if let display = item.metadata?.displayName ?? item.metadata?.parts.first?.displayName, !display.isEmpty {
                         Label(display, systemImage: "display").lineLimit(1)
+                    }
+                    if item.metadata?.isInterrupted == true {
+                        Label("The recording was interrupted", systemImage: "exclamationmark.circle.fill")
+                            .foregroundStyle(.orange)
                     }
                 }
                 .font(.caption)
@@ -192,7 +214,7 @@ private struct TranscriptCard: View {
                         Spacer()
                         Button("Transcribe") { model.transcribe(session) }
                             .buttonStyle(.borderedProminent)
-                            .disabled(item.metadata?.audioTracks.isEmpty ?? true || mediaRemoved || model.isBusy(session))
+                            .disabled(!(item.metadata?.hasAudioTracks ?? false) || mediaRemoved || model.isBusy(session))
                     }
                 }
             }
@@ -348,6 +370,7 @@ private struct SummaryCard: View {
 private struct OutputsCard: View {
     @Environment(AppModel.self) private var model
     let outputs: [URL]
+    let stale: Set<URL>
 
     var body: some View {
         Card {
@@ -356,8 +379,14 @@ private struct OutputsCard: View {
             }
             VStack(spacing: 2) {
                 ForEach(outputs, id: \.self) { url in
-                    OutputRow(url: url)
+                    OutputRow(url: url, stale: stale.contains(url))
                 }
+            }
+            if !stale.isEmpty {
+                Label("Summaries marked with a clock were made before all parts were in the session.",
+                      systemImage: "clock.arrow.circlepath")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -368,10 +397,13 @@ private struct OutputRow: View {
     let url: URL
     @State private var hovering = false
 
+    var stale = false
+
     var body: some View {
         Button { model.open(url) } label: {
             HStack(spacing: 8) {
-                Image(systemName: "doc.richtext").foregroundStyle(Color.accentColor)
+                Image(systemName: stale ? "clock.arrow.circlepath" : "doc.richtext")
+                    .foregroundStyle(stale ? Color.secondary : Color.accentColor)
                 Text(url.lastPathComponent)
                     .font(.callout)
                     .lineLimit(1)
@@ -433,5 +465,74 @@ private struct CompactLabelStyle: LabelStyle {
             configuration.icon
             configuration.title
         }
+    }
+}
+
+// MARK: - Merge
+
+/// Confirmation of "Merge with previous session" with both sessions and the break (ADR-0029, flow F3).
+private struct MergePanel: View {
+    @Environment(AppModel.self) private var model
+    let item: SessionItem
+    let onClose: () -> Void
+
+    var body: some View {
+        let previous = model.previousSession(of: item.session)
+        let problem = model.mergeProblem(item)
+        let gap = previous?.metadata.flatMap { target in item.metadata.flatMap { SessionMerge.gap(target: target, source: $0) } }
+
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Merge with previous session", systemImage: "arrow.triangle.merge")
+                .font(.callout.weight(.semibold))
+            if let previous {
+                row(previous)
+                row(item)
+            }
+            if let gap {
+                Text("Break between the sessions: \(SessionFormat.duration(gap))")
+                    .font(.caption).foregroundStyle(.secondary)
+                if gap > 3600 {
+                    Label("The break is longer than 60 minutes. Check that it is the same meeting.", systemImage: "exclamationmark.triangle")
+                        .font(.caption).foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            if let problem {
+                Label(problem, systemImage: "xmark.octagon").font(.caption).foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                Text("You cannot split the sessions again in the app. Older summaries stay in the session.")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            HStack {
+                Spacer()
+                Button("Cancel", action: onClose)
+                    .keyboardShortcut(.cancelAction)
+                Button("Merge") {
+                    onClose()
+                    Task { await model.mergeWithPrevious(item.session) }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(problem != nil)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
+    private func row(_ item: SessionItem) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: "waveform").foregroundStyle(.secondary).accessibilityHidden(true)
+            Text(item.date?.formatted(date: .abbreviated, time: .shortened) ?? item.session.name)
+            if let duration = item.metadata?.duration {
+                Text(verbatim: "· \(SessionFormat.duration(duration))").foregroundStyle(.secondary)
+            }
+            if let topic = item.topic {
+                Text(verbatim: "· \(topic)").foregroundStyle(.secondary).lineLimit(1)
+            }
+        }
+        .font(.caption)
     }
 }

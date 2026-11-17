@@ -63,6 +63,10 @@ struct IdleView: View {
                 }
             }
 
+            if let offer = model.continueOffer {
+                ContinueBanner(item: offer.item, interrupted: offer.interrupted)
+            }
+
             Button {
                 Task { await model.startSession() }
             } label: {
@@ -74,6 +78,43 @@ struct IdleView: View {
             .controlSize(.large)
             .disabled(!model.canStart)
         }
+    }
+}
+
+/// Offer to continue the last session instead of starting a new one (ADR-0029, flow F2).
+struct ContinueBanner: View {
+    @Environment(AppModel.self) private var model
+    let item: SessionItem
+    let interrupted: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: interrupted ? "exclamationmark.circle.fill" : "arrow.clockwise.circle")
+                .foregroundStyle(interrupted ? .orange : Color.accentColor)
+                .font(.title3)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(message).font(.callout).fixedSize(horizontal: false, vertical: true)
+                Button("Continue") { Task { await model.continueSession(item.session) } }
+                    .buttonStyle(.bordered)
+                    .disabled(model.selectedDisplay == nil)
+            }
+            Spacer(minLength: 0)
+            Button("Close", systemImage: "xmark") { model.dismissedContinueOffers.insert(item.id) }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+                .foregroundStyle(.secondary)
+        }
+        .padding(12)
+        .background((interrupted ? Color.orange : Color.accentColor).opacity(0.1),
+                    in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
+    private var message: String {
+        if interrupted { return String(localized: "The last recording was interrupted. Continue it?") }
+        let end = item.metadata?.endedAt ?? Date()
+        let minutes = max(1, Int(Date().timeIntervalSince(end) / 60))
+        return String(localized: "Continue the last session? It stopped \(minutes) min ago.")
     }
 }
 

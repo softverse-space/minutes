@@ -61,6 +61,14 @@ final class AppModel {
     var iconPhase: TimeInterval = 0
     var microphoneLevel: Float = 0
     var systemLevel: Float = 0
+    /// Number of the part that records now, in a session with parts (ADR-0029).
+    var activePartNumber: Int?
+    /// Recorded time of the earlier parts. The timer shows the time of the whole session.
+    var earlierPartsDuration: TimeInterval = 0
+    /// `true` until the launch check of interrupted sessions and merges ends. Continue and merge wait for it.
+    var isRecovering = true
+    /// Sessions whose offer to continue the user closed on the New session tab.
+    var dismissedContinueOffers: Set<URL> = []
     var microphoneMuted = false
     var systemMuted = false
     var errorMessage: String?
@@ -96,6 +104,10 @@ final class AppModel {
 
     @ObservationIgnored private var recorder: ScreenRecorder?
     @ObservationIgnored private var activeSession: SessionFolder?
+    /// Folder of the part that records now (`parts/02`), or `nil` for a session without parts.
+    @ObservationIgnored private var activePart: String?
+    @ObservationIgnored private var sessionStoppedForSleep: SessionFolder?
+    @ObservationIgnored private var workspaceObservers: [NSObjectProtocol] = []
     @ObservationIgnored private var ticker: Timer?
     @ObservationIgnored private var tickCount = 0
     @ObservationIgnored private var iconTicker: Timer?
@@ -127,22 +139,71 @@ final class AppModel {
         let settings = AppSettings.current
         BundledResources.install(customTemplatesFolder: settings.customTemplatesFolder)
         reloadTemplates()
-        Notifier.shared.setUp()
+        Notifier.shared.setUp(onContinue: { [weak self] url in
+            Task { @MainActor [weak self] in await self?.continueFromNotification(url) }
+        }, onShow: { [weak self] url in
+            Task { @MainActor [weak self] in self?.showFromNotification(url) }
+        })
+        observeSleep()
+        let launchedAt = Date()
         Task { [weak self] in
+            let (interrupted, failedMerges) = await Task.detached(priority: .utility) {
+                await Self.recoverSessions(in: settings.sessionsFolder, before: launchedAt)
+            }.value
             _ = await Task.detached(priority: .utility) {
                 SessionLibrary.removeOldVideos(in: settings.sessionsFolder, olderThanDays: settings.videoRetentionDays)
             }.value
-            self?.refreshSessions()
+            guard let self else { return }
+            self.isRecovering = false
+            if let target = failedMerges.first {
+                self.errorMessage = String(localized: "A merge did not finish. No file was deleted. Check the session \(target.name).")
+            }
+            if let session = interrupted.first {
+                Notifier.shared.postInterrupted(title: String(localized: "The last recording was interrupted"),
+                                                body: String(localized: "You can continue the same session."), session: session.url)
+            }
+            self.refreshSessions()
         }
+    }
+
+    /// Completes unfinished merges, then repairs sessions without an end (ADR-0029, ADR-0030).
+    /// Returns the interrupted sessions, newest first, and the merges that failed again.
+    /// Sessions that started after `launchedAt` belong to this app process and stay as they are.
+    private nonisolated static func recoverSessions(in folder: URL, before launchedAt: Date) async
+        -> (interrupted: [SessionFolder], failedMerges: [SessionFolder]) {
+        let failed = SessionMerge.recoverUnfinished(in: folder) { try FileManager.default.trashItem(at: $0, resultingItemURL: nil) }
+        var interrupted: [SessionFolder] = []
+        for session in SessionLibrary.list(in: folder, limit: .max) {
+            guard let metadata = try? session.loadMetadata(), metadata.startedAt < launchedAt else { continue }
+            let open = metadata.hasParts ? metadata.parts.contains { $0.endedAt == nil } : metadata.endedAt == nil
+            guard open || metadata.transcription == .running || metadata.parts.contains(where: { $0.transcription == .running })
+                    || (!metadata.hasParts && FileManager.default.fileExists(atPath: session.url.appending(path: "parts/01").path))
+            else { continue }
+            if (try? await SessionRecovery.recover(session, mediaDuration: MediaProbe.duration)) == true {
+                interrupted.append(session)
+            }
+        }
+        return (interrupted, failed)
+    }
+
+    private func observeSleep() {
+        let center = NSWorkspace.shared.notificationCenter
+        workspaceObservers.append(center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.handleSleep() }
+        })
+        workspaceObservers.append(center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.handleWake() }
+        })
     }
 
     // MARK: Derived state
 
     var isRecording: Bool { phase == .recording }
 
+    /// Time of the whole session: the earlier parts and the part that records now.
     var elapsedText: String {
         guard let start = recordingStartedAt else { return "00:00:00" }
-        return Timecode.format(now.timeIntervalSince(start))
+        return Timecode.format(earlierPartsDuration + now.timeIntervalSince(start))
     }
 
     var selectedDisplay: DisplayInfo? { displays.first { $0.id == selectedDisplayID } }
@@ -185,12 +246,7 @@ final class AppModel {
         guard phase == .idle, let display = selectedDisplay else { return }
         errorMessage = nil
         phase = .starting
-
-        if captureMicrophone, SourceCatalog.microphoneAuthorization == .notDetermined {
-            _ = await SourceCatalog.requestMicrophonePermission()
-        }
-        let microphoneAllowed = SourceCatalog.microphoneAuthorization == .authorized
-        microphoneDenied = captureMicrophone && !microphoneAllowed
+        let microphoneAllowed = await prepareMicrophone()
 
         let settings = AppSettings.current
         var startedSession: SessionFolder?
@@ -204,55 +260,161 @@ final class AppModel {
             startedSession = session
             var metadata = SessionMetadata(startedAt: startedAt)
             metadata.displayName = display.name
-            metadata.microphoneName = captureMicrophone && microphoneAllowed
-                ? microphones.first { $0.id == selectedMicrophoneID }?.name : nil
+            metadata.microphoneName = microphoneName(allowed: microphoneAllowed)
             metadata.appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            // Known at the start, so a session that a crash interrupts still lists its audio (ADR-0030).
+            metadata.audioTracks = plannedTracks(microphoneAllowed: microphoneAllowed)
             try session.save(metadata)
-
-            let recorder = ScreenRecorder()
-            recorder.onStreamError = { [weak self, weak recorder] error in
-                Task { @MainActor [weak self] in self?.handleStreamError(error, from: recorder) }
-            }
-            startingRecorder = recorder
-            pendingStreamError = nil
-            try await recorder.start(RecordingConfiguration(
-                displayID: display.id,
-                captureSystemAudio: captureSystemAudio,
-                captureMicrophone: captureMicrophone && microphoneAllowed,
-                microphoneID: selectedMicrophoneID,
-                fps: settings.videoFPS,
-                maxWidth: settings.videoMaxWidth,
-                videoURL: session.videoURL,
-                systemAudioURL: session.audioDirectory.appending(path: "system.m4a"),
-                microphoneURL: session.audioDirectory.appending(path: "mic.m4a")
-            ))
-
-            self.recorder = recorder
-            startingRecorder = nil
-            activeSession = session
-            microphoneMuted = false
-            systemMuted = false
-            recordingStartedAt = startedAt
-            now = startedAt
-            phase = .recording
-            startTicker()
-            // The recorder reports an error only once. One that came during the start must not be lost.
-            if let error = pendingStreamError {
-                pendingStreamError = nil
-                handleStreamError(error, from: recorder)
-            }
+            try await beginRecording(session: session, part: nil, display: display,
+                                     microphoneAllowed: microphoneAllowed, startedAt: startedAt)
         } catch {
-            phase = .idle
-            recorder = nil
-            startingRecorder = nil
-            pendingStreamError = nil
-            if let startedSession { operations.end(.recording, for: startedSession.url) }
-            errorMessage = String(localized: "Recording did not start: \(error.localizedDescription)")
-            if !SourceCatalog.hasScreenRecordingPermission { hasScreenPermission = false }
+            failStart(error, session: startedSession, part: nil)
         }
     }
 
-    func stopSession() async {
+    /// Records a new part into an existing session (ADR-0029, flows F1, F2, F5).
+    /// `fromNotification`: the menu bar popover may be closed, so a failure also posts a notification.
+    func continueSession(_ session: SessionFolder, fromNotification: Bool = false) async {
+        guard phase == .idle, !isRecovering else { return }
+        guard let display = selectedDisplay else {
+            reportContinueFailure(String(localized: "Select a screen on the New session tab."), notify: fromNotification)
+            return
+        }
+        errorMessage = nil
+        // The transcription that started after Stop must not block the continue. It runs again after the new part.
+        if operations.operation(for: session.url) == .transcription {
+            cancelJobs(for: session)
+            for _ in 0..<150 where !operations.isIdle(session.url) { try? await Task.sleep(for: .milliseconds(100)) }
+        }
+        guard phase == .idle, operations.begin(.recording, for: session.url) else {
+            reportContinueFailure(String(localized: "The session is busy. Wait until its work ends."), notify: fromNotification)
+            return
+        }
+        phase = .starting
+        var partFolder: String?
+        do {
+            let current = try session.loadMetadata()
+            guard current.mediaRemovedAt == nil else { throw ContinueError.mediaRemoved }
+            guard max(1, current.parts.count) < SessionFolder.maximumParts else { throw SessionPartsError.tooManyParts }
+            try checkDiskSpace(at: session.url)
+            let microphoneAllowed = await prepareMicrophone()
+            let metadata = try session.convertToParts()
+
+            let number = (metadata.parts.compactMap(\.number).max() ?? 0) + 1
+            let folder = SessionFolder.partFolderName(number)
+            let startedAt = Date()
+            var part = SessionPart(folder: folder, startedAt: startedAt, origin: .continued)
+            part.displayName = display.name
+            part.microphoneName = microphoneName(allowed: microphoneAllowed)
+            part.audioTracks = plannedTracks(microphoneAllowed: microphoneAllowed)
+            try FileManager.default.createDirectory(at: session.url.appending(path: "\(folder)/audio"), withIntermediateDirectories: true)
+            partFolder = folder
+            try session.updateMetadata { $0.parts.append(part) }
+
+            transcriptionJobs[session.url] = nil
+            earlierPartsDuration = metadata.duration ?? 0
+            dismissedContinueOffers.insert(session.url)
+            try await beginRecording(session: session, part: (folder, number), display: display,
+                                     microphoneAllowed: microphoneAllowed, startedAt: startedAt)
+        } catch {
+            failStart(error, session: session, part: partFolder, continuing: true)
+            if fromNotification, let message = errorMessage {
+                Notifier.shared.post(title: String(localized: "The recording did not continue"), body: message)
+            }
+        }
+    }
+
+    /// Starts the recorder into the session root or into a part folder. The caller holds `.recording`.
+    private func beginRecording(session: SessionFolder, part: (folder: String, number: Int)?, display: DisplayInfo,
+                                microphoneAllowed: Bool, startedAt: Date) async throws {
+        let settings = AppSettings.current
+        let base = part.map { session.url.appending(path: $0.folder) } ?? session.url
+        let recorder = ScreenRecorder()
+        recorder.onStreamError = { [weak self, weak recorder] error in
+            Task { @MainActor [weak self] in self?.handleStreamError(error, from: recorder) }
+        }
+        startingRecorder = recorder
+        pendingStreamError = nil
+        try await recorder.start(RecordingConfiguration(
+            displayID: display.id,
+            captureSystemAudio: captureSystemAudio,
+            captureMicrophone: captureMicrophone && microphoneAllowed,
+            microphoneID: selectedMicrophoneID,
+            fps: settings.videoFPS,
+            maxWidth: settings.videoMaxWidth,
+            videoURL: base.appending(path: "recording.mov"),
+            systemAudioURL: base.appending(path: "audio/system.m4a"),
+            microphoneURL: base.appending(path: "audio/mic.m4a")
+        ))
+
+        self.recorder = recorder
+        startingRecorder = nil
+        activeSession = session
+        activePart = part?.folder
+        activePartNumber = part?.number
+        microphoneMuted = false
+        systemMuted = false
+        recordingStartedAt = startedAt
+        now = startedAt
+        tickCount = 0
+        phase = .recording
+        startTicker()
+        // The recorder reports an error only once. One that came during the start must not be lost.
+        if let error = pendingStreamError {
+            pendingStreamError = nil
+            handleStreamError(error, from: recorder)
+        }
+    }
+
+    /// Resets the state after a failed start. A new part that did not start is removed again.
+    private func failStart(_ error: Error, session: SessionFolder?, part: String?, continuing: Bool = false) {
+        phase = .idle
+        recorder = nil
+        startingRecorder = nil
+        pendingStreamError = nil
+        earlierPartsDuration = 0
+        if let session {
+            if let part {
+                _ = try? session.updateMetadata { $0.parts.removeAll { $0.folder == part } }
+                try? FileManager.default.removeItem(at: session.url.appending(path: part))
+            }
+            operations.end(.recording, for: session.url)
+        }
+        errorMessage = continuing
+            ? String(localized: "The recording did not continue: \(Self.message(for: error))")
+            : String(localized: "Recording did not start: \(error.localizedDescription)")
+        if !SourceCatalog.hasScreenRecordingPermission { hasScreenPermission = false }
+    }
+
+    private func reportContinueFailure(_ message: String, notify: Bool) {
+        errorMessage = message
+        if notify { Notifier.shared.post(title: String(localized: "The recording did not continue"), body: message) }
+    }
+
+    private func prepareMicrophone() async -> Bool {
+        if captureMicrophone, SourceCatalog.microphoneAuthorization == .notDetermined {
+            _ = await SourceCatalog.requestMicrophonePermission()
+        }
+        let allowed = SourceCatalog.microphoneAuthorization == .authorized
+        microphoneDenied = captureMicrophone && !allowed
+        return allowed
+    }
+
+    private func microphoneName(allowed: Bool) -> String? {
+        captureMicrophone && allowed ? microphones.first { $0.id == selectedMicrophoneID }?.name : nil
+    }
+
+    /// The audio files that the recorder will write. The offsets come later (heartbeat and Stop).
+    private func plannedTracks(microphoneAllowed: Bool) -> [AudioTrackInfo] {
+        var tracks: [AudioTrackInfo] = []
+        if captureSystemAudio { tracks.append(AudioTrackInfo(file: "audio/system.m4a", speaker: .others, offset: 0)) }
+        if captureMicrophone && microphoneAllowed { tracks.append(AudioTrackInfo(file: "audio/mic.m4a", speaker: .me, offset: 0)) }
+        return tracks
+    }
+
+    /// Stops the recording. `reason` is saved with the recording (ADR-0030).
+    /// `autoTranscribe: false` when the app quits or the Mac goes to sleep.
+    func stopSession(reason: PartEndReason = .stop, autoTranscribe: Bool = true) async {
         guard phase == .recording, let recorder, let session = activeSession else { return }
         phase = .stopping
         stopTicker()
@@ -266,11 +428,31 @@ final class AppModel {
             audioTracks.append(AudioTrackInfo(file: "audio/\(microphone.url.lastPathComponent)", speaker: .me, offset: microphone.offset))
         }
         var failure = result.videoError
+        let part = activePart
         do {
-            try session.updateMetadata {
-                $0.endedAt = Date()
-                $0.video = result.videoURL?.lastPathComponent
-                $0.audioTracks = audioTracks
+            let endedAt = Date()
+            let metadata = try session.updateMetadata { metadata in
+                metadata.endedAt = endedAt
+                metadata.interrupted = false
+                if let part, let index = metadata.parts.firstIndex(where: { $0.folder == part }) {
+                    metadata.parts[index].endedAt = endedAt
+                    metadata.parts[index].video = result.videoURL?.lastPathComponent
+                    metadata.parts[index].audioTracks = audioTracks
+                    metadata.parts[index].endReason = reason
+                    metadata.parts[index].interrupted = false
+                    metadata.parts[index].lastAliveAt = nil
+                    metadata.parts[index].transcription = .pending
+                    metadata.transcription = .pending
+                } else {
+                    metadata.video = result.videoURL?.lastPathComponent
+                    metadata.audioTracks = audioTracks
+                    metadata.endReason = reason
+                    metadata.lastAliveAt = nil
+                }
+            }
+            if metadata.hasParts {
+                // The session transcript misses the new part now. `combine` removes it and writes the part map.
+                try session.combineTranscripts()
             }
         } catch {
             failure = failure ?? error
@@ -282,6 +464,9 @@ final class AppModel {
 
         self.recorder = nil
         activeSession = nil
+        activePart = nil
+        activePartNumber = nil
+        earlierPartsDuration = 0
         recordingStartedAt = nil
         phase = .idle
         operations.end(.recording, for: session.url)
@@ -291,8 +476,8 @@ final class AppModel {
         tab = .sessions
         if audioTracks.isEmpty {
             errorMessage = (errorMessage ?? "") + " " + String(localized: "The recording has no audio, so transcription is not possible.")
-        } else if AppSettings.current.autoTranscribe {
-            transcribe(session)
+        } else if autoTranscribe, AppSettings.current.autoTranscribe {
+            transcribe(session, allParts: false)
         }
     }
 
@@ -301,8 +486,60 @@ final class AppModel {
         recorder?.setMuted(muted, microphone: microphone)
         if let start = recordingStartedAt, let session = activeSession {
             let event = SourceEvent(at: Date().timeIntervalSince(start), source: microphone ? "microphone" : "system", enabled: !muted)
-            _ = try? session.updateMetadata { $0.sourceEvents.append(event) }
+            let part = activePart
+            _ = try? session.updateMetadata { metadata in
+                if let part, let index = metadata.parts.firstIndex(where: { $0.folder == part }) {
+                    metadata.parts[index].sourceEvents.append(event)
+                } else {
+                    metadata.sourceEvents.append(event)
+                }
+            }
         }
+    }
+
+    /// Every 10 seconds while recording: the heartbeat, the audio offsets and `F_FULLFSYNC` (ADR-0030).
+    private func heartbeat() {
+        guard phase == .recording, let session = activeSession, let recorder else { return }
+        let offsets = recorder.trackOffsets()
+        let part = activePart
+        let now = Date()
+        func apply(_ tracks: inout [AudioTrackInfo]) {
+            for index in tracks.indices {
+                if tracks[index].speaker == .others, let offset = offsets.system { tracks[index].offset = offset }
+                if tracks[index].speaker == .me, let offset = offsets.microphone { tracks[index].offset = offset }
+            }
+        }
+        _ = try? session.updateMetadata { metadata in
+            if let part, let index = metadata.parts.firstIndex(where: { $0.folder == part }) {
+                metadata.parts[index].lastAliveAt = now
+                apply(&metadata.parts[index].audioTracks)
+            } else {
+                metadata.lastAliveAt = now
+                apply(&metadata.audioTracks)
+            }
+        }
+        recorder.flushToDisk()
+    }
+
+    /// Before the app quits (also for a restart or a shut down of the Mac): stop the recording correctly.
+    func stopForTermination() async {
+        for _ in 0..<100 where phase == .starting || phase == .stopping {
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+        if phase == .recording { await stopSession(reason: .quit, autoTranscribe: false) }
+    }
+
+    private func handleSleep() {
+        guard phase == .recording, let session = activeSession else { return }
+        sessionStoppedForSleep = session
+        Task { await stopSession(reason: .sleep, autoTranscribe: false) }
+    }
+
+    private func handleWake() {
+        guard let session = sessionStoppedForSleep else { return }
+        sessionStoppedForSleep = nil
+        Notifier.shared.postInterrupted(title: String(localized: "The recording stopped because the Mac went to sleep"),
+                                        body: String(localized: "You can continue the same session."), session: session.url)
     }
 
     private func handleStreamError(_ error: Error, from source: ScreenRecorder?) {
@@ -314,8 +551,11 @@ final class AppModel {
         }
         guard phase == .recording else { return }
         errorMessage = String(localized: "Recording stopped unexpectedly: \(error.localizedDescription). The saved part stays.")
-        Notifier.shared.post(title: String(localized: "Recording stopped unexpectedly"), body: error.localizedDescription)
-        Task { await stopSession() }
+        if let session = activeSession {
+            Notifier.shared.postInterrupted(title: String(localized: "Recording stopped unexpectedly"),
+                                            body: error.localizedDescription, session: session.url)
+        }
+        Task { await stopSession(reason: .streamError) }
     }
 
     /// The check before the start is not enough for a long recording. Runs every few seconds while recording.
@@ -326,8 +566,10 @@ final class AppModel {
             .volumeAvailableCapacityForImportantUsage, free < Self.criticalFreeSpace else { return }
         let message = String(localized: "The disk is almost full, so the app stopped the recording. The saved part stays.")
         errorMessage = message
-        Notifier.shared.post(title: String(localized: "Recording stopped unexpectedly"), body: message)
-        Task { await stopSession() }
+        if let session = activeSession {
+            Notifier.shared.postInterrupted(title: String(localized: "Recording stopped unexpectedly"), body: message, session: session.url)
+        }
+        Task { await stopSession(reason: .diskFull) }
     }
 
     private func checkDiskSpace(at folder: URL) throws {
@@ -347,6 +589,7 @@ final class AppModel {
                 self.now = Date()
                 self.tickCount += 1
                 if self.tickCount.isMultiple(of: 25) { self.checkDiskSpaceWhileRecording() }
+                if self.tickCount.isMultiple(of: 50) { self.heartbeat() }
                 let levels = recorder.levels()
                 self.systemLevel = levels.system
                 self.microphoneLevel = levels.microphone
@@ -379,7 +622,8 @@ final class AppModel {
 
     // MARK: Processing
 
-    func transcribe(_ session: SessionFolder) {
+    /// `allParts: false` transcribes only the parts of a session that have no transcript yet (ADR-0029).
+    func transcribe(_ session: SessionFolder, allParts: Bool = true) {
         guard operations.begin(.transcription, for: session.url) else { return }
         let key = JobKey(kind: .transcription, session: session.url)
         let previous = transcriptionQueue
@@ -394,7 +638,7 @@ final class AppModel {
             // Cancel released this job while it waited. A newer job of the same session has another token.
             guard self?.transcriptionTokens[session.url] == token else { return }
             self?.activeTranscription = session.url
-            await self?.runTranscription(session)
+            await self?.runTranscription(session, allParts: allParts)
             self?.activeTranscription = nil
             self?.releaseTranscription(session)
         }
@@ -411,7 +655,7 @@ final class AppModel {
         operations.end(.transcription, for: session.url)
     }
 
-    private func runTranscription(_ session: SessionFolder) async {
+    private func runTranscription(_ session: SessionFolder, allParts: Bool) async {
         guard !Task.isCancelled else {
             transcriptionJobs[session.url] = .cancelled
             return
@@ -420,7 +664,7 @@ final class AppModel {
         do {
             // Progress arrives on other threads. Each update checks that the job still runs,
             // so a late message cannot overwrite the final state.
-            let transcript = try await TranscriptionService.transcribe(session) { [weak self] message in
+            let transcript = try await TranscriptionService.transcribe(session, allParts: allParts) { [weak self] message in
                 Task { @MainActor [weak self] in
                     guard let self, self.transcriptionJobs[session.url]?.isRunning == true,
                           !self.isCancelling(.transcription, session) else { return }
@@ -438,11 +682,17 @@ final class AppModel {
                                  body: String(localized: "\(transcript.segments.count) segments. You can start the summary."),
                                  open: session.transcriptURL("md"))
         } catch is CancellationError {
-            _ = try? session.updateMetadata { $0.transcription = .pending }
+            _ = try? session.updateMetadata { metadata in
+                metadata.transcription = .pending
+                for index in metadata.parts.indices where metadata.parts[index].transcription == .running {
+                    metadata.parts[index].transcription = .pending
+                }
+            }
             transcriptionJobs[session.url] = .cancelled
         } catch {
-            _ = try? session.updateMetadata { $0.transcription = .failed; $0.transcriptionError = error.localizedDescription }
-            transcriptionJobs[session.url] = .failed(error.localizedDescription)
+            let message = Self.message(for: error)
+            _ = try? session.updateMetadata { $0.transcription = .failed; $0.transcriptionError = message }
+            transcriptionJobs[session.url] = .failed(message)
         }
         refreshSessions()
     }
@@ -508,6 +758,109 @@ final class AppModel {
     /// Then the item has no sizes: a recursive size scan must not run on the main actor.
     func item(for session: SessionFolder) -> SessionItem {
         sessionItems.first { $0.session == session } ?? SessionItem(session, measuringStorage: false)
+    }
+
+    // MARK: Continue and merge (ADR-0029)
+
+    /// `true` when the session can get a new part now.
+    func canContinue(_ item: SessionItem) -> Bool {
+        guard phase == .idle, !isRecovering, let metadata = item.metadata, metadata.mediaRemovedAt == nil,
+              metadata.endedAt != nil, max(1, metadata.parts.count) < SessionFolder.maximumParts else { return false }
+        let operation = operations.operation(for: item.session.url)
+        return operation == nil || operation == .transcription
+    }
+
+    /// The offer on the New session tab: the newest session stopped less than 30 minutes ago,
+    /// or was interrupted less than 12 hours ago (flow F2).
+    var continueOffer: (item: SessionItem, interrupted: Bool)? {
+        guard let item = sessionItems.first, !dismissedContinueOffers.contains(item.id), canContinue(item),
+              let metadata = item.metadata else { return nil }
+        let now = Date()
+        if metadata.isInterrupted, now.timeIntervalSince(metadata.startedAt) < 12 * 3600 { return (item, true) }
+        if let end = metadata.endedAt, now.timeIntervalSince(end) < 30 * 60 { return (item, false) }
+        return nil
+    }
+
+    /// Accepts only a session folder in the sessions folder: the path comes from a notification.
+    private func validatedSession(_ url: URL) -> SessionFolder? {
+        let root = AppSettings.current.sessionsFolder.standardizedFileURL.path
+        let session = SessionFolder(url: url.standardizedFileURL)
+        guard session.url.deletingLastPathComponent().standardizedFileURL.path == root,
+              FileManager.default.fileExists(atPath: session.metadataURL.path) else { return nil }
+        return session
+    }
+
+    func continueFromNotification(_ url: URL) async {
+        guard let session = validatedSession(url) else { return }
+        for _ in 0..<100 where isRecovering { try? await Task.sleep(for: .milliseconds(100)) }
+        await continueSession(session, fromNotification: true)
+    }
+
+    func showFromNotification(_ url: URL) {
+        guard phase == .idle, let session = validatedSession(url) else { return }
+        tab = .sessions
+        focusedSession = session
+    }
+
+    /// The next older session in the list: the target of "Merge with previous session".
+    func previousSession(of session: SessionFolder) -> SessionItem? {
+        guard let index = sessionItems.firstIndex(where: { $0.session == session }), index + 1 < sessionItems.count else { return nil }
+        return sessionItems[index + 1]
+    }
+
+    /// Why the session cannot merge with the previous session now, or `nil` when it can.
+    func mergeProblem(_ item: SessionItem) -> String? {
+        guard let previous = previousSession(of: item.session) else { return String(localized: "There is no older session.") }
+        guard phase == .idle, !isRecovering, !isBusy(item.session), !isBusy(previous.session) else {
+            return String(localized: "The session is busy. Wait until its work ends.")
+        }
+        guard let target = previous.metadata, let source = item.metadata else { return String(localized: "The session data cannot be read.") }
+        do { try SessionMerge.validate(target: target, source: source) } catch { return Self.message(for: error) }
+        if (target.mediaRemovedAt != nil && !previous.hasTranscript) || (source.mediaRemovedAt != nil && !item.hasTranscript) {
+            return String(localized: "A session without audio and without a transcript cannot be merged.")
+        }
+        return nil
+    }
+
+    func mergeWithPrevious(_ session: SessionFolder) async {
+        let item = item(for: session)
+        guard mergeProblem(item) == nil, let target = previousSession(of: session)?.session,
+              operations.begin(.merge, for: [target.url, session.url]) else { return }
+        let result = await Task.detached(priority: .userInitiated) { () -> Result<Bool, Error> in
+            Result {
+                try SessionMerge.merge(session, into: target) { try FileManager.default.trashItem(at: $0, resultingItemURL: nil) } != nil
+            }
+        }.value
+        operations.end(.merge, for: target.url)
+        operations.end(.merge, for: session.url)
+        transcriptionJobs[session.url] = nil
+        summaryJobs[session.url] = nil
+        transcriptionJobs[target.url] = nil
+        dismissedContinueOffers.remove(target.url)
+        switch result {
+        case .success(let combined):
+            focusedSession = target
+            if !combined, AppSettings.current.autoTranscribe, (try? target.loadMetadata())?.hasAudioTracks == true {
+                transcribe(target, allParts: false)
+            }
+        case .failure(let error):
+            errorMessage = String(localized: "The sessions were not merged: \(Self.message(for: error))")
+        }
+        refreshSessions()
+    }
+
+    /// A text for the user. OMSCore errors have no localized text of their own.
+    static func message(for error: Error) -> String {
+        switch error {
+        case SessionPartsError.targetExists(let name): String(localized: "The file \(name) already exists in the session.")
+        case SessionPartsError.tooManyParts: String(localized: "A session can have at most 99 parts.")
+        case SessionPartsError.partNotReady(let number): String(localized: "Part \(number) has no audio and no transcript.")
+        case SessionPartsError.overlap: String(localized: "The sessions overlap in time, so you cannot merge them.")
+        case SessionPartsError.notEnded: String(localized: "A session that records cannot be merged.")
+        case SessionPartsError.sameSession: String(localized: "A session cannot merge with itself.")
+        case ContinueError.mediaRemoved: String(localized: "The video and audio of this session are deleted.")
+        default: error.localizedDescription
+        }
     }
 
     // MARK: Library
@@ -613,7 +966,20 @@ enum RecordingStartError: LocalizedError {
     }
 }
 
-/// Destructive actions on a session. Both need an explicit confirmation.
+/// Actions on a session that need an explicit confirmation.
 enum SessionAction: Equatable {
-    case cleanUp, delete
+    case cleanUp, delete, merge
+}
+
+enum ContinueError: Error {
+    case mediaRemoved
+}
+
+/// Reads the duration of a media file for the recovery of interrupted sessions (ADR-0030).
+enum MediaProbe {
+    static let duration: SessionRecovery.MediaDuration = { url in
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        guard let duration = try? await AVURLAsset(url: url).load(.duration), duration.isNumeric, duration.seconds > 0 else { return nil }
+        return duration.seconds
+    }
 }

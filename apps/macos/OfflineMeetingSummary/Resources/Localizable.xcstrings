@@ -94,6 +94,52 @@
         }
       }
     },
+    "%lld parts" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld part"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld parts"
+                }
+              }
+            }
+          }
+        },
+        "sk" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld časť"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld časti"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld častí"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld segments. You can start the summary." : {
       "localizations" : {
         "en" : {
@@ -252,12 +298,62 @@
         }
       }
     },
+    "A merge did not finish. No file was deleted. Check the session %@." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zlúčenie sa nedokončilo. Žiadny súbor sa nevymazal. Skontrolujte session %@."
+          }
+        }
+      }
+    },
     "A model writes the summary from the transcript and a template. It can look at screen frames." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Model napíše zápis z prepisu podľa šablóny. Môže si pozrieť snímky obrazovky."
+          }
+        }
+      }
+    },
+    "A session can have at most 99 parts." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session môže mať najviac 99 častí."
+          }
+        }
+      }
+    },
+    "A session cannot merge with itself." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session sa nedá zlúčiť sama so sebou."
+          }
+        }
+      }
+    },
+    "A session that records cannot be merged." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session, ktorá sa nahráva, sa nedá zlúčiť."
+          }
+        }
+      }
+    },
+    "A session without audio and without a transcript cannot be merged." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session bez zvuku a bez prepisu sa nedá zlúčiť."
           }
         }
       }
@@ -455,6 +551,16 @@
         }
       }
     },
+    "Break between the sessions: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prestávka medzi sessions: %@"
+          }
+        }
+      }
+    },
     "Brief" : {
       "localizations" : {
         "sk" : {
@@ -591,6 +697,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zavrieť"
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokračovať"
+          }
+        }
+      }
+    },
+    "Continue recording" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokračovať v nahrávaní"
+          }
+        }
+      }
+    },
+    "Continue the last session? It stopped %lld min ago." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokračovať v poslednej session? Zastavila sa pred %lld min."
           }
         }
       }
@@ -1168,6 +1304,36 @@
         }
       }
     },
+    "Merge" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zlúčiť"
+          }
+        }
+      }
+    },
+    "Merge with previous session" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zlúčiť s predchádzajúcou session"
+          }
+        }
+      }
+    },
+    "Merge with previous session…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zlúčiť s predchádzajúcou session…"
+          }
+        }
+      }
+    },
     "Microphone" : {
       "localizations" : {
         "sk" : {
@@ -1494,6 +1660,26 @@
         }
       }
     },
+    "Part %lld" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Časť %lld"
+          }
+        }
+      }
+    },
+    "Part %lld has no audio and no transcript." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Časť %lld nemá zvuk ani prepis."
+          }
+        }
+      }
+    },
     "Path to %@" : {
       "localizations" : {
         "sk" : {
@@ -1570,6 +1756,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nahrať"
+          }
+        }
+      }
+    },
+    "Record a new part into this session" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrať ďalšiu časť do tejto session"
           }
         }
       }
@@ -1734,6 +1930,16 @@
         }
       }
     },
+    "Select a screen on the New session tab." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vyberte obrazovku na karte Nová session."
+          }
+        }
+      }
+    },
     "Sending part %lld/%lld to the transcription server…" : {
       "localizations" : {
         "en" : {
@@ -1883,6 +2089,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Úložisko"
+          }
+        }
+      }
+    },
+    "Summaries marked with a clock were made before all parts were in the session." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zápisy označené hodinami vznikli skôr, než boli v session všetky časti."
           }
         }
       }
@@ -2050,6 +2266,16 @@
         }
       }
     },
+    "The break is longer than 60 minutes. Check that it is the same meeting." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prestávka je dlhšia ako 60 minút. Skontrolujte, či ide o to isté stretnutie."
+          }
+        }
+      }
+    },
     "The disk has less than 2 GB of free space." : {
       "localizations" : {
         "sk" : {
@@ -2070,12 +2296,42 @@
         }
       }
     },
+    "The file %@ already exists in the session." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Súbor %@ už v session existuje."
+          }
+        }
+      }
+    },
     "The key is saved in Keychain" : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kľúč je uložený v Keychain"
+          }
+        }
+      }
+    },
+    "The last recording was interrupted" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posledné nahrávanie sa prerušilo"
+          }
+        }
+      }
+    },
+    "The last recording was interrupted. Continue it?" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posledné nahrávanie sa prerušilo. Pokračovať v ňom?"
           }
         }
       }
@@ -2150,12 +2406,52 @@
         }
       }
     },
+    "The recording did not continue" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie nepokračovalo"
+          }
+        }
+      }
+    },
+    "The recording did not continue: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie nepokračovalo: %@"
+          }
+        }
+      }
+    },
     "The recording has no audio, so transcription is not possible." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nahrávka nemá zvuk, prepis sa nedá spraviť."
+          }
+        }
+      }
+    },
+    "The recording stopped because the Mac went to sleep" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie sa zastavilo, lebo Mac prešiel do režimu spánku"
+          }
+        }
+      }
+    },
+    "The recording was interrupted" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie sa prerušilo"
           }
         }
       }
@@ -2180,12 +2476,52 @@
         }
       }
     },
+    "The session data cannot be read." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Údaje session sa nedajú prečítať."
+          }
+        }
+      }
+    },
     "The session has no transcript yet." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Session ešte nemá prepis."
+          }
+        }
+      }
+    },
+    "The session is busy. Wait until its work ends." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session práve pracuje. Počkajte, kým práca skončí."
+          }
+        }
+      }
+    },
+    "The sessions overlap in time, so you cannot merge them." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions sa časovo prekrývajú, preto sa nedajú zlúčiť."
+          }
+        }
+      }
+    },
+    "The sessions were not merged: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions sa nezlúčili: %@"
           }
         }
       }
@@ -2286,6 +2622,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Video zostáva vždy na Macu. Prepis beží lokálne, ak nevyberiete server. Zápis ide do modelu, ktorý si vyberiete: s lokálnym modelom v OpenCode neopustí Mac nič. Aplikácia neposiela telemetriu."
+          }
+        }
+      }
+    },
+    "The video and audio of this session are deleted." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video a zvuk tejto session sú vymazané."
+          }
+        }
+      }
+    },
+    "There is no older session." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Staršia session neexistuje."
           }
         }
       }
@@ -2586,12 +2942,32 @@
         }
       }
     },
+    "You can continue the same session." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Môžete pokračovať v tej istej session."
+          }
+        }
+      }
+    },
     "You can create a summary only from a finished transcript." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zápis sa dá vytvoriť až z hotového prepisu."
+          }
+        }
+      }
+    },
+    "You cannot split the sessions again in the app. Older summaries stay in the session." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions sa v aplikácii nedajú znova rozdeliť. Staršie zápisy v session zostanú."
           }
         }
       }

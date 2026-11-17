@@ -132,6 +132,10 @@ struct SessionRow: View {
             Button("Open") { model.focusedSession = session }
             Button("Open folder") { model.openFolder(session.url) }
             Button("Show in Finder") { model.reveal(session.url) }
+            Button("Continue recording") { Task { await model.continueSession(session) } }
+                .disabled(!model.canContinue(item) || model.selectedDisplay == nil)
+            Button("Merge with previous session…") { model.confirm(.merge, for: session) }
+                .disabled(model.mergeProblem(item) != nil)
             Divider()
             Button("Free up space (delete video and audio)…") { model.confirm(.cleanUp, for: session) }
                 .disabled(!item.hasSourceMedia || model.isBusy(session))
@@ -144,6 +148,7 @@ struct SessionRow: View {
         var parts: [String] = []
         if let date = item.date { parts.append(date.formatted(date: .omitted, time: .shortened)) }
         if let duration = item.metadata?.duration { parts.append(SessionFormat.duration(duration)) }
+        if let count = item.metadata?.parts.count, count > 1 { parts.append(String(localized: "\(count) parts")) }
         if let display = item.metadata?.displayName, !display.isEmpty { parts.append(display) }
         return parts.joined(separator: " · ")
     }
@@ -157,6 +162,9 @@ struct SessionRow: View {
             Image(systemName: "doc.text.fill").foregroundStyle(.green).help("The summary is done")
         } else if item.hasTranscript {
             Image(systemName: "text.bubble.fill").foregroundStyle(.blue).help("The transcript is done, the summary is not")
+        } else if item.metadata?.isInterrupted == true {
+            Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
+                .help("The recording was interrupted")
         } else if item.metadata?.transcription == .failed {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange).help("Transcription failed")
         } else {
