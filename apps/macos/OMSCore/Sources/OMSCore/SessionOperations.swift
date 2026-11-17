@@ -24,6 +24,9 @@ public struct SessionOperations: Sendable {
 
     public func isIdle(_ session: URL) -> Bool { operation(for: session) == nil }
 
+    /// `true` when no session has an operation.
+    public var isEmpty: Bool { running.isEmpty }
+
     /// Starts the operation and returns `true`, or returns `false` when the session is busy.
     public mutating func begin(_ operation: SessionOperation, for session: URL) -> Bool {
         let key = Self.key(session)

@@ -882,6 +882,12 @@ final class AppModel {
         }
     }
 
+    /// `true` while any session has an operation, a recording starts or stops, or the launch check runs.
+    /// An update does not restart the app at such a time (ADR-0031).
+    var hasRunningWork: Bool {
+        phase != .idle || isRecovering || !operations.isEmpty
+    }
+
     /// `true` while a recording, a transcription (also a waiting one), a summary or a cleanup uses the session.
     func isBusy(_ session: SessionFolder) -> Bool {
         !operations.isIdle(session.url)

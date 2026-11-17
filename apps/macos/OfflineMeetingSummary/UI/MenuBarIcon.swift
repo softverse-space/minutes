@@ -74,6 +74,17 @@ enum MenuBarIcon {
         return image
     }()
 
+    /// Shows next to the idle icon when a new version is available (ADR-0031). No other state uses blue.
+    static let updateDot: NSImage = {
+        let image = NSImage(size: NSSize(width: 6, height: 10), flipped: false) { _ in
+            NSColor.systemBlue.set()
+            NSBezierPath(ovalIn: NSRect(x: 0, y: 6, width: 6, height: 6).insetBy(dx: 0.5, dy: 0.5)).fill()
+            return true
+        }
+        image.isTemplate = false
+        return image
+    }()
+
     // MARK: Drawing
 
     private static func ring(alpha: CGFloat) {

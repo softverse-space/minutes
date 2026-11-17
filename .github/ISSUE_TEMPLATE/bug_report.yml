@@ -1,0 +1,50 @@
+name: Report a problem
+description: Something in Minutes does not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Privacy:** do not attach recordings, transcripts, summaries or screenshots of real meetings. Use a short test recording if you need an example.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      description: The steps that cause the problem.
+      placeholder: |
+        1. Click …
+        2. …
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+  - type: input
+    id: app-version
+    attributes:
+      label: Minutes version
+      description: Settings → About. The app fills this in when you use "Report a problem on GitHub".
+    validations:
+      required: true
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: Mac
+      placeholder: Apple silicon or Intel
+  - type: textarea
+    id: settings
+    attributes:
+      label: Settings that apply
+      description: For example the transcription mode (local or server) and the summary engine (OpenCode, Claude, Codex). Do not add addresses of internal servers or keys.

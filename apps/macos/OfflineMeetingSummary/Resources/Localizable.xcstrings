@@ -671,6 +671,26 @@
         }
       }
     },
+    "Check for Updates…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skontrolovať aktualizácie…"
+          }
+        }
+      }
+    },
+    "Check for updates automatically" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automaticky kontrolovať aktualizácie"
+          }
+        }
+      }
+    },
     "Choose another folder…" : {
       "localizations" : {
         "sk" : {
@@ -914,12 +934,32 @@
         }
       }
     },
+    "Do not attach recordings, transcripts, summaries or screenshots of real meetings to a report." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "K hláseniu nepripájajte nahrávky, prepisy, zápisy ani snímky obrazovky zo skutočných stretnutí."
+          }
+        }
+      }
+    },
     "Done" : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hotový"
+          }
+        }
+      }
+    },
+    "Download and install updates automatically" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automaticky sťahovať a inštalovať aktualizácie"
           }
         }
       }
@@ -1084,6 +1124,16 @@
         }
       }
     },
+    "Free and open source" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zadarmo a s otvoreným kódom"
+          }
+        }
+      }
+    },
     "Free up %@" : {
       "localizations" : {
         "sk" : {
@@ -1150,6 +1200,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nemčina"
+          }
+        }
+      }
+    },
+    "GitHub" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub"
           }
         }
       }
@@ -1350,6 +1410,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mikrofón nemá povolenie – otvoriť nastavenia"
+          }
+        }
+      }
+    },
+    "Minutes %@ is available" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "K dispozícii je Minutes %@"
+          }
+        }
+      }
+    },
+    "Minutes is free and open source under the Apache License 2.0." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minutes je zadarmo a má otvorený zdrojový kód pod licenciou Apache License 2.0."
           }
         }
       }
@@ -1557,12 +1637,32 @@
         }
       }
     },
+    "Open source" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open source"
+          }
+        }
+      }
+    },
     "Open the folder with all sessions" : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Otvoriť priečinok so všetkými sessions"
+          }
+        }
+      }
+    },
+    "Open the guide" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť návod"
           }
         }
       }
@@ -1830,6 +1930,16 @@
         }
       }
     },
+    "Release notes for version %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poznámky k verzii %@"
+          }
+        }
+      }
+    },
     "Reload screens" : {
       "localizations" : {
         "sk" : {
@@ -1846,6 +1956,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Načítať šablóny znova"
+          }
+        }
+      }
+    },
+    "Report a problem" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahlásiť problém"
+          }
+        }
+      }
+    },
+    "Report a problem on GitHub" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahlásiť problém na GitHube"
           }
         }
       }
@@ -2009,6 +2139,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Slovenčina"
+          }
+        }
+      }
+    },
+    "Source code" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zdrojový kód"
           }
         }
       }
@@ -2222,6 +2362,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aplikácia nevie overiť oprávnenia agenta OpenCode pre zápis, preto zápis nespustila. Aktualizujte OpenCode na verziu 2 alebo novšiu a skontrolujte jeho konfiguráciu."
+          }
+        }
+      }
+    },
+    "The app checks once a day. It never restarts for an update during a recording or a job." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia kontroluje raz denne. Počas nahrávania ani počas úlohy sa kvôli aktualizácii nereštartuje."
           }
         }
       }
@@ -2616,12 +2766,22 @@
         }
       }
     },
-    "The video always stays on the Mac. Transcription runs locally unless you select a server. The summary goes to the model you choose: with a local model in OpenCode, nothing leaves the Mac. The app sends no telemetry." : {
+    "The update installs when the current job is done." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Video zostáva vždy na Macu. Prepis beží lokálne, ak nevyberiete server. Zápis ide do modelu, ktorý si vyberiete: s lokálnym modelom v OpenCode neopustí Mac nič. Aplikácia neposiela telemetriu."
+            "value" : "Aktualizácia sa nainštaluje po skončení aktuálnej úlohy."
+          }
+        }
+      }
+    },
+    "The video always stays on the Mac. Transcription runs locally unless you select a server. The summary goes to the model you choose: with a local model in OpenCode, nothing leaves the Mac. The app sends no telemetry. The update check only downloads the public list of versions from GitHub." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video zostáva vždy na Macu. Prepis beží lokálne, ak nevyberiete server. Zápis ide do modelu, ktorý si vyberiete: s lokálnym modelom v OpenCode neopustí Mac nič. Aplikácia neposiela telemetriu. Kontrola aktualizácií len stiahne verejný zoznam verzií z GitHubu."
           }
         }
       }
@@ -2642,6 +2802,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Staršia session neexistuje."
+          }
+        }
+      }
+    },
+    "This build does not check for updates. Only the released app from GitHub updates itself." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tento build nekontroluje aktualizácie. Sám sa aktualizuje len vydaná aplikácia z GitHubu."
           }
         }
       }
@@ -2829,12 +2999,42 @@
         }
       }
     },
+    "Update available" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "K dispozícii je aktualizácia"
+          }
+        }
+      }
+    },
+    "Updates" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualizácie"
+          }
+        }
+      }
+    },
     "Use" : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Použiť"
+          }
+        }
+      }
+    },
+    "User guide" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Návod"
           }
         }
       }
@@ -2878,6 +3078,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Čaká na iný prepis…"
+          }
+        }
+      }
+    },
+    "What's new" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novinky"
           }
         }
       }

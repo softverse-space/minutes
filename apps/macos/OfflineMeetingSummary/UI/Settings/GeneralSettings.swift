@@ -4,6 +4,7 @@ import SwiftUI
 
 struct GeneralSettings: View {
     @Environment(AppModel.self) private var model
+    @Environment(UpdateController.self) private var updates
     @AppStorage(SettingsKey.sessionsFolder) private var sessionsFolder = ""
     @AppStorage(SettingsKey.editorAppPath) private var editorPath = ""
     @AppStorage(SettingsKey.appLanguage) private var appLanguage = AppLanguage.defaultValue.rawValue
@@ -50,6 +51,25 @@ struct GeneralSettings: View {
             }
 
             Section {
+                @Bindable var updates = updates
+                Toggle("Check for updates automatically", isOn: $updates.automaticallyChecks)
+                    .disabled(!updates.isEnabled)
+                Toggle("Download and install updates automatically", isOn: $updates.automaticallyDownloads)
+                    .disabled(!updates.isEnabled || !updates.automaticallyChecks)
+            } header: {
+                Text("Updates")
+            } footer: {
+                Group {
+                    if updates.isEnabled {
+                        Text("The app checks once a day. It never restarts for an update during a recording or a job.")
+                    } else {
+                        Text("This build does not check for updates. Only the released app from GitHub updates itself.")
+                    }
+                }
+                .font(.caption).foregroundStyle(.secondary)
+            }
+
+            Section {
                 FolderRow(title: "Sessions folder", path: $sessionsFolder)
                     .onChange(of: sessionsFolder) { model.refreshSessions() }
             } header: {
@@ -81,7 +101,7 @@ struct GeneralSettings: View {
 
             Section {
                 Label {
-                    Text("The video always stays on the Mac. Transcription runs locally unless you select a server. The summary goes to the model you choose: with a local model in OpenCode, nothing leaves the Mac. The app sends no telemetry.")
+                    Text("The video always stays on the Mac. Transcription runs locally unless you select a server. The summary goes to the model you choose: with a local model in OpenCode, nothing leaves the Mac. The app sends no telemetry. The update check only downloads the public list of versions from GitHub.")
                         .fixedSize(horizontal: false, vertical: true)
                 } icon: {
                     Image(systemName: "lock.shield").foregroundStyle(.secondary)

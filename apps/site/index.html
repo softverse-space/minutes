@@ -488,7 +488,7 @@
           <div class="chip cloud" data-i18n="pr.cloud">Claude or Codex (cloud)<small>only if you turn it on and select it</small></div>
         </div>
       </div>
-      <p class="note" data-i18n="pr.note">The video never leaves your local machine. The audio goes to a transcription server only if you select one in Settings → Transcription. With a local model in OpenCode, nothing leaves your local machine. The app sends no telemetry.</p>
+      <p class="note" data-i18n="pr.note">The video never leaves your local machine. The audio goes to a transcription server only if you select one in Settings → Transcription. With a local model in OpenCode, nothing leaves your local machine. The app sends no telemetry. The update check only downloads the public list of versions from GitHub.</p>
     </div>
   </section>
 
@@ -597,6 +597,8 @@
         <details><summary>The transcript is in the wrong language.</summary><p>In Settings → Transcription, set the speech language manually and transcribe again.</p></details>
         <details><summary>How do I free up disk space?</summary><p>In the session detail, click Free up. The app can also delete old videos by itself (Settings → Recording).</p></details>
         <details><summary>The app says it has no permission to record the screen.</summary><p>Allow Minutes in System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording, then restart the app.</p></details>
+        <details><summary>How do I update Minutes?</summary><p>From version 1.1.0, Minutes checks for updates once a day. A blue dot next to the menu bar icon tells you about a new version. Click Update in the menu. You can also click Check for Updates… in Settings → About. The app does not restart during a recording or a job. From version 1.0.0, download the new <code>.dmg</code> one time.</p></details>
+        <details><summary>How do I report a problem?</summary><p>In Settings → About, click Report a problem on GitHub. The report gets the app and macOS versions. Do not attach recordings, transcripts, summaries or screenshots of real meetings.</p></details>
       </div>
     </div>
   </section>
@@ -813,7 +815,7 @@
     'pr.arrow': '<b>→</b>text prepisu<br>a vybrané snímky',
     'pr.internal': 'Váš model v OpenCode<small>lokálny, vlastný server alebo cloud – vyberiete si</small>',
     'pr.cloud': 'Claude alebo Codex (cloud)<small>iba ak ich zapnete a vyberiete</small>',
-    'pr.note': 'Video nikdy neopustí váš lokálny počítač. Zvuk ide na server na prepis iba vtedy, ak ho vyberiete v Settings → Transcription. S lokálnym modelom v OpenCode neopustí váš lokálny počítač nič. Aplikácia neposiela telemetriu.',
+    'pr.note': 'Video nikdy neopustí váš lokálny počítač. Zvuk ide na server na prepis iba vtedy, ak ho vyberiete v Settings → Transcription. S lokálnym modelom v OpenCode neopustí váš lokálny počítač nič. Aplikácia neposiela telemetriu. Kontrola aktualizácií len stiahne verejný zoznam verzií z GitHubu.',
     'ic.stamp': 'menu bar',
     'ic.title': 'Ikona hovorí, čo sa deje.',
     'ic.p1': 'Pozrite sa hore na menu bar tejto stránky. Jeho ikona sa menila, kým ste čítali.',
@@ -845,7 +847,7 @@
     'in.req': '<tr><th>Mac</th><td>Apple Silicon (M1 a novší)</td></tr><tr><th>Systém</th><td>macOS 15 Sequoia a novší</td></tr><tr><th>Miesto</th><td>asi 3 GB a nahrávky</td></tr><tr><th>Sieť</th><td>pri lokálnom modeli žiadna; inak podľa modelu</td></tr><tr><th>Nástroje</th><td>OpenCode; voliteľne Claude Code, Codex a ffmpeg</td></tr>',
     'faq.stamp': 'otázky',
     'faq.title': 'Časté otázky',
-    'faq.items': '<details><summary>Funguje to bez internetu?</summary><p>Nahrávanie a lokálny prepis áno. Zápis tiež, s lokálnym modelom v OpenCode (napríklad Ollama).</p></details><details><summary>Ako prepnem aplikáciu do slovenčiny?</summary><p>Settings → General → App language → Slovenčina. Potom kliknite na Restart now.</p></details><details><summary>Ako pridám vlastnú šablónu?</summary><p>Skopírujte <code>standard.md</code>, zmeňte <code>id</code>, názov a pokyn. Uložte ju do priečinka šablón z Settings → Summary.</p></details><details><summary>Prepis je v zlom jazyku.</summary><p>V Settings → Transcription nastavte jazyk reči ručne a spustite prepis znova.</p></details><details><summary>Ako uvoľním miesto na disku?</summary><p>V detaile session kliknite na Free up. Staré videá môže aplikácia mazať sama (Settings → Recording).</p></details><details><summary>Aplikácia hlási, že nemá povolenie nahrávať obrazovku.</summary><p>Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording a aplikáciu reštartujte.</p></details>',
+    'faq.items': '<details><summary>Funguje to bez internetu?</summary><p>Nahrávanie a lokálny prepis áno. Zápis tiež, s lokálnym modelom v OpenCode (napríklad Ollama).</p></details><details><summary>Ako prepnem aplikáciu do slovenčiny?</summary><p>Settings → General → App language → Slovenčina. Potom kliknite na Restart now.</p></details><details><summary>Ako pridám vlastnú šablónu?</summary><p>Skopírujte <code>standard.md</code>, zmeňte <code>id</code>, názov a pokyn. Uložte ju do priečinka šablón z Settings → Summary.</p></details><details><summary>Prepis je v zlom jazyku.</summary><p>V Settings → Transcription nastavte jazyk reči ručne a spustite prepis znova.</p></details><details><summary>Ako uvoľním miesto na disku?</summary><p>V detaile session kliknite na Free up. Staré videá môže aplikácia mazať sama (Settings → Recording).</p></details><details><summary>Aplikácia hlási, že nemá povolenie nahrávať obrazovku.</summary><p>Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording a aplikáciu reštartujte.</p></details><details><summary>Ako aktualizujem Minutes?</summary><p>Od verzie 1.1.0 Minutes raz denne skontroluje aktualizácie. Modrá bodka vedľa ikony v menu bare oznámi novú verziu. V menu kliknite na Update. Môžete tiež kliknúť na Check for Updates… v Settings → About. Počas nahrávania ani počas úlohy sa aplikácia nereštartuje. Z verzie 1.0.0 si nový <code>.dmg</code> stiahnite raz ručne.</p></details><details><summary>Ako nahlásim problém?</summary><p>V Settings → About kliknite na Report a problem on GitHub. Hlásenie dostane verziu aplikácie a macOS. Nepripájajte nahrávky, prepisy, zápisy ani snímky obrazovky zo skutočných stretnutí.</p></details>',
     'cl.stamp': 'zápis z tejto stránky',
     'cl.items': '<dt>rozhodnutie</dt><dd>Stretnutia zapisuje Minutes. Dáta zostávajú na vašom lokálnom počítači.</dd><dt>úloha</dt><dd>Nainštalovať Minutes – vy – pred ďalšou poradou.</dd><dt>otvorené</dt><dd>Ktorú šablónu použijete prvú?</dd>',
     'ft.version': 'open source · verzia 1.0.0',

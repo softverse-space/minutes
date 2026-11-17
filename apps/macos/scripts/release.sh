@@ -12,6 +12,8 @@
 # apps/macos/Config/Signing.xcconfig (not in git). See Signing.xcconfig.example.
 #
 # Output: apps/macos/build/release/Minutes-<version>.dmg and its .sha256 file.
+#
+# After the GitHub release exists, run scripts/appcast.sh to announce the update (ADR-0031).
 set -euo pipefail
 
 SIGN_IDENTITY="${SIGN_IDENTITY:-Developer ID Application}"
@@ -34,6 +36,13 @@ if [[ -z "${TEAM_ID:-}" ]]; then
 fi
 VERSION="$(grep -E '^\s+MARKETING_VERSION:' project.yml | awk '{print $2}')"
 DMG="$OUT/Minutes-$VERSION.dmg"
+
+# A distributed build without the public key can never update itself (ADR-0031).
+ED_KEY="$(sed -nE 's/^[[:space:]]+SPARKLE_PUBLIC_ED_KEY:[[:space:]]*"?([^"]*)"?[[:space:]]*$/\1/p' project.yml | head -1)"
+if [[ -z "$ED_KEY" && $NOTARIZE == 1 ]]; then
+  echo "SPARKLE_PUBLIC_ED_KEY in project.yml is empty. Run Sparkle generate_keys and set the public key (see scripts/appcast.sh)." >&2
+  exit 1
+fi
 
 echo "==> Minutes $VERSION"
 rm -rf "$WORK" "$DMG" "$DMG.sha256"
@@ -79,6 +88,7 @@ APP="$WORK/export/Minutes.app"
 echo "==> Verify signature"
 codesign --verify --deep --strict --verbose=1 "$APP"
 codesign -dvv "$APP" 2>&1 | grep -E "^Authority=Developer ID|TeamIdentifier|Runtime"
+echo "==> Update feed: $(/usr/libexec/PlistBuddy -c 'Print :SUFeedURL' "$APP/Contents/Info.plist")"
 
 echo "==> Build .dmg"
 mkdir -p "$WORK/dmg"

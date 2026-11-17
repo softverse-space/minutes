@@ -38,7 +38,7 @@ The acceptance criteria are in the brief (the original brief, kept locally).
 - [ ] Comparison of WhisperKit vs Parakeet v3 vs server (ADR-0004)
 - [ ] Process a session again with a different template, session history
 - [ ] Check unclear sections with a second transcription
-- [ ] Automatic updates (Sparkle) – specification [app-updates](../../docs/specs/app-updates.md), [ADR-0031](../../docs/adr/0031-app-updates-sparkle.md) (proposed)
+- [x] Automatic updates (Sparkle) and project links in About – specification [app-updates](../../docs/specs/app-updates.md), [ADR-0031](../../docs/adr/0031-app-updates-sparkle.md). First automatic update: release 1.1.0, then 1.1.1
 - [x] Continue a session and merge sessions into one summary – specification [continue-and-merge-sessions](../../docs/specs/continue-and-merge-sessions.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md) (manual tests open)
 - [x] Recording that survives a crash or a restart, recovery of interrupted sessions – [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md) (manual tests open)
 
