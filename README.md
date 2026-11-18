@@ -42,6 +42,7 @@ Click the Minutes icon. Select a screen and the audio sources. Then click **Star
 - **Microphone** records you. In the transcript you are “me”, the others are “others”.
 - During the recording you see the audio level. You can mute each source.
 - Turn off the **Screen** switch to record only audio. The file is then much smaller, but the minutes cannot use pictures of the screen.
+- Do you already have a recording? Click **Import a recording…** or drop audio or video files on the popover. The app copies them and starts the transcription. The original files stay where they are.
 
 > [!IMPORTANT]
 > Before you record, tell the participants that you record the meeting. Use headphones, or the microphone also picks up the speakers.

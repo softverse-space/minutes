@@ -4,6 +4,7 @@ struct RecordingSettings: View {
     @AppStorage(SettingsKey.videoFPS) private var fps = 5
     @AppStorage(SettingsKey.videoMaxWidth) private var maxWidth = 1920
     @AppStorage(SettingsKey.videoRetentionDays) private var retention = 0
+    @AppStorage(SettingsKey.importKeepsVideo) private var importKeepsVideo = true
 
     var body: some View {
         Form {
@@ -30,6 +31,15 @@ struct RecordingSettings: View {
                 }
             } footer: {
                 Text("Audio, transcript and summaries stay. The app checks for old videos at launch.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
+            Section {
+                Toggle("Keep the video of imported files", isOn: $importKeepsVideo)
+            } header: {
+                Text("Import")
+            } footer: {
+                Text("With the video, the minutes can use pictures of the screen. Without it, the session uses less disk space. The original file stays where it is.")
                     .font(.caption).foregroundStyle(.secondary)
             }
 
