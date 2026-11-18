@@ -245,3 +245,11 @@
 - Version 1.2.0, build 3. The first update through Sparkle, from 1.1.0.
 - Published: GitHub release v1.2.0, appcast item (EdDSA signature checked), website and README (EN and SK, FAQ about audio only).
 - Fixed: `release.sh` wrote the full local path into the `.sha256` file. It now writes only the file name.
+
+## [2026-11-18] update | Import of existing recordings
+- Source: [import request](raw/2026-11-18-import-recordings.md).
+- App: Import a recording… (New session tab, menu of the menu bar icon) and a drop on the popover. A copy of the file in a hidden staging folder, `audio/import.m4a`, optional video (`recording.mov`, `.mp4` or `.mkv`), transcription at once. More files: one session with parts or separate sessions. ffmpeg for mkv, webm, ogg, opus and other formats.
+- ADR: new 0034 (proposed).
+- Site and README: a point in the recording chapter and a FAQ item (EN and SK).
+- Open: manual tests in the app (drop, file dialog, alert, Cancel, a kill during the import, a 2+ h file).
+- Changed: pages/ui.md, pages/pipeline.md, pages/architecture.md, pages/glossary.md, docs/adr/README.md, CHANGELOG.md, README.md, apps/site/index.html.

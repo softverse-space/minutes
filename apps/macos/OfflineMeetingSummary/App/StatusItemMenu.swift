@@ -62,6 +62,13 @@ final class StatusItemMenu {
         case .stopping:
             menu.addItem(ActionMenuItem(String(localized: "Saving recording…"), symbol: "stop.fill", enabled: false) {})
         }
+        if model.isImporting {
+            menu.addItem(ActionMenuItem(String(localized: "Stop import"), symbol: "xmark.circle") { model.cancelImport() })
+        } else {
+            menu.addItem(ActionMenuItem(String(localized: "Import a recording…"), symbol: "square.and.arrow.down") {
+                model.chooseFilesToImport()
+            })
+        }
         menu.addItem(ActionMenuItem(String(localized: "Stop transcription"), symbol: "waveform.slash",
                                     enabled: model.isTranscribing) { model.cancelAll(.transcription) })
         menu.addItem(ActionMenuItem(String(localized: "Stop writing minutes"), symbol: "xmark.circle",

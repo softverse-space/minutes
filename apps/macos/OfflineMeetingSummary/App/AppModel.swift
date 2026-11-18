@@ -3,6 +3,7 @@ import AVFoundation
 import Observation
 import OMSCore
 import SwiftUI
+import UniformTypeIdentifiers
 
 enum RecorderPhase: Equatable {
     case idle, starting, recording, stopping
@@ -79,6 +80,14 @@ final class AppModel {
     var systemMuted = false
     var errorMessage: String?
 
+    // Import (ADR-0034)
+    /// Dropped files that wait for the choice: one session or separate sessions.
+    var pendingImport: [URL]?
+    /// State of the running or the last import. `nil` when there is nothing to show.
+    var importJob: JobState?
+    /// Done part of the file that the import converts now (0…1). `nil` while it is not known.
+    var importProgress: Double?
+
     // Sessions
     var tab: PopoverTab = .record
     /// Sessions with everything the UI shows, loaded off the main actor by `refreshSessions()`.
@@ -129,6 +138,7 @@ final class AppModel {
     /// The recorder between `start()` and the `.recording` phase, with an error that it reported in that time.
     @ObservationIgnored private var startingRecorder: ScreenRecorder?
     @ObservationIgnored private var pendingStreamError: Error?
+    @ObservationIgnored private var importTask: Task<Void, Never>?
 
     init() {
         AppSettings.registerDefaults()
@@ -179,6 +189,8 @@ final class AppModel {
     private nonisolated static func recoverSessions(in folder: URL, before launchedAt: Date) async
         -> (interrupted: [SessionFolder], failedMerges: [SessionFolder]) {
         let failed = SessionMerge.recoverUnfinished(in: folder) { try FileManager.default.trashItem(at: $0, resultingItemURL: nil) }
+        // An import that a crash or a quit stopped left only copies in a hidden folder (ADR-0034).
+        MediaImport.removeUnfinished(in: folder)
         var interrupted: [SessionFolder] = []
         for session in SessionLibrary.list(in: folder, limit: .max) {
             guard let metadata = try? session.loadMetadata(), metadata.startedAt < launchedAt else { continue }
@@ -313,6 +325,7 @@ final class AppModel {
         do {
             let current = try session.loadMetadata()
             guard current.mediaRemovedAt == nil else { throw ContinueError.mediaRemoved }
+            guard !current.isImported else { throw ContinueError.imported }
             guard max(1, current.parts.count) < SessionFolder.maximumParts else { throw SessionPartsError.tooManyParts }
             try checkDiskSpace(at: session.url)
             let microphoneAllowed = await prepareMicrophone()
@@ -624,7 +637,8 @@ final class AppModel {
         iconTicker = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated {
                 guard let self else { return }
-                if self.transcriptionJobs.values.contains(where: \.isRunning) || self.summaryJobs.values.contains(where: \.isRunning) {
+                if self.transcriptionJobs.values.contains(where: \.isRunning) || self.summaryJobs.values.contains(where: \.isRunning)
+                    || self.isImporting {
                     self.iconPhase = Date().timeIntervalSinceReferenceDate
                 } else {
                     self.iconTicker?.invalidate()
@@ -815,8 +829,9 @@ final class AppModel {
 
     /// `true` when the session can get a new part now.
     func canContinue(_ item: SessionItem) -> Bool {
+        // An imported session has no real time after its end, so a new recording cannot continue it (ADR-0034).
         guard phase == .idle, !isRecovering, let metadata = item.metadata, metadata.mediaRemovedAt == nil,
-              metadata.endedAt != nil, max(1, metadata.parts.count) < SessionFolder.maximumParts else { return false }
+              !metadata.isImported, metadata.endedAt != nil, max(1, metadata.parts.count) < SessionFolder.maximumParts else { return false }
         let operation = operations.operation(for: item.session.url)
         return operation == nil || operation == .transcription
     }
@@ -910,7 +925,172 @@ final class AppModel {
         case SessionPartsError.notEnded: String(localized: "A session that records cannot be merged.")
         case SessionPartsError.sameSession: String(localized: "A session cannot merge with itself.")
         case ContinueError.mediaRemoved: String(localized: "The video and audio of this session are deleted.")
+        case ContinueError.imported: String(localized: "An imported session cannot get a new recording.")
         default: error.localizedDescription
+        }
+    }
+
+    // MARK: Import (ADR-0034)
+
+    var isImporting: Bool { importJob?.isRunning == true }
+
+    /// Opens a file dialog. The popover closes when the dialog opens, so a question about more files is an alert.
+    func chooseFilesToImport() {
+        guard !isImporting else { return }
+        NSApp.activate()
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.allowedContentTypes = MediaImport.supportedExtensions.sorted().compactMap { UTType(filenameExtension: $0) }
+        panel.message = String(localized: "Select audio or video files. The app copies them. The original files stay where they are.")
+        panel.prompt = String(localized: "Import")
+        guard panel.runModal() == .OK, !panel.urls.isEmpty else { return }
+        requestImport(panel.urls, askInline: false)
+    }
+
+    /// Starts an import of `urls`. More than one file needs a choice: one session or separate sessions.
+    /// `askInline`: the popover is open (a drop), so the question is a panel on the New session tab.
+    func requestImport(_ urls: [URL], askInline: Bool) {
+        let files = urls.filter { !$0.hasDirectoryPath }
+        let supported = files.filter(MediaImport.isSupported)
+        let rejected = files.filter { !MediaImport.isSupported($0) } + urls.filter(\.hasDirectoryPath)
+        errorMessage = rejected.isEmpty ? nil : MediaImportError.unsupported(rejected.map(\.lastPathComponent)).localizedDescription
+        guard !supported.isEmpty else { return }
+        guard !isImporting else {
+            errorMessage = MediaImportError.busy.localizedDescription
+            return
+        }
+        guard supported.count > 1 else {
+            startImport(supported, asOneSession: false)
+            return
+        }
+        // The panel is on the New session tab. During a recording the popover shows the recording view, so ask with an alert.
+        if askInline, phase == .idle {
+            focusedSession = nil
+            tab = .record
+            pendingImport = supported
+            return
+        }
+        let alert = NSAlert()
+        alert.messageText = String(localized: "Import \(supported.count) files as one session?")
+        alert.informativeText = String(localized: "One session makes one transcript and one summary. The files are its parts, in the order of their names.")
+        alert.addButton(withTitle: String(localized: "One session"))
+        alert.addButton(withTitle: String(localized: "Separate sessions"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
+        switch alert.runModal() {
+        case .alertFirstButtonReturn: startImport(supported, asOneSession: true)
+        case .alertSecondButtonReturn: startImport(supported, asOneSession: false)
+        default: break
+        }
+    }
+
+    /// Imports the files one after another. Each finished session is transcribed at once
+    /// when "Transcribe automatically" is on.
+    func startImport(_ urls: [URL], asOneSession: Bool) {
+        pendingImport = nil
+        guard !isImporting, !urls.isEmpty else { return }
+        let ordered = MediaImport.ordered(urls)
+        let groups = asOneSession ? [ordered] : ordered.map { [$0] }
+        let keepVideo = AppSettings.current.importKeepsVideo
+        importJob = .running(String(localized: "Preparing the import…"))
+        importProgress = nil
+        startIconTicker()
+        importTask = Task { [weak self] in
+            var imported: [SessionFolder] = []
+            var failures: [String] = []
+            var cancelled = false
+            for (index, group) in groups.enumerated() {
+                guard let self else { return }
+                if Task.isCancelled { cancelled = true; break }
+                let counter = groups.count > 1 ? "\(index + 1)/\(groups.count) · " : ""
+                do {
+                    let session = try await self.importGroup(group, keepVideo: keepVideo, counter: counter)
+                    imported.append(session)
+                    self.refreshSessions()
+                    if AppSettings.current.autoTranscribe { self.transcribe(session) }
+                } catch is CancellationError {
+                    cancelled = true
+                    break
+                } catch {
+                    failures.append(Self.message(for: error))
+                }
+            }
+            self?.finishImport(imported: imported, failures: failures, cancelled: cancelled)
+        }
+    }
+
+    func cancelImport() {
+        importTask?.cancel()
+        if isImporting { importJob = .running(String(localized: "Cancelling…")) }
+    }
+
+    private func finishImport(imported: [SessionFolder], failures: [String], cancelled: Bool) {
+        importTask = nil
+        importProgress = nil
+        if let failure = failures.first {
+            importJob = .failed(failure)
+            Notifier.shared.post(title: String(localized: "The import did not finish"), body: failure)
+        } else {
+            importJob = cancelled ? .cancelled : nil
+        }
+        refreshSessions()
+        if imported.count == 1, let session = imported.first {
+            focusedSession = session
+            tab = .sessions
+        } else if !imported.isEmpty {
+            focusedSession = nil
+            tab = .sessions
+        }
+    }
+
+    /// Imports one group of files into one new session. A group of more files gets one part per file.
+    /// The files go to a hidden folder first. Only a complete session gets its real name.
+    private func importGroup(_ urls: [URL], keepVideo: Bool, counter: String) async throws -> SessionFolder {
+        let root = AppSettings.current.sessionsFolder
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        let needed = urls.reduce(Int64(Self.minimumFreeSpace)) { $0 + FileStorage.size(of: $1) }
+        if let free = try root.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+            .volumeAvailableCapacityForImportantUsage, free < needed {
+            throw MediaImportError.insufficientDiskSpace
+        }
+
+        let startedAt = await MediaImporter.startDate(of: urls[0])
+        let name = MediaImport.folderName(startedAt: startedAt, existing: MediaImport.existingNames(in: root))
+        let session = SessionFolder(url: root.appending(path: name))
+        guard operations.begin(.importing, for: session.url) else { throw MediaImportError.busy }
+        defer { operations.end(.importing, for: session.url) }
+
+        let staging = SessionFolder(url: root.appending(path: MediaImport.stagingName(for: name)))
+        do {
+            try staging.createDirectories()
+            var items: [MediaImport.Item] = []
+            for (index, url) in urls.enumerated() {
+                try Task.checkCancellation()
+                let fileCounter = urls.count > 1 ? String(localized: "Part \(index + 1)") + " · " : ""
+                importJob = .running(counter + fileCounter + String(localized: "Importing \(url.lastPathComponent)…"))
+                importProgress = nil
+                let folder = urls.count > 1 ? staging.url.appending(path: SessionFolder.partFolderName(index + 1)) : staging.url
+                let result = try await MediaImporter.importFile(url, into: folder, keepVideo: keepVideo) { [weak self] value in
+                    Task { @MainActor [weak self] in
+                        guard self?.isImporting == true else { return }
+                        self?.importProgress = value
+                    }
+                }
+                items.append(MediaImport.Item(fileName: url.lastPathComponent, startedAt: startedAt,
+                                              duration: result.duration, video: result.video))
+            }
+            try Task.checkCancellation()
+            let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            let metadata = items.count > 1
+                ? MediaImport.metadata(forParts: items, appVersion: version)
+                : MediaImport.metadata(for: items[0], appVersion: version)
+            try staging.save(metadata)
+            try staging.writePartsMap(metadata)
+            try FileManager.default.moveItem(at: staging.url, to: session.url)
+            return session
+        } catch {
+            try? FileManager.default.removeItem(at: staging.url)
+            throw error
         }
     }
 
@@ -936,7 +1116,7 @@ final class AppModel {
     /// `true` while any session has an operation, a recording starts or stops, or the launch check runs.
     /// An update does not restart the app at such a time (ADR-0031).
     var hasRunningWork: Bool {
-        phase != .idle || isRecovering || !operations.isEmpty
+        phase != .idle || isRecovering || !operations.isEmpty || isImporting
     }
 
     /// `true` while a recording, a transcription (also a waiting one), a summary or a cleanup uses the session.
@@ -1030,6 +1210,7 @@ enum SessionAction: Equatable {
 
 enum ContinueError: Error {
     case mediaRemoved
+    case imported
 }
 
 /// Reads the duration of a media file for the recovery of interrupted sessions (ADR-0030).

@@ -30,6 +30,14 @@ public struct AudioTrackInfo: Codable, Sendable, Hashable {
     }
 }
 
+/// How a session came into the app (ADR-0034).
+public enum SessionSource: String, Codable, Sendable {
+    /// The app recorded the session.
+    case recorded
+    /// The user imported existing audio or video files.
+    case imported
+}
+
 /// How a part came into its session (ADR-0029).
 public enum PartOrigin: String, Codable, Sendable {
     case recorded, continued, merged
@@ -61,6 +69,8 @@ public struct SessionPart: Codable, Sendable, Hashable {
     public var lastAliveAt: Date?
     public var interrupted: Bool
     public var endReason: PartEndReason?
+    /// Name (without a path) of the file that the user imported as this part (ADR-0034).
+    public var importedFileName: String?
 
     public init(folder: String, startedAt: Date, timeZone: String = TimeZone.current.identifier, origin: PartOrigin) {
         self.folder = folder
@@ -75,7 +85,8 @@ public struct SessionPart: Codable, Sendable, Hashable {
 
     enum CodingKeys: String, CodingKey {
         case folder, startedAt, endedAt, timeZone, origin, mergedFrom, video, audioTracks, sourceEvents,
-             displayName, microphoneName, transcription, transcriptionEngine, lastAliveAt, interrupted, endReason
+             displayName, microphoneName, transcription, transcriptionEngine, lastAliveAt, interrupted, endReason,
+             importedFileName
     }
 
     public init(from decoder: Decoder) throws {
@@ -96,6 +107,7 @@ public struct SessionPart: Codable, Sendable, Hashable {
         lastAliveAt = try c.decodeIfPresent(Date.self, forKey: .lastAliveAt)
         interrupted = try c.decodeIfPresent(Bool.self, forKey: .interrupted) ?? false
         endReason = try c.decodeIfPresent(PartEndReason.self, forKey: .endReason)
+        importedFileName = try c.decodeIfPresent(String.self, forKey: .importedFileName)
     }
 
     /// Recorded time of the part, without breaks. `nil` while it records.
@@ -131,6 +143,10 @@ public struct SessionMetadata: Codable, Sendable {
     /// The recording (or the last part) ended without Stop.
     public var interrupted: Bool
     public var endReason: PartEndReason?
+    /// `imported` for a session that the user made from existing files (ADR-0034).
+    public var source: SessionSource
+    /// Name (without a path) of the imported file of a session without parts.
+    public var importedFileName: String?
 
     public init(id: UUID = UUID(), startedAt: Date, timeZone: TimeZone = .current) {
         self.id = id
@@ -142,12 +158,13 @@ public struct SessionMetadata: Codable, Sendable {
         self.outputs = []
         self.parts = []
         self.interrupted = false
+        self.source = .recorded
     }
 
     enum CodingKeys: String, CodingKey {
         case id, startedAt, endedAt, timeZone, displayName, microphoneName, video, audioTracks, sourceEvents,
              transcription, transcriptionEngine, transcriptionError, outputs, appVersion, mediaRemovedAt,
-             parts, lastAliveAt, interrupted, endReason
+             parts, lastAliveAt, interrupted, endReason, source, importedFileName
     }
 
     /// Fields added after version 1.0.0 are optional, so old `session.json` files still load.
@@ -172,7 +189,12 @@ public struct SessionMetadata: Codable, Sendable {
         lastAliveAt = try c.decodeIfPresent(Date.self, forKey: .lastAliveAt)
         interrupted = try c.decodeIfPresent(Bool.self, forKey: .interrupted) ?? false
         endReason = try c.decodeIfPresent(PartEndReason.self, forKey: .endReason)
+        source = try c.decodeIfPresent(SessionSource.self, forKey: .source) ?? .recorded
+        importedFileName = try c.decodeIfPresent(String.self, forKey: .importedFileName)
     }
+
+    /// The user imported the session from existing files (ADR-0034).
+    public var isImported: Bool { source == .imported }
 
     public var hasParts: Bool { !parts.isEmpty }
 
@@ -262,6 +284,10 @@ public struct SessionFolder: Sendable, Hashable, Identifiable {
     public var name: String { url.lastPathComponent }
     public var metadataURL: URL { url.appending(path: "session.json") }
     public var videoURL: URL { url.appending(path: "recording.mov") }
+    /// The video of a session without parts. An imported session can have `recording.mp4` or `recording.mkv` (ADR-0034).
+    public func videoURL(_ metadata: SessionMetadata) -> URL { url.appending(path: metadata.video ?? "recording.mov") }
+    /// Video file names that the app writes. `frame-at.sh` reads the same names.
+    public static let videoFileNames = ["recording.mov", "recording.mp4", "recording.mkv"]
     public var audioDirectory: URL { url.appending(path: "audio") }
     public var framesDirectory: URL { url.appending(path: "frames") }
     public var outputsDirectory: URL { url.appending(path: "outputs") }
@@ -317,6 +343,8 @@ public enum SessionLibrary {
     public static func list(in root: URL, limit: Int = 20) -> [SessionFolder] {
         let folders = (try? FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: [.isDirectoryKey])) ?? []
         return folders
+            // A hidden folder is an import that has not finished (ADR-0034).
+            .filter { !$0.lastPathComponent.hasPrefix(".") }
             .map(SessionFolder.init(url:))
             .filter { FileManager.default.fileExists(atPath: $0.metadataURL.path) }
             .sorted { $0.name > $1.name }
@@ -324,7 +352,7 @@ public enum SessionLibrary {
             .map { $0 }
     }
 
-    /// Deletes `recording.mov` in sessions older than `days`. Audio, transcripts and outputs stay.
+    /// Deletes the video (`recording.mov`, `.mp4` or `.mkv`) in sessions older than `days`. Audio, transcripts and outputs stay.
     @discardableResult
     public static func removeOldVideos(in root: URL, olderThanDays days: Int, now: Date = Date()) -> [URL] {
         guard days > 0 else { return [] }
@@ -333,7 +361,8 @@ public enum SessionLibrary {
         for session in list(in: root, limit: .max) {
             guard let metadata = try? session.loadMetadata(), metadata.startedAt < limit else { continue }
             // The root video of a session with one recording, and the video of each part (ADR-0029).
-            let videos = [session.videoURL] + session.partFoldersOnDisk.map { $0.appending(path: "recording.mov") }
+            let folders = [session.url] + session.partFoldersOnDisk
+            let videos = folders.flatMap { folder in SessionFolder.videoFileNames.map { folder.appending(path: $0) } }
             for video in videos where FileManager.default.fileExists(atPath: video.path) {
                 if (try? FileManager.default.removeItem(at: video)) != nil { removed.append(video) }
             }
