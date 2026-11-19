@@ -27,3 +27,4 @@ apps/macos/Config/Signing.xcconfig
 
 # Internal, local-only material (templates and sources that must not be public)
 local/
+__pycache__/

@@ -272,3 +272,7 @@
 - New: import of existing recordings (ADR-0034), copy and drag of outputs, **Show prompt**, regrouped Settings (ADR-0035).
 - Version 1.3.0, build 4. Update through Sparkle from 1.2.0.
 - Fixed: a compiler warning (`nonisolated(unsafe)` on a `Sendable` constant in `MarkdownHTML.swift`).
+
+## [2026-11-19] update | User-facing CHANGELOG
+- Source: feedback from the user after the 1.3.0 release. The release notes were too long and had links to ADRs.
+- Changed: `apps/macos/CHANGELOG.md` (all versions, shorter, no links to ADRs or code), the release notes in `apps/site/appcast.xml` (from the new CHANGELOG; signatures not changed), the release skill (rule for the CHANGELOG), the GitHub release notes of v1.0.0–v1.3.0.
