@@ -12,9 +12,9 @@
 Minutes records your meeting, transcribes the speech and writes the minutes from a template.<br>
 Video and audio stay on your local machine.
 
-![macOS 15+](https://img.shields.io/badge/macOS-15%2B-15173d) ![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-M1%2B-15173d) ![Swift](https://img.shields.io/badge/Swift-SwiftUI-ff6b4a) ![version](https://img.shields.io/badge/version-1.2.0-ffb347) ![license](https://img.shields.io/badge/license-Apache--2.0-15173d)
+![macOS 15+](https://img.shields.io/badge/macOS-15%2B-15173d) ![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-M1%2B-15173d) ![Swift](https://img.shields.io/badge/Swift-SwiftUI-ff6b4a) ![version](https://img.shields.io/badge/version-1.3.0-ffb347) ![license](https://img.shields.io/badge/license-Apache--2.0-15173d)
 
-**[Download Minutes 1.2.0](https://github.com/softverse-space/minutes/releases/latest)** · [Website and user guide](https://softverse-space.github.io/minutes/) · [Build from source](#build-from-source) · [Changelog](apps/macos/CHANGELOG.md) · [Decisions (ADR)](docs/adr/README.md)
+**[Download Minutes 1.3.0](https://github.com/softverse-space/minutes/releases/latest)** · [Website and user guide](https://softverse-space.github.io/minutes/) · [Build from source](#build-from-source) · [Changelog](apps/macos/CHANGELOG.md) · [Decisions (ADR)](docs/adr/README.md)
 
 </div>
 
@@ -144,12 +144,12 @@ App language (English or Slovak), sessions folder, video quality, transcription 
 
 ### Download the app
 
-1. Download [`Minutes-1.2.0.dmg`](https://github.com/softverse-space/minutes/releases/latest) from GitHub. Open it and move Minutes to Applications.
+1. Download [`Minutes-1.3.0.dmg`](https://github.com/softverse-space/minutes/releases/latest) from GitHub. Open it and move Minutes to Applications.
 2. Open Minutes. The icon appears in the menu bar.
 3. Click the icon and then **Allow**. Allow Minutes in System Settings → Privacy & Security → Screen & System Audio Recording. Restart the app.
 4. In Settings → Transcription, click **Download model**. It downloads once.
 5. Install OpenCode and set up a model: a local one (for example Ollama), your company server or a cloud provider: `brew install opencode ffmpeg`.
-6. Optional: install Claude Code or Codex and turn them on in Settings → Summary.
+6. Optional: install Claude Code or Codex and turn them on in Settings → Models.
 
 Full guide and FAQ: [softverse-space.github.io/minutes](https://softverse-space.github.io/minutes/#install).
 
