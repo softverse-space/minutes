@@ -266,7 +266,7 @@ public enum MarkdownHTML {
     }
 
     /// `*text*` and `_text_`, but not `2 * 3 * 4` or `snake_case_name`. Swift Regex has no lookbehind.
-    nonisolated(unsafe) private static let italicPatterns: [NSRegularExpression] = [
+    private static let italicPatterns: [NSRegularExpression] = [
         #"(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])"#,
         #"(?<!\w)_(?!\s)(.+?)(?<!\s)_(?!\w)"#,
     ].map { try! NSRegularExpression(pattern: $0) }

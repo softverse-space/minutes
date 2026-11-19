@@ -1,6 +1,6 @@
 # Changes – Minutes
 
-## Unreleased
+## 1.3.0 – 2026-11-19
 
 ### New
 - **Import a recording:** make a session from an existing audio or video file. Click **Import a recording…** on the New session tab or in the menu of the menu bar icon, or drop files on the popover. The app copies the file, keeps the video for screen frames and starts the transcription at once. The original file stays where it is. For more files, the app asks: one session with parts or separate sessions. ffmpeg adds mkv, webm, ogg, opus and other formats ([ADR-0034](../../docs/adr/0034-import-existing-recordings.md)).

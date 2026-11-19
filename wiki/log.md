@@ -267,3 +267,8 @@
 - Changed: pages/ui.md
 - Later the same day: one section layout for all tools (switch, Program, default model, Advanced with an own path), no "(cloud)" label, the Model picker shows only tools that are on, the OpenCode agent name setting is removed. ADR-0015 and ADR-0023 got an "amended by ADR-0035" note.
 - Merge with main: main got ADR-0034 (import of recordings), so the Settings decision is now ADR-0035.
+
+## [2026-11-19] release | Minutes 1.3.0
+- New: import of existing recordings (ADR-0034), copy and drag of outputs, **Show prompt**, regrouped Settings (ADR-0035).
+- Version 1.3.0, build 4. Update through Sparkle from 1.2.0.
+- Fixed: a compiler warning (`nonisolated(unsafe)` on a `Sendable` constant in `MarkdownHTML.swift`).
