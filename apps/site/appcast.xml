@@ -7,6 +7,35 @@
     <description>Updates of Minutes</description>
     <language>en</language>
     <item>
+      <title>Minutes 1.3.0</title>
+      <pubDate>Thu, 19 Nov 2026 19:56:55 GMT</pubDate>
+      <sparkle:version>4</sparkle:version>
+      <sparkle:shortVersionString>1.3.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>https://github.com/softverse-space/minutes/releases/tag/v1.3.0</sparkle:fullReleaseNotesLink>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+<li><strong>Import a recording:</strong> make a session from an existing audio or video file. Click <strong>Import a recording…</strong> on the New session tab or in the menu of the menu bar icon, or drop files on the popover. The app copies the file, keeps the video for screen frames and starts the transcription at once. The original file stays where it is. For more files, the app asks: one session with parts or separate sessions. ffmpeg adds mkv, webm, ogg, opus and other formats (<a href="https://github.com/softverse-space/minutes/blob/main/docs/adr/0034-import-existing-recordings.md">ADR-0034</a>).</li>
+<li>Settings → Recording: <strong>Keep the video of imported files</strong>.</li>
+<li><strong>Copy a summary:</strong> the copy button in the Outputs list puts the summary on the clipboard. Mail, Teams, Word and Pages paste formatted text with headings, lists and tables. Text editors paste the Markdown. Right-click has <strong>Copy as Markdown text</strong> and <strong>Share…</strong>.</li>
+<li><strong>Drag a summary</strong> from the Outputs list to Mail, Slack or Finder.</li>
+<li><strong>Copy the transcript</strong> with the copy button in the Transcript card.</li>
+<li><strong>Show prompt</strong> in the Summary card opens the full text that the model gets: the system prompt and the task from the template, the detail, the language and Extra.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>Settings:</strong> a new <strong>Models</strong> tab has OpenCode, Claude and Codex. The <strong>Summary</strong> tab has the defaults, the templates, the system prompt and the screen frames. The window is larger.</li>
+<li><strong>Offer OpenCode for summaries:</strong> you can turn OpenCode off, the same as Claude and Codex. A new summary then starts with the first tool that is on.</li>
+<li>One note "Where the data goes" applies to all models. A cloud provider in OpenCode gets the transcript the same as Claude or Codex.</li>
+<li>Settings no longer show the status of the OpenCode agent. The app syncs it before each summary.</li>
+<li><strong>The same settings for all tools:</strong> OpenCode, Claude and Codex have the same rows: the switch, <strong>Program</strong> with the path that the app found, the default model and <strong>Advanced</strong> with an own path. The Model picker shows only the tools that are on, without the "(cloud)" label.</li>
+<li><strong>Removed:</strong> the OpenCode agent name. OpenCode always uses the agent <code>meeting-summary</code> with the system prompt of the app.</li>
+</ul>
+      ]]></description>
+      <enclosure url="https://github.com/softverse-space/minutes/releases/download/v1.3.0/Minutes-1.3.0.dmg" length="6353928" type="application/x-apple-diskimage" sparkle:edSignature="+xwX4pCbzE1u+f271Kqaa7FovjjNLeIXzTVUKNf/TYNLFhUbx+Gq+C3K7nfvMDNbAsQ3S5tz6DV5SNnTMuy7DA=="/>
+    </item>
+    <item>
       <title>Minutes 1.2.0</title>
       <pubDate>Tue, 17 Nov 2026 22:59:48 GMT</pubDate>
       <sparkle:version>3</sparkle:version>
