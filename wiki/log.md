@@ -253,3 +253,17 @@
 - Site and README: a point in the recording chapter and a FAQ item (EN and SK).
 - Open: manual tests in the app (drop, file dialog, alert, Cancel, a kill during the import, a 2+ h file).
 - Changed: pages/ui.md, pages/pipeline.md, pages/architecture.md, pages/glossary.md, docs/adr/README.md, CHANGELOG.md, README.md, apps/site/index.html.
+
+## [2026-11-18] update | Copy outputs and prompt preview
+- Source: discussion with the user. HTML templates and extra context for the model are out of scope: the core is recording, transcript and summary. The user can take the Markdown or the transcript to other tools.
+- App: copy button and drag for summaries (Markdown, HTML and RTF on the clipboard), copy button for the transcript, **Show prompt** in the Summary card.
+- Site: sum.p3 (EN and SK).
+- Changed: pages/ui.md
+
+## [2026-11-19] decision | Settings tabs and one data note for all models
+- Source: feedback from the user (the ffmpeg status was in the System prompt section, the OpenCode agent status was not useful, the cloud warning was only for Claude and Codex, the window was small).
+- App: a new Models tab, the Summary tab without tools, one data note for all models, window 640 pt wide.
+- ADR: new 0035 (proposed), changes the Settings table of 0012.
+- Changed: pages/ui.md
+- Later the same day: one section layout for all tools (switch, Program, default model, Advanced with an own path), no "(cloud)" label, the Model picker shows only tools that are on, the OpenCode agent name setting is removed. ADR-0015 and ADR-0023 got an "amended by ADR-0035" note.
+- Merge with main: main got ADR-0034 (import of recordings), so the Settings decision is now ADR-0035.

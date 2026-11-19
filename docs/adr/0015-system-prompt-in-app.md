@@ -1,6 +1,6 @@
 # ADR-0015: The system prompt is part of the app
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [ADR-0035](0035-settings-tabs-and-model-data-note.md) (no custom agent name)
 - **Date:** 2026-11-13
 - **Decided by:** Henrich Neuschl
 

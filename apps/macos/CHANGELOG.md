@@ -5,6 +5,18 @@
 ### New
 - **Import a recording:** make a session from an existing audio or video file. Click **Import a recording…** on the New session tab or in the menu of the menu bar icon, or drop files on the popover. The app copies the file, keeps the video for screen frames and starts the transcription at once. The original file stays where it is. For more files, the app asks: one session with parts or separate sessions. ffmpeg adds mkv, webm, ogg, opus and other formats ([ADR-0034](../../docs/adr/0034-import-existing-recordings.md)).
 - Settings → Recording: **Keep the video of imported files**.
+- **Copy a summary:** the copy button in the Outputs list puts the summary on the clipboard. Mail, Teams, Word and Pages paste formatted text with headings, lists and tables. Text editors paste the Markdown. Right-click has **Copy as Markdown text** and **Share…**.
+- **Drag a summary** from the Outputs list to Mail, Slack or Finder.
+- **Copy the transcript** with the copy button in the Transcript card.
+- **Show prompt** in the Summary card opens the full text that the model gets: the system prompt and the task from the template, the detail, the language and Extra.
+
+### Changed
+- **Settings:** a new **Models** tab has OpenCode, Claude and Codex. The **Summary** tab has the defaults, the templates, the system prompt and the screen frames. The window is larger.
+- **Offer OpenCode for summaries:** you can turn OpenCode off, the same as Claude and Codex. A new summary then starts with the first tool that is on.
+- One note "Where the data goes" applies to all models. A cloud provider in OpenCode gets the transcript the same as Claude or Codex.
+- Settings no longer show the status of the OpenCode agent. The app syncs it before each summary.
+- **The same settings for all tools:** OpenCode, Claude and Codex have the same rows: the switch, **Program** with the path that the app found, the default model and **Advanced** with an own path. The Model picker shows only the tools that are on, without the "(cloud)" label.
+- **Removed:** the OpenCode agent name. OpenCode always uses the agent `meeting-summary` with the system prompt of the app.
 
 ## 1.2.0 – 2026-11-17
 

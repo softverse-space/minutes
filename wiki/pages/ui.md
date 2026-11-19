@@ -1,8 +1,8 @@
 # App controls
 
-Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md), [app updates](../../docs/specs/app-updates.md), [import request](../raw/2026-11-18-import-recordings.md) · Updated: 2026-11-18
+Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md), [app updates](../../docs/specs/app-updates.md), [import request](../raw/2026-11-18-import-recordings.md) · Updated: 2026-11-19
 
-Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md), [ADR-0032](../../docs/adr/0032-audio-only-recording.md), [ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md), [ADR-0034](../../docs/adr/0034-import-existing-recordings.md).
+Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md), [ADR-0032](../../docs/adr/0032-audio-only-recording.md), [ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md), [ADR-0034](../../docs/adr/0034-import-existing-recordings.md), [ADR-0035](../../docs/adr/0035-settings-tabs-and-model-data-note.md).
 
 The popover has two tabs: **New session** and **Sessions**. The recent sessions are no longer below the Start button.
 
@@ -74,9 +74,20 @@ Specification: [continue-and-merge-sessions](../../docs/specs/continue-and-merge
 - A summary made before a merge or a continue has a clock icon in the outputs list.
 - Before the app quits (also for a restart or a shut down of the Mac) and before sleep, the app stops the recording correctly.
 
-## Opening files
+## Opening and copying files
 
 Transcripts and summaries open in the app that you select in Settings → General. The default is Visual Studio Code.
+
+- **Copy a summary:** the copy button in a row of the Outputs card. The clipboard gets the Markdown, HTML and RTF. Mail, Teams, Word and Pages paste formatted text. Text editors paste the Markdown. `MarkdownHTML` in OMSCore makes the HTML.
+- Right-click on a summary: Open, Copy, **Copy as Markdown text** (only the Markdown), **Share…**, Show in Finder.
+- **Drag** a summary row to Mail, Slack or Finder. The file moves as an attachment.
+- **Copy the transcript:** the copy button in the Transcript card. The clipboard gets the Markdown text.
+
+## Prompt preview
+
+**Show prompt** below Create summary opens the full text that the model gets with the current form. The file is in the temporary folder and opens in the editor from Settings → General. Changes in it have no effect.
+
+The preview has three parts: the system prompt, the task (template, detail, language, date, parts, Extra, frame rules, output rules) and a line about the transcript with its word count. The preview does not copy the transcript.
 
 ## Menu bar icon
 
@@ -121,4 +132,8 @@ The UI is in English (default) or in Slovak. Select the language in Settings →
 
 ## Settings
 
-See the table in [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md#settings-separate-window).
+Tabs: General, Recording, Transcription, Summary, Models, About. The window is 640 pt wide. See [ADR-0035](../../docs/adr/0035-settings-tabs-and-model-data-note.md). It changes the table in [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md#settings-separate-window).
+
+- **Summary:** what the summary contains. Defaults (template, detail, language), templates folder, system prompt, screen frames (ffmpeg status).
+- **Models:** which tool writes the summary. One note "Where the data goes" for all tools, then OpenCode, Claude and Codex. Each tool has the same rows: the switch **Offer … for summaries** (OpenCode on, Claude and Codex off by default), **Program** with the path that the app found, the default model and **Advanced** with an own path. All rows are always visible. The default model is disabled while the tool is off. With an empty path, the app looks in /opt/homebrew/bin, /usr/local/bin, ~/.opencode/bin, ~/.local/bin, ~/.bun/bin and the PATH. When OpenCode is off, a new summary starts with the first tool that is on. The Model picker of the Summary card lists only the tools that are on. When all tools are off, the card shows a note and Create summary is disabled.
+- The app syncs the OpenCode agent `meeting-summary` before each summary. Settings show no agent status and no agent name. OpenCode always uses this agent (ADR-0035).

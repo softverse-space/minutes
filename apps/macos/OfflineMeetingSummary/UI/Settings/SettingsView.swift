@@ -8,10 +8,11 @@ struct SettingsView: View {
             Tab("Recording", systemImage: "record.circle") { RecordingSettings() }
             Tab("Transcription", systemImage: "text.bubble") { TranscriptionSettings() }
             Tab("Summary", systemImage: "doc.text") { SummarySettings() }
+            Tab("Models", systemImage: "cpu") { ModelsSettings() }
             Tab("About", systemImage: "info.circle") { AboutSettings() }
         }
-        .frame(width: 540)
-        .frame(minHeight: 440)
+        .frame(width: 640)
+        .frame(minHeight: 600)
     }
 }
 

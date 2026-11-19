@@ -29,6 +29,8 @@ struct RecordingSettings: View {
                     Text("After 30 days").tag(30)
                     Text("After 90 days").tag(90)
                 }
+            } header: {
+                Text("Old videos")
             } footer: {
                 Text("Audio, transcript and summaries stay. The app checks for old videos at launch.")
                     .font(.caption).foregroundStyle(.secondary)

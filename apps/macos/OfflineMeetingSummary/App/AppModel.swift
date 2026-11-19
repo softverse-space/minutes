@@ -732,10 +732,9 @@ final class AppModel {
         refreshSessions()
     }
 
-    func summarize(_ session: SessionFolder) {
-        guard operations.begin(.summary, for: session.url) else { return }
-        let key = JobKey(kind: .summary, session: session.url)
-        let options = SummaryOptions(
+    /// The summary options from the form in the session detail.
+    private var formOptions: SummaryOptions {
+        SummaryOptions(
             template: formTemplateID == Self.customTemplateID ? nil : template(id: formTemplateID),
             customInstruction: formCustomInstruction,
             detail: formDetail,
@@ -743,6 +742,21 @@ final class AppModel {
             extraInstruction: formExtra,
             model: formModel
         )
+    }
+
+    /// Opens the full text that the model gets with the current form, in the editor from Settings.
+    func previewPrompt(_ session: SessionFolder) {
+        do {
+            open(try SummaryService.previewPrompt(session, options: formOptions))
+        } catch where summaryJobs[session.url]?.isRunning != true {
+            summaryJobs[session.url] = .failed(error.localizedDescription)
+        } catch {}
+    }
+
+    func summarize(_ session: SessionFolder) {
+        guard operations.begin(.summary, for: session.url) else { return }
+        let key = JobKey(kind: .summary, session: session.url)
+        let options = formOptions
         summaryJobs[session.url] = .running(String(localized: "\(options.model.engine.displayName) is preparing the summary…"))
         startIconTicker()
         tasks[key] = Task { [weak self] in
@@ -1159,9 +1173,12 @@ final class AppModel {
         return freed
     }
 
-    /// Default engine and model for a new summary: OpenCode with the model from Settings.
+    /// Default engine and model for a new summary: OpenCode with its default model from Settings.
+    /// When OpenCode is off, the first engine that is on, with its default model.
     static var defaultModelChoice: SummaryModelChoice {
-        SummaryModelChoice(engine: .opencode, model: AppSettings.current.opencodeModel)
+        let settings = AppSettings.current
+        let engine = SummaryEngine.allCases.first(where: settings.isEnabled) ?? .opencode
+        return SummaryModelChoice(engine: engine, model: settings.defaultModel(for: engine))
     }
 
     var formModel: SummaryModelChoice { SummaryModelChoice(id: formModelID) ?? Self.defaultModelChoice }
