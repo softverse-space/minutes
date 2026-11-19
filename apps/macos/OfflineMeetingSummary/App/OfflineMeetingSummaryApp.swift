@@ -113,6 +113,7 @@ struct MenuBarLabel: View {
         case .transcribing: Text("Transcribing")
         case .summarizing: Text("Writing minutes")
         case .done: Text("Minutes ready")
+        case .busy where model.isImporting: Text("Importing")
         case .busy: Text("Starting or saving")
         case .idle where updates.availableVersion != nil: Text("Update available")
         case .idle: Text("Ready")
@@ -120,7 +121,7 @@ struct MenuBarLabel: View {
     }
 
     private var iconState: MenuBarIcon.State {
-        if model.phase != .idle { return .busy }
+        if model.phase != .idle || model.isImporting { return .busy }
         if let running = model.transcriptionJobs.first(where: { $0.value.isRunning }) {
             return .transcribing(progress: model.transcriptionProgress[running.key])
         }

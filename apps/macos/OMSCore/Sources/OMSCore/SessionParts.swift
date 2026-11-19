@@ -67,11 +67,13 @@ public extension SessionFolder {
             part.lastAliveAt = metadata.lastAliveAt
             part.interrupted = metadata.interrupted
             part.endReason = metadata.endReason
+            part.importedFileName = metadata.importedFileName
             metadata.parts = [part]
             metadata.video = nil
             metadata.audioTracks = []
             metadata.sourceEvents = []
             metadata.lastAliveAt = nil
+            metadata.importedFileName = nil
         }
     }
 

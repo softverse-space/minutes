@@ -12,9 +12,9 @@
 Minutes records your meeting, transcribes the speech and writes the minutes from a template.<br>
 Video and audio stay on your local machine.
 
-![macOS 15+](https://img.shields.io/badge/macOS-15%2B-15173d) ![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-M1%2B-15173d) ![Swift](https://img.shields.io/badge/Swift-SwiftUI-ff6b4a) ![version](https://img.shields.io/badge/version-1.1.0-ffb347) ![license](https://img.shields.io/badge/license-Apache--2.0-15173d)
+![macOS 15+](https://img.shields.io/badge/macOS-15%2B-15173d) ![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-M1%2B-15173d) ![Swift](https://img.shields.io/badge/Swift-SwiftUI-ff6b4a) ![version](https://img.shields.io/badge/version-1.2.0-ffb347) ![license](https://img.shields.io/badge/license-Apache--2.0-15173d)
 
-**[Download Minutes 1.1.0](https://github.com/softverse-space/minutes/releases/latest)** · [Website and user guide](https://softverse-space.github.io/minutes/) · [Build from source](#build-from-source) · [Changelog](apps/macos/CHANGELOG.md) · [Decisions (ADR)](docs/adr/README.md)
+**[Download Minutes 1.2.0](https://github.com/softverse-space/minutes/releases/latest)** · [Website and user guide](https://softverse-space.github.io/minutes/) · [Build from source](#build-from-source) · [Changelog](apps/macos/CHANGELOG.md) · [Decisions (ADR)](docs/adr/README.md)
 
 </div>
 
@@ -41,6 +41,8 @@ Click the Minutes icon. Select a screen and the audio sources. Then click **Star
 - **System audio** records the other participants from Teams, Meet or Zoom.
 - **Microphone** records you. In the transcript you are “me”, the others are “others”.
 - During the recording you see the audio level. You can mute each source.
+- Turn off the **Screen** switch to record only audio. The file is then much smaller, but the minutes cannot use pictures of the screen.
+- Do you already have a recording? Click **Import a recording…** or drop audio or video files on the popover. The app copies them and starts the transcription. The original files stay where they are.
 
 > [!IMPORTANT]
 > Before you record, tell the participants that you record the meeting. Use headphones, or the microphone also picks up the speakers.
@@ -104,6 +106,8 @@ The **Sessions** tab lists your recordings by day. The session name is the topic
 | Minutes ready | A dot waits until you open the popover. |
 | Starting or saving | The arc spins for a moment. |
 
+Right-click (or Control-click) the icon for quick actions: **Start recording** or **Stop recording**, **Stop transcription**, **Stop writing minutes**, **Settings…** and **Quit Minutes**.
+
 ## Privacy – what stays on your local machine, and what does not
 
 | Data | Where it stays |
@@ -140,7 +144,7 @@ App language (English or Slovak), sessions folder, video quality, transcription 
 
 ### Download the app
 
-1. Download [`Minutes-1.1.0.dmg`](https://github.com/softverse-space/minutes/releases/latest) from GitHub. Open it and move Minutes to Applications.
+1. Download [`Minutes-1.2.0.dmg`](https://github.com/softverse-space/minutes/releases/latest) from GitHub. Open it and move Minutes to Applications.
 2. Open Minutes. The icon appears in the menu bar.
 3. Click the icon and then **Allow**. Allow Minutes in System Settings → Privacy & Security → Screen & System Audio Recording. Restart the app.
 4. In Settings → Transcription, click **Download model**. It downloads once.

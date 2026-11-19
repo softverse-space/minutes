@@ -72,6 +72,10 @@ struct IdleView: View {
                 }
             }
 
+            if let files = model.pendingImport {
+                ImportChoiceBanner(files: files)
+            }
+
             if let offer = model.continueOffer {
                 ContinueBanner(item: offer.item, interrupted: offer.interrupted)
             }
@@ -86,7 +90,52 @@ struct IdleView: View {
             .tint(.red)
             .controlSize(.large)
             .disabled(!model.canStart)
+
+            Button {
+                model.chooseFilesToImport()
+            } label: {
+                Label("Import a recording…", systemImage: "square.and.arrow.down")
+                    .frame(maxWidth: .infinity)
+            }
+            .controlSize(.large)
+            .disabled(model.isImporting)
+            .help("Make a session from an audio or video file. You can also drop files here.")
         }
+    }
+}
+
+/// Asks how to import more dropped files: as one session with parts or as separate sessions (ADR-0034).
+struct ImportChoiceBanner: View {
+    @Environment(AppModel.self) private var model
+    let files: [URL]
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "square.and.arrow.down.on.square")
+                .foregroundStyle(Color.accentColor)
+                .font(.title3)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Import \(files.count) files as one session?").font(.callout.weight(.medium))
+                Text("One session makes one transcript and one summary. The files are its parts, in the order of their names.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack {
+                    Button("One session") { model.startImport(files, asOneSession: true) }
+                        .buttonStyle(.borderedProminent)
+                    Button("Separate sessions") { model.startImport(files, asOneSession: false) }
+                        .buttonStyle(.bordered)
+                }
+            }
+            Spacer(minLength: 0)
+            Button("Close", systemImage: "xmark") { model.pendingImport = nil }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+                .foregroundStyle(.secondary)
+        }
+        .padding(12)
+        .background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }
 

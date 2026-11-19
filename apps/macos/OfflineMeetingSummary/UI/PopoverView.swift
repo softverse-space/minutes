@@ -5,6 +5,7 @@ struct PopoverView: View {
     @Environment(AppModel.self) private var model
     @Environment(UpdateController.self) private var updates
     @Environment(\.openSettings) private var openSettings
+    @State private var isDropTargeted = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -33,6 +34,10 @@ struct PopoverView: View {
                 }
             }
             .padding(16)
+
+            if let job = model.importJob {
+                ImportStatusRow(job: job, progress: model.importProgress)
+            }
 
             if let message = model.errorMessage {
                 HStack(alignment: .top, spacing: 8) {
@@ -71,6 +76,17 @@ struct PopoverView: View {
             .padding(.vertical, 10)
         }
         .frame(width: 400)
+        // Audio and video files dropped on the popover become sessions (ADR-0034).
+        .dropDestination(for: URL.self) { urls, _ in
+            guard model.phase == .idle || model.phase == .recording, !urls.isEmpty else { return false }
+            model.requestImport(urls, askInline: true)
+            return true
+        } isTargeted: { isDropTargeted = $0 }
+        .overlay {
+            if isDropTargeted {
+                DropOverlay()
+            }
+        }
         .onAppear { model.hasUnseenSummary = false }
         .task {
             model.refreshSessions()
@@ -78,6 +94,68 @@ struct PopoverView: View {
             await model.refreshSources()
             await models
         }
+    }
+}
+
+/// Shows where dropped files go.
+private struct DropOverlay: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+            .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay {
+                Label("Drop to import", systemImage: "square.and.arrow.down")
+                    .font(.headline)
+                    .padding(12)
+                    .background(.regularMaterial, in: Capsule())
+            }
+            .padding(6)
+            .allowsHitTesting(false)
+    }
+}
+
+/// The running import, or its result when it failed or was cancelled (ADR-0034).
+private struct ImportStatusRow: View {
+    @Environment(AppModel.self) private var model
+    let job: JobState
+    let progress: Double?
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            switch job {
+            case .running(let message):
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(message).font(.callout).lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                    if let progress {
+                        ProgressView(value: progress).controlSize(.small)
+                    } else {
+                        ProgressView().progressViewStyle(.linear).controlSize(.small)
+                    }
+                }
+                Spacer(minLength: 8)
+                Button("Cancel") { model.cancelImport() }.controlSize(.small)
+            case .failed(let message):
+                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                Text(message).font(.callout).fixedSize(horizontal: false, vertical: true)
+                Spacer()
+                closeButton
+            case .cancelled:
+                Image(systemName: "xmark.circle").foregroundStyle(.secondary)
+                Text("The import was cancelled.").font(.callout)
+                Spacer()
+                closeButton
+            case .done:
+                EmptyView()
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 12)
+    }
+
+    private var closeButton: some View {
+        Button("Close", systemImage: "xmark") { model.importJob = nil }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
     }
 }
 

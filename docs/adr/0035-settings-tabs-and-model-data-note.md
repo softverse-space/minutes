@@ -1,4 +1,4 @@
-# ADR-0034: Settings tabs and one data note for all models
+# ADR-0035: Settings tabs and one data note for all models
 
 - **Status:** Proposed
 - **Date:** 2026-11-19

@@ -5,6 +5,8 @@ public enum SessionOperation: String, Sendable, CaseIterable {
     case recording, transcription, summary, cleanup
     /// Holds both sessions of a merge (ADR-0029).
     case merge
+    /// Copies and converts imported files into a new session (ADR-0034).
+    case importing
 }
 
 /// Decides which operations may run on a session (ADR-0023).

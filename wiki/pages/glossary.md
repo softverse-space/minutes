@@ -1,6 +1,6 @@
 # Glossary
 
-Updated: 2026-11-17
+Updated: 2026-11-18
 
 | Term | Meaning |
 |---|---|
@@ -19,4 +19,6 @@ Updated: 2026-11-17
 | Continue | Record a new part into an existing session. |
 | Merge | Move all parts of a later session into an earlier session. |
 | Interrupted session | A session whose last part has no end, because the app or the Mac stopped. See [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md) |
+| Import | Make a session from existing audio or video files. The app copies the files. See [ADR-0034](../../docs/adr/0034-import-existing-recordings.md) |
+| Imported session | A session with `source: imported` in `session.json`. It cannot get a new recording |
 | Combined timeline | The timeline of a session with parts. Time 0 is the start of the first part. |

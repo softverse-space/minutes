@@ -1,8 +1,8 @@
 # App controls
 
-Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md), [app updates](../../docs/specs/app-updates.md) · Updated: 2026-11-19
+Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md), [app updates](../../docs/specs/app-updates.md), [import request](../raw/2026-11-18-import-recordings.md) · Updated: 2026-11-19
 
-Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md), [ADR-0032](../../docs/adr/0032-audio-only-recording.md), [ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md).
+Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md), [ADR-0032](../../docs/adr/0032-audio-only-recording.md), [ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md), [ADR-0034](../../docs/adr/0034-import-existing-recordings.md), [ADR-0035](../../docs/adr/0035-settings-tabs-and-model-data-note.md).
 
 The popover has two tabs: **New session** and **Sessions**. The recent sessions are no longer below the Start button.
 
@@ -38,6 +38,15 @@ The **Screen** section of the New session tab has a switch. When you turn it off
 - The app still needs the Screen Recording permission, because ScreenCaptureKit captures system audio only through it.
 - The session has no `recording.mov`. The summary then has no frame tool.
 - The app keeps the switch for the next sessions. Continue recording also uses it.
+
+## Import a recording
+
+- **Import a recording…** below Start recording on the New session tab, and in the menu of the menu bar icon, opens a file dialog.
+- A drop of files on the popover also starts an import. The popover shows a dashed frame while you drag.
+- More files: the app asks **One session** or **Separate sessions**. After a drop, the question is a panel on the New session tab. After the file dialog, it is an alert, because the popover is closed.
+- A row above the bottom bar shows the running import with progress and **Cancel**.
+- The list shows "Imported" for an imported session. The detail shows the name of the imported file. Continue recording is not available.
+- Settings → Recording → **Keep the video of imported files** (default on).
 
 ## Session states
 
@@ -123,8 +132,8 @@ The UI is in English (default) or in Slovak. Select the language in Settings →
 
 ## Settings
 
-Tabs: General, Recording, Transcription, Summary, Models, About. The window is 640 pt wide. See [ADR-0034](../../docs/adr/0034-settings-tabs-and-model-data-note.md). It changes the table in [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md#settings-separate-window).
+Tabs: General, Recording, Transcription, Summary, Models, About. The window is 640 pt wide. See [ADR-0035](../../docs/adr/0035-settings-tabs-and-model-data-note.md). It changes the table in [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md#settings-separate-window).
 
 - **Summary:** what the summary contains. Defaults (template, detail, language), templates folder, system prompt, screen frames (ffmpeg status).
 - **Models:** which tool writes the summary. One note "Where the data goes" for all tools, then OpenCode, Claude and Codex. Each tool has the same rows: the switch **Offer … for summaries** (OpenCode on, Claude and Codex off by default), **Program** with the path that the app found, the default model and **Advanced** with an own path. All rows are always visible. The default model is disabled while the tool is off. With an empty path, the app looks in /opt/homebrew/bin, /usr/local/bin, ~/.opencode/bin, ~/.local/bin, ~/.bun/bin and the PATH. When OpenCode is off, a new summary starts with the first tool that is on. The Model picker of the Summary card lists only the tools that are on. When all tools are off, the card shows a note and Create summary is disabled.
-- The app syncs the OpenCode agent `meeting-summary` before each summary. Settings show no agent status and no agent name. OpenCode always uses this agent (ADR-0034).
+- The app syncs the OpenCode agent `meeting-summary` before each summary. Settings show no agent status and no agent name. OpenCode always uses this agent (ADR-0035).

@@ -119,6 +119,12 @@ struct SessionView: View {
                     if let count = item.metadata?.parts.count, count > 1 {
                         Label("\(count) parts", systemImage: "square.stack")
                     }
+                    if let metadata = item.metadata, metadata.isImported {
+                        Label(metadata.importedFileName ?? metadata.parts.first?.importedFileName ?? String(localized: "Imported"),
+                              systemImage: "square.and.arrow.down")
+                            .lineLimit(1)
+                            .help("Imported")
+                    }
                     if let display = item.metadata?.displayName ?? item.metadata?.parts.first?.displayName, !display.isEmpty {
                         Label(display, systemImage: "display").lineLimit(1)
                     }

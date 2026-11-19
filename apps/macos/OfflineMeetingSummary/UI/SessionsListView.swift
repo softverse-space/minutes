@@ -149,6 +149,7 @@ struct SessionRow: View {
         if let date = item.date { parts.append(date.formatted(date: .omitted, time: .shortened)) }
         if let duration = item.metadata?.duration { parts.append(SessionFormat.duration(duration)) }
         if let count = item.metadata?.parts.count, count > 1 { parts.append(String(localized: "\(count) parts")) }
+        if item.metadata?.isImported == true { parts.append(String(localized: "Imported")) }
         if let display = item.metadata?.displayName, !display.isEmpty { parts.append(display) }
         return parts.joined(separator: " · ")
     }

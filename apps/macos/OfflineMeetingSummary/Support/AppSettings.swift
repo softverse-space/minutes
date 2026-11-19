@@ -14,6 +14,8 @@ enum SettingsKey {
     static let captureScreen = "captureScreen"
     static let microphoneID = "microphoneID"
     static let displayID = "displayID"
+    /// An import keeps the video of a video file, so the minutes can use screen frames (ADR-0034).
+    static let importKeepsVideo = "importKeepsVideo"
     // Transcription
     static let asrMode = "asrMode"
     static let whisperModel = "whisperModel"
@@ -115,6 +117,7 @@ struct AppSettings {
     var videoFPS: Int
     var videoMaxWidth: Int
     var videoRetentionDays: Int
+    var importKeepsVideo: Bool
     var asrMode: AsrMode
     var whisperModel: String
     var speechLanguage: String
@@ -175,6 +178,7 @@ struct AppSettings {
             SettingsKey.captureMicrophone: true,
             SettingsKey.captureSystemAudio: true,
             SettingsKey.captureScreen: true,
+            SettingsKey.importKeepsVideo: true,
             SettingsKey.asrMode: AsrMode.local.rawValue,
             SettingsKey.whisperModel: defaultWhisperModel,
             SettingsKey.speechLanguage: "auto",
@@ -208,6 +212,7 @@ struct AppSettings {
             videoFPS: max(1, min(30, d.integer(forKey: SettingsKey.videoFPS))),
             videoMaxWidth: max(640, d.integer(forKey: SettingsKey.videoMaxWidth)),
             videoRetentionDays: max(0, d.integer(forKey: SettingsKey.videoRetentionDays)),
+            importKeepsVideo: d.bool(forKey: SettingsKey.importKeepsVideo),
             asrMode: AsrMode(rawValue: d.string(forKey: SettingsKey.asrMode) ?? "") ?? .local,
             whisperModel: d.string(forKey: SettingsKey.whisperModel) ?? defaultWhisperModel,
             speechLanguage: d.string(forKey: SettingsKey.speechLanguage) ?? "auto",

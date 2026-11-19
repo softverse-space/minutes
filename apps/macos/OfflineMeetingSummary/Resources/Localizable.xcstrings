@@ -438,6 +438,26 @@
         }
       }
     },
+    "An imported session cannot get a new recording." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importovaná session nemôže dostať nové nahrávanie."
+          }
+        }
+      }
+    },
+    "Another import runs. Wait until it ends." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beží iný import. Počkajte, kým skončí."
+          }
+        }
+      }
+    },
     "App data" : {
       "localizations" : {
         "sk" : {
@@ -584,6 +604,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ruší sa…"
+          }
+        }
+      }
+    },
+    "Cannot convert %@: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Súbor %1$@ sa nedá previesť: %2$@"
           }
         }
       }
@@ -1011,6 +1041,16 @@
         }
       }
     },
+    "Drop to import" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pustite na import"
+          }
+        }
+      }
+    },
     "Each session has its own folder with video, audio, transcript and summaries." : {
       "localizations" : {
         "sk" : {
@@ -1241,12 +1281,82 @@
         }
       }
     },
+    "Import" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importovať"
+          }
+        }
+      }
+    },
+    "Import %lld files as one session?" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importovať %lld súbory ako jednu session?"
+          }
+        }
+      }
+    },
+    "Import a recording…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importovať nahrávku…"
+          }
+        }
+      }
+    },
+    "Imported" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importované"
+          }
+        }
+      }
+    },
+    "Importing" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuje sa"
+          }
+        }
+      }
+    },
+    "Importing %@…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuje sa %@…"
+          }
+        }
+      }
+    },
     "Instruction" : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pokyn"
+          }
+        }
+      }
+    },
+    "Keep the video of imported files" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponechať video importovaných súborov"
           }
         }
       }
@@ -1347,6 +1457,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lokálne na Macu (WhisperKit)"
+          }
+        }
+      }
+    },
+    "Make a session from an audio or video file. You can also drop files here." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vytvorí session zo zvukového alebo video súboru. Súbory môžete aj pustiť sem."
           }
         }
       }
@@ -1614,6 +1734,26 @@
         }
       }
     },
+    "One session" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedna session"
+          }
+        }
+      }
+    },
+    "One session makes one transcript and one summary. The files are its parts, in the order of their names." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedna session má jeden prepis a jeden súhrn. Súbory sú jej časti v poradí podľa názvu."
+          }
+        }
+      }
+    },
     "Open" : {
       "localizations" : {
         "sk" : {
@@ -1843,6 +1983,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pripravujem zvuk…"
+          }
+        }
+      }
+    },
+    "Preparing the import…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pripravuje sa import…"
           }
         }
       }
@@ -2157,12 +2307,32 @@
         }
       }
     },
+    "Select audio or video files. The app copies them. The original files stay where they are." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vyberte zvukové alebo video súbory. Aplikácia ich skopíruje. Pôvodné súbory zostanú na svojom mieste."
+          }
+        }
+      }
+    },
     "Sending part %lld/%lld to the transcription server…" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Sending part %1$lld/%2$lld to the transcription server…"
+          }
+        }
+      }
+    },
+    "Separate sessions" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Samostatné sessions"
           }
         }
       }
@@ -2316,6 +2486,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stav"
+          }
+        }
+      }
+    },
+    "Stop import" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastaviť import"
           }
         }
       }
@@ -2493,6 +2673,16 @@
         }
       }
     },
+    "The app cannot import these files: %@." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia nevie importovať tieto súbory: %@."
+          }
+        }
+      }
+    },
     "The app checks once a day. It never restarts for an update during a recording or a job." : {
       "localizations" : {
         "sk" : {
@@ -2543,6 +2733,16 @@
         }
       }
     },
+    "The audio export is not available." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export zvuku nie je dostupný."
+          }
+        }
+      }
+    },
     "The audio leaves the Mac and goes to this server (OpenAI-compatible /v1/audio/transcriptions). The video stays on the Mac." : {
       "localizations" : {
         "sk" : {
@@ -2559,6 +2759,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prestávka je dlhšia ako 60 minút. Skontrolujte, či ide o to isté stretnutie."
+          }
+        }
+      }
+    },
+    "The disk does not have enough free space for the import." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na disku nie je dosť voľného miesta na import."
           }
         }
       }
@@ -2589,6 +2799,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Súbor %@ už v session existuje."
+          }
+        }
+      }
+    },
+    "The file %@ has no audio." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Súbor %@ nemá zvuk."
+          }
+        }
+      }
+    },
+    "The import did not finish" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import sa nedokončil"
+          }
+        }
+      }
+    },
+    "The import was cancelled." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import bol zrušený."
           }
         }
       }
@@ -2963,6 +3203,16 @@
         }
       }
     },
+    "To import %@, install ffmpeg (brew install ffmpeg)." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na import súboru %@ nainštalujte ffmpeg (brew install ffmpeg)."
+          }
+        }
+      }
+    },
     "Today" : {
       "localizations" : {
         "sk" : {
@@ -3255,6 +3505,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kam idú údaje"
+          }
+        }
+      }
+    },
+    "With the video, the minutes can use pictures of the screen. Without it, the session uses less disk space. The original file stays where it is." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S videom môže zápisnica použiť obrázky obrazovky. Bez neho zaberá session menej miesta na disku. Pôvodný súbor zostane na svojom mieste."
           }
         }
       }

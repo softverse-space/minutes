@@ -76,7 +76,7 @@ enum SummaryService {
         let hasVideo = metadata.hasParts
             ? FileManager.default.fileExists(atPath: session.partsMapURL.path)
                 && metadata.parts.contains { FileManager.default.fileExists(atPath: session.partVideoURL($0).path) }
-            : FileManager.default.fileExists(atPath: session.videoURL.path)
+            : FileManager.default.fileExists(atPath: session.videoURL(metadata).path)
         guard hasVideo, isFfmpegAvailable else { return nil }
         return .init(toolPath: BundledResources.installedFrameTool.path, framesPath: session.framesDirectory.path)
     }
