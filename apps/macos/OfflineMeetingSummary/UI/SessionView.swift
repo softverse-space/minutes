@@ -203,6 +203,9 @@ private struct TranscriptCard: View {
                             .buttonStyle(.borderless)
                             .help(mediaRemoved ? "Video and audio are deleted, so you cannot transcribe again" : "Transcribe again")
                             .disabled(mediaRemoved || model.isBusy(session))
+                        CopyButton(help: "Copy the transcript as text") {
+                            Clipboard.copyMarkdownFile(session.transcriptURL("md"), formatted: false)
+                        }
                         Button("Open") { model.open(session.transcriptURL("md")) }
                     } else {
                         let subtitle = job == .cancelled
@@ -226,7 +229,12 @@ private struct TranscriptCard: View {
 
 private struct SummaryCard: View {
     @Environment(AppModel.self) private var model
+    @AppStorage(SettingsKey.opencodeEnabled) private var opencodeEnabled = true
+    @AppStorage(SettingsKey.claudeEnabled) private var claudeEnabled = false
+    @AppStorage(SettingsKey.codexEnabled) private var codexEnabled = false
     let item: SessionItem
+
+    private var anyEngineEnabled: Bool { opencodeEnabled || claudeEnabled || codexEnabled }
 
     var body: some View {
         @Bindable var model = model
@@ -297,10 +305,16 @@ private struct SummaryCard: View {
 
                 GridRow {
                     FieldLabel("Model")
-                    ModelPicker(selection: $model.formModelID)
+                    if anyEngineEnabled {
+                        ModelPicker(selection: $model.formModelID)
+                    } else {
+                        Label("No tool is on. Turn on a tool in Settings → Models.", systemImage: "exclamationmark.triangle.fill")
+                            .font(.callout).foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
 
-                if let vendor = model.formModel.engine.cloudVendor {
+                if anyEngineEnabled, let vendor = model.formModel.engine.cloudVendor {
                     GridRow {
                         Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
                         Label("The transcript and selected frames go to \(vendor) (cloud). Use this only for meetings that are not sensitive.",
@@ -355,13 +369,19 @@ private struct SummaryCard: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .disabled(!transcribed || transcribing || model.isBusy(session))
+                .disabled(!transcribed || transcribing || !anyEngineEnabled || model.isBusy(session))
 
                 if !transcribed {
                     Text("You can create a summary only from a finished transcript.")
                         .font(.caption).foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity)
                 }
+
+                Button("Show prompt", systemImage: "text.magnifyingglass") { model.previewPrompt(session) }
+                    .buttonStyle(.borderless)
+                    .font(.caption)
+                    .frame(maxWidth: .infinity)
+                    .help("Open the full text that the model gets with these settings, in your editor")
             }
         }
     }
@@ -400,33 +420,72 @@ private struct OutputRow: View {
     var stale = false
 
     var body: some View {
-        Button { model.open(url) } label: {
-            HStack(spacing: 8) {
-                Image(systemName: stale ? "clock.arrow.circlepath" : "doc.richtext")
-                    .foregroundStyle(stale ? Color.secondary : Color.accentColor)
-                Text(url.lastPathComponent)
-                    .font(.callout)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                Spacer(minLength: 8)
-                Image(systemName: "arrow.up.forward.square")
-                    .foregroundStyle(hovering ? .primary : .tertiary)
+        HStack(spacing: 4) {
+            Button { model.open(url) } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: stale ? "clock.arrow.circlepath" : "doc.richtext")
+                        .foregroundStyle(stale ? Color.secondary : Color.accentColor)
+                    Text(url.lastPathComponent)
+                        .font(.callout)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Spacer(minLength: 8)
+                    Image(systemName: "arrow.up.forward.square")
+                        .foregroundStyle(hovering ? .primary : .tertiary)
+                }
+                .contentShape(Rectangle())
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-            .background(hovering ? Color.primary.opacity(0.06) : .clear,
-                        in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+            .help("Open \(url.lastPathComponent)")
+
+            CopyButton(help: "Copy the summary. Mail, Teams and Word paste formatted text. Text editors paste Markdown.") {
+                Clipboard.copyMarkdownFile(url, formatted: true)
+            }
+            .opacity(hovering ? 1 : 0.5)
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(hovering ? Color.primary.opacity(0.06) : .clear,
+                    in: RoundedRectangle(cornerRadius: 6, style: .continuous))
         .onHover { hovering = $0 }
-        .help("Open \(url.lastPathComponent)")
+        // Drag the file to Mail, Slack or Finder.
+        .onDrag { NSItemProvider(contentsOf: url) ?? NSItemProvider() }
         .contextMenu {
             Button("Open") { model.open(url) }
+            Button("Copy") { Clipboard.copyMarkdownFile(url, formatted: true) }
+            Button("Copy as Markdown text") { Clipboard.copyMarkdownFile(url, formatted: false) }
+            ShareLink("Share…", item: url)
+            Divider()
             Button("Show in Finder") { model.reveal(url) }
         }
     }
 }
+
+/// A copy icon that shows a check mark for a moment after a successful copy.
+private struct CopyButton: View {
+    let help: LocalizedStringKey
+    let action: () -> Bool
+    @State private var copied = false
+
+    var body: some View {
+        Button {
+            guard action() else { return }
+            copied = true
+            Task {
+                try? await Task.sleep(for: .seconds(1.5))
+                copied = false
+            }
+        } label: {
+            Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
+                .contentTransition(.symbolEffect(.replace))
+        }
+        .labelStyle(.iconOnly)
+        .buttonStyle(.borderless)
+        .foregroundStyle(copied ? Color.green : Color.secondary)
+        .help(help)
+    }
+}
+
 
 // MARK: - Building blocks
 

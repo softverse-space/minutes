@@ -37,3 +37,4 @@ Each decision is a separate file. [ADR-0001](0001-record-decisions-in-adr.md) gi
 | [0031](0031-app-updates-sparkle.md) | App updates with Sparkle and an appcast on GitHub Pages | Accepted |
 | [0032](0032-audio-only-recording.md) | Audio-only recording | Proposed |
 | [0033](0033-menu-bar-icon-context-menu.md) | Menu of the menu bar icon | Proposed |
+| [0034](0034-settings-tabs-and-model-data-note.md) | Settings tabs and one data note for all models | Proposed |

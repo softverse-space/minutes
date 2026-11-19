@@ -1,6 +1,6 @@
 # ADR-0023: Narrow AI tool permissions, process groups and one operation for one session
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [ADR-0034](0034-settings-tabs-and-model-data-note.md) (no custom agent name)
 - **Date:** 2026-11-14
 - **Decided by:** Henrich Neuschl
 - **Amends:** [ADR-0005](0005-llm-processing-via-opencode.md), [ADR-0017](0017-model-choice-and-claude.md), [ADR-0022](0022-open-source-release.md)

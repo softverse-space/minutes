@@ -70,26 +70,20 @@ enum SummaryService {
 
     static var isFfmpegAvailable: Bool { ProcessRunner.which("ffmpeg") != nil }
 
-    /// Runs the selected engine and writes `outputs/<date>_meetingsummary_<topic>.md`.
-    static func summarize(_ session: SessionFolder, options: SummaryOptions) async throws -> URL {
-        let settings = AppSettings.current
-        guard TranscriptionService.hasTranscript(session) else { throw SummaryError.noTranscript }
-        if options.template == nil, options.customInstruction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            throw SummaryError.emptyInstruction
-        }
-
-        let metadata = try session.loadMetadata()
+    /// The frame tool and the `frames` folder, or `nil` when the session has no video or ffmpeg is missing.
+    private static func frameAccess(for session: SessionFolder, metadata: SessionMetadata) -> EngineInvocation.FrameAccess? {
         // A session with parts needs the part map; the frame tool finds the video of each part through it (ADR-0029).
         let hasVideo = metadata.hasParts
             ? FileManager.default.fileExists(atPath: session.partsMapURL.path)
                 && metadata.parts.contains { FileManager.default.fileExists(atPath: session.partVideoURL($0).path) }
             : FileManager.default.fileExists(atPath: session.videoURL.path)
-        var frames: EngineInvocation.FrameAccess?
-        if hasVideo, isFfmpegAvailable {
-            try FileManager.default.createDirectory(at: session.framesDirectory, withIntermediateDirectories: true)
-            frames = .init(toolPath: BundledResources.installedFrameTool.path, framesPath: session.framesDirectory.path)
-        }
-        let request = SummaryRequest(
+        guard hasVideo, isFfmpegAvailable else { return nil }
+        return .init(toolPath: BundledResources.installedFrameTool.path, framesPath: session.framesDirectory.path)
+    }
+
+    private static func summaryRequest(_ options: SummaryOptions, metadata: SessionMetadata,
+                                       frames: EngineInvocation.FrameAccess?) -> SummaryRequest {
+        SummaryRequest(
             template: options.template,
             customInstruction: options.customInstruction,
             detail: options.detail,
@@ -100,6 +94,44 @@ enum SummaryService {
             frameToolPath: frames?.toolPath,
             partCount: max(1, metadata.parts.count)
         )
+    }
+
+    /// Writes the full text that the model gets for these options to a temporary Markdown file and returns it.
+    /// The file shows the system prompt and the task. It names the transcript but does not copy it.
+    static func previewPrompt(_ session: SessionFolder, options: SummaryOptions) throws -> URL {
+        guard let systemPrompt = BundledResources.loadSystemPrompt() else { throw SummaryError.missingSystemPrompt }
+        let metadata = try session.loadMetadata()
+        let request = summaryRequest(options, metadata: metadata, frames: frameAccess(for: session, metadata: metadata))
+        let taskPrompt = PromptBuilder.build(request, details: BundledResources.loadDetailLevels())
+        let transcriptURL = session.transcriptURL("md")
+        let words = TranscriptionService.hasTranscript(session)
+            ? (try? String(contentsOf: transcriptURL, encoding: .utf8)).map(PromptPreview.wordCount)
+            : nil
+        let text = PromptPreview.render(systemPrompt: systemPrompt, taskPrompt: taskPrompt,
+                                        engine: options.model.engine.displayName, model: options.model.model,
+                                        transcriptFile: transcriptURL.lastPathComponent, transcriptWords: words)
+
+        let folder = FileManager.default.temporaryDirectory.appending(path: "minutes-prompt-preview")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let url = folder.appending(path: "\(session.name)-prompt.md")
+        try Data(text.utf8).write(to: url, options: .atomic)
+        return url
+    }
+
+    /// Runs the selected engine and writes `outputs/<date>_meetingsummary_<topic>.md`.
+    static func summarize(_ session: SessionFolder, options: SummaryOptions) async throws -> URL {
+        let settings = AppSettings.current
+        guard TranscriptionService.hasTranscript(session) else { throw SummaryError.noTranscript }
+        if options.template == nil, options.customInstruction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            throw SummaryError.emptyInstruction
+        }
+
+        let metadata = try session.loadMetadata()
+        let frames = frameAccess(for: session, metadata: metadata)
+        if frames != nil {
+            try FileManager.default.createDirectory(at: session.framesDirectory, withIntermediateDirectories: true)
+        }
+        let request = summaryRequest(options, metadata: metadata, frames: frames)
         let job = SummaryJob(session: session, prompt: PromptBuilder.build(request, details: BundledResources.loadDetailLevels()),
                              model: options.model.model, frames: frames)
         let output = try await SummaryRunners.runner(for: options.model.engine, settings: settings).run(job)

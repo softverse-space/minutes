@@ -1,6 +1,6 @@
 # ADR-0012: Control through a menu bar popover and Settings
 
-- **Status:** Accepted, amended by [ADR-0014](0014-sessions-tab-cleanup-editor.md)
+- **Status:** Accepted, amended by [ADR-0014](0014-sessions-tab-cleanup-editor.md) and [ADR-0034](0034-settings-tabs-and-model-data-note.md) (Settings tabs)
 - **Date:** 2026-11-13
 - **Decided by:** Henrich Neuschl
 

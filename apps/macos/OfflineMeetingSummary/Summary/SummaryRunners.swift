@@ -67,7 +67,7 @@ enum SummaryRunners {
         return result.stdout
     }
 
-    fileprivate static func requireEnabledCloudEngine(_ engine: SummaryEngine, settings: AppSettings) throws {
+    fileprivate static func requireEnabledEngine(_ engine: SummaryEngine, settings: AppSettings) throws {
         guard settings.isEnabled(engine) else { throw SummaryError.engineDisabled(engine) }
     }
 }
@@ -78,14 +78,13 @@ struct OpenCodeRunner: SummaryRunner {
     var engine: SummaryEngine { .opencode }
 
     func run(_ job: SummaryJob) async throws -> String {
+        try SummaryRunners.requireEnabledEngine(engine, settings: settings)
         guard let opencode = SummaryRunners.executable(for: engine, settings: settings) else {
             throw SummaryError.engineNotFound(engine)
         }
-        if settings.opencodeAgent == OpenCodeAgent.managedName {
-            try BundledResources.syncOpenCodeAgent()
-            try await requireRestrictedAgent(opencode, job: job)
-        }
-        let arguments = EngineInvocation.openCode(agent: settings.opencodeAgent, title: "Meeting \(job.session.name)",
+        try BundledResources.syncOpenCodeAgent()
+        try await requireRestrictedAgent(opencode, job: job)
+        let arguments = EngineInvocation.openCode(agent: OpenCodeAgent.managedName, title: "Meeting \(job.session.name)",
                                                   transcriptPath: job.session.transcriptURL("md").path,
                                                   model: job.model, prompt: job.prompt)
         let result = try await SummaryRunners.launch(opencode, arguments: arguments, job: job)
@@ -123,7 +122,7 @@ struct ClaudeRunner: SummaryRunner {
     var engine: SummaryEngine { .claude }
 
     func run(_ job: SummaryJob) async throws -> String {
-        try SummaryRunners.requireEnabledCloudEngine(engine, settings: settings)
+        try SummaryRunners.requireEnabledEngine(engine, settings: settings)
         guard let claude = SummaryRunners.executable(for: engine, settings: settings) else {
             throw SummaryError.engineNotFound(engine)
         }
@@ -144,7 +143,7 @@ struct CodexRunner: SummaryRunner {
     var engine: SummaryEngine { .codex }
 
     func run(_ job: SummaryJob) async throws -> String {
-        try SummaryRunners.requireEnabledCloudEngine(engine, settings: settings)
+        try SummaryRunners.requireEnabledEngine(engine, settings: settings)
         guard let codex = SummaryRunners.executable(for: engine, settings: settings) else {
             throw SummaryError.engineNotFound(engine)
         }

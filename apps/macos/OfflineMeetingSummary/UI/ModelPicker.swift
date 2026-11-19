@@ -2,7 +2,7 @@ import OMSCore
 import SwiftUI
 
 /// Engine and model for this summary. Each engine lists its models (`opencode models`,
-/// `codex debug models`, Claude aliases). Cloud engines appear only when they are turned on in Settings.
+/// `codex debug models`, Claude aliases). Only engines that are turned on in Settings appear.
 struct ModelPicker: View {
     @Environment(AppModel.self) private var model
     @Binding var selection: String
@@ -21,7 +21,7 @@ struct ModelPicker: View {
 }
 
 /// Models of one engine: its default, the listed models, the default from Settings and the current choice.
-/// A cloud engine is shown only when it is on, or when the current choice uses it.
+/// An engine is shown only when it is on in Settings.
 private struct EngineModelSection: View {
     let engine: SummaryEngine
     let listed: [EngineModel]
@@ -34,13 +34,13 @@ private struct EngineModelSection: View {
         self.engine = engine
         self.listed = listed
         self.current = current
-        _enabled = AppStorage(wrappedValue: !engine.isCloudOnly, SettingsKey.enabled(for: engine))
+        _enabled = AppStorage(wrappedValue: engine == .opencode, SettingsKey.enabled(for: engine))
         _defaultModel = AppStorage(wrappedValue: "", SettingsKey.model(for: engine))
     }
 
     var body: some View {
-        if !engine.isCloudOnly || enabled || current != nil {
-            Section(engine.isCloudOnly ? "\(engine.displayName) (cloud)" : "\(engine.displayName)") {
+        if enabled {
+            Section(engine.displayName) {
                 row(EngineModel(id: "", title: String(localized: "\(engine.displayName) default")))
                 ForEach(ModelOptions.merge(listed: listed, including: [defaultModel, current ?? ""])) { option in
                     row(option)
@@ -50,7 +50,7 @@ private struct EngineModelSection: View {
     }
 
     private func row(_ option: EngineModel) -> some View {
-        Label(option.title, systemImage: engine.isCloudOnly ? "icloud" : "cpu")
+        Label(option.title, systemImage: "cpu")
             .tag(SummaryModelChoice(engine: engine, model: option.id).id)
     }
 }

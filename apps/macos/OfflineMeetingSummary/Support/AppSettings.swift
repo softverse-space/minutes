@@ -24,11 +24,11 @@ enum SettingsKey {
     // Summary
     static let opencodePath = "opencodePath"
     static let opencodeModel = "opencodeModel"
-    static let opencodeAgent = "opencodeAgent"
     static let defaultTemplate = "defaultTemplate"
     static let defaultDetail = "defaultDetail"
     static let defaultLanguage = "defaultLanguage"
     static let customTemplatesFolder = "customTemplatesFolder"
+    static let opencodeEnabled = "opencodeEnabled"
     static let claudeEnabled = "claudeEnabled"
     static let claudePath = "claudePath"
     static let codexEnabled = "codexEnabled"
@@ -123,7 +123,7 @@ struct AppSettings {
     var asrServerModel: String
     var opencodePath: String
     var opencodeModel: String
-    var opencodeAgent: String
+    var opencodeEnabled: Bool
     var customTemplatesFolder: URL
     var claudeEnabled: Bool
     var claudePath: String
@@ -150,10 +150,10 @@ struct AppSettings {
         }
     }
 
-    /// OpenCode is always on. Cloud-only engines need an opt-in, because the transcript leaves the Mac.
+    /// OpenCode is on by default. Cloud-only engines need an opt-in, because the transcript leaves the Mac.
     func isEnabled(_ engine: SummaryEngine) -> Bool {
         switch engine {
-        case .opencode: true
+        case .opencode: opencodeEnabled
         case .claude: claudeEnabled
         case .codex: codexEnabled
         }
@@ -183,12 +183,12 @@ struct AppSettings {
             SettingsKey.internalAsrModel: "",
             SettingsKey.opencodePath: "",
             SettingsKey.opencodeModel: "",
-            SettingsKey.opencodeAgent: "meeting-summary",
             SettingsKey.defaultTemplate: "standard",
             SettingsKey.defaultDetail: DetailLevel.medium.rawValue,
             SettingsKey.defaultLanguage: "sk",
             SettingsKey.customTemplatesFolder: AppPaths.defaultTemplatesFolder.path,
             SettingsKey.editorAppPath: EditorApp.defaultPath,
+            SettingsKey.opencodeEnabled: true,
             SettingsKey.claudeEnabled: false,
             SettingsKey.claudePath: "",
             SettingsKey.codexEnabled: false,
@@ -216,7 +216,7 @@ struct AppSettings {
             asrServerModel: d.string(forKey: SettingsKey.internalAsrModel) ?? "",
             opencodePath: d.string(forKey: SettingsKey.opencodePath) ?? "",
             opencodeModel: d.string(forKey: SettingsKey.opencodeModel) ?? "",
-            opencodeAgent: d.string(forKey: SettingsKey.opencodeAgent) ?? "meeting-summary",
+            opencodeEnabled: d.bool(forKey: SettingsKey.opencodeEnabled),
             customTemplatesFolder: path(SettingsKey.customTemplatesFolder),
             claudeEnabled: d.bool(forKey: SettingsKey.claudeEnabled),
             claudePath: d.string(forKey: SettingsKey.claudePath) ?? "",

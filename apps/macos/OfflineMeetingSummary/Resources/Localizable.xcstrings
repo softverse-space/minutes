@@ -4,22 +4,12 @@
     "%@" : {
       "shouldTranslate" : false
     },
-    "%@ (cloud)" : {
+    "%@ always sends the transcript and the frames to the %@ cloud." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ (cloud)"
-          }
-        }
-      }
-    },
-    "%@ CLI" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ CLI"
+            "value" : "%1$@ vždy posiela prepis a snímky do cloudu %2$@."
           }
         }
       }
@@ -60,16 +50,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ na disku"
-          }
-        }
-      }
-    },
-    "%@ runs in the %@ cloud. The transcript and selected frames leave the Mac. The app never selects it by itself – you select it for a specific summary." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ runs in the %2$@ cloud. The transcript and selected frames leave the Mac. The app never selects it by itself – you select it for a specific summary."
           }
         }
       }
@@ -117,16 +97,16 @@
         "sk" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld časť"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld časti"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld časť"
                 }
               },
               "other" : {
@@ -428,15 +408,12 @@
         }
       }
     },
-    "Agent" : {
-      "shouldTranslate" : false
-    },
-    "Agent %@" : {
+    "All tools are off. Turn on at least one tool, or the app cannot write summaries." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agent %@"
+            "value" : "Všetky nástroje sú vypnuté. Zapnite aspoň jeden, inak aplikácia nemôže písať súhrny."
           }
         }
       }
@@ -537,16 +514,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Automaticky"
-          }
-        }
-      }
-    },
-    "Available (ffmpeg)" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dostupné (ffmpeg)"
           }
         }
       }
@@ -761,22 +728,62 @@
         }
       }
     },
+    "Copied" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skopírované"
+          }
+        }
+      }
+    },
+    "Copy" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopírovať"
+          }
+        }
+      }
+    },
+    "Copy as Markdown text" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopírovať ako text Markdown"
+          }
+        }
+      }
+    },
+    "Copy the summary. Mail, Teams and Word paste formatted text. Text editors paste Markdown." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skopírovať súhrn. Mail, Teams a Word vložia formátovaný text. Textové editory vložia Markdown."
+          }
+        }
+      }
+    },
+    "Copy the transcript as text" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skopírovať prepis ako text"
+          }
+        }
+      }
+    },
     "Create summary" : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vytvoriť zápis"
-          }
-        }
-      }
-    },
-    "Custom agent" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vlastný agent"
           }
         }
       }
@@ -1264,6 +1271,16 @@
         }
       }
     },
+    "Leave the field empty to let the app find the program (see Program). It looks in /opt/homebrew/bin, /usr/local/bin, ~/.opencode/bin, ~/.local/bin, ~/.bun/bin and the PATH." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keď pole necháte prázdne, aplikácia program nájde sama (pozri Program). Hľadá v /opt/homebrew/bin, /usr/local/bin, ~/.opencode/bin, ~/.local/bin, ~/.bun/bin a v PATH."
+          }
+        }
+      }
+    },
     "Licenses" : {
       "localizations" : {
         "sk" : {
@@ -1330,16 +1347,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lokálne na Macu (WhisperKit)"
-          }
-        }
-      }
-    },
-    "Matches the prompt" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zhoduje sa s promptom"
           }
         }
       }
@@ -1477,6 +1484,16 @@
         }
       }
     },
+    "Models" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modely"
+          }
+        }
+      }
+    },
     "More actions" : {
       "localizations" : {
         "sk" : {
@@ -1537,12 +1554,12 @@
         }
       }
     },
-    "Not available – ffmpeg is missing" : {
+    "No tool is on. Turn on a tool in Settings → Models." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nedostupné – chýba ffmpeg"
+            "value" : "Žiadny nástroj nie je zapnutý. Zapnite nástroj v Nastaveniach → Modely."
           }
         }
       }
@@ -1567,16 +1584,6 @@
         }
       }
     },
-    "Not found (brew install opencode)" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenájdený (brew install opencode)"
-          }
-        }
-      }
-    },
     "Nothing found" : {
       "localizations" : {
         "sk" : {
@@ -1593,6 +1600,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ponúknuť %@ pri zápise"
+          }
+        }
+      }
+    },
+    "Old videos" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Staré videá"
           }
         }
       }
@@ -1677,6 +1694,16 @@
         }
       }
     },
+    "Open the full text that the model gets with these settings, in your editor" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť v editore celý text, ktorý model dostane s týmito nastaveniami"
+          }
+        }
+      }
+    },
     "Open the guide" : {
       "localizations" : {
         "sk" : {
@@ -1720,22 +1747,22 @@
     "OpenCode" : {
       "shouldTranslate" : false
     },
-    "OpenCode gets the system prompt as the agent %@. The app creates it at launch and before each summary and overwrites manual changes. Set up a custom agent under a different name." : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OpenCode dostane systémový prompt ako agenta %@. Aplikácia ho vytvorí pri štarte a pred každým zápisom a ručné zmeny prepíše. Vlastného agenta nastavte pod iným menom."
-          }
-        }
-      }
-    },
     "OpenCode gives the summary agent more permissions than the app allows (%@). Check your OpenCode version and configuration." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "OpenCode dáva agentovi pre zápis viac oprávnení, ako aplikácia povoľuje (%@). Skontrolujte verziu a konfiguráciu OpenCode."
+          }
+        }
+      }
+    },
+    "OpenCode works with any provider in your OpenCode configuration: a local model (for example Ollama or LM Studio), a company server (for example LiteLLM) or a cloud provider. New summaries start with the default model of OpenCode. When OpenCode is off, they start with Claude or Codex. The list comes from the opencode models command." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenCode pracuje s ľubovoľným poskytovateľom z vašej konfigurácie OpenCode: lokálnym modelom (napríklad Ollama alebo LM Studio), firemným serverom (napríklad LiteLLM) alebo cloudovým poskytovateľom. Nové súhrny začínajú s predvoleným modelom OpenCode. Keď je OpenCode vypnutý, začínajú s Claude alebo Codex. Zoznam pochádza z príkazu opencode models."
           }
         }
       }
@@ -1780,6 +1807,16 @@
         }
       }
     },
+    "Own path" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vlastná cesta"
+          }
+        }
+      }
+    },
     "Part %lld" : {
       "localizations" : {
         "sk" : {
@@ -1796,26 +1833,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Časť %lld nemá zvuk ani prepis."
-          }
-        }
-      }
-    },
-    "Path to %@" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cesta k %@"
-          }
-        }
-      }
-    },
-    "Path to opencode" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cesta k opencode"
           }
         }
       }
@@ -1846,6 +1863,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Súkromie"
+          }
+        }
+      }
+    },
+    "Program" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Program"
           }
         }
       }
@@ -2100,6 +2127,16 @@
         }
       }
     },
+    "Screen frames" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snímky obrazovky"
+          }
+        }
+      }
+    },
     "Search" : {
       "localizations" : {
         "sk" : {
@@ -2163,6 +2200,16 @@
         }
       }
     },
+    "Share…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zdieľať…"
+          }
+        }
+      }
+    },
     "Show" : {
       "localizations" : {
         "sk" : {
@@ -2179,6 +2226,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zobraziť vo Finderi"
+          }
+        }
+      }
+    },
+    "Show prompt" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobraziť prompt"
           }
         }
       }
@@ -2416,12 +2473,12 @@
         }
       }
     },
-    "The agent is in ~/.config/opencode/agent/meeting-summary.md" : {
+    "The Summary card of a session starts with these values. You can change them for each summary. The default model is in the Models tab." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agent je v ~/.config/opencode/agent/meeting-summary.md"
+            "value" : "Karta Summary v sedení začína s týmito hodnotami. Pri každom súhrne ich môžete zmeniť. Predvolený model je na karte Models."
           }
         }
       }
@@ -2696,6 +2753,16 @@
         }
       }
     },
+    "The rules for all summaries and all models: how to clean the transcript, what is a decision, how to write dates. Your changes apply from the next summary. A new app version updates the file only when you did not edit it. Show prompt in the Summary card shows the full text that the model gets." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pravidlá pre všetky súhrny a všetky modely: ako vyčistiť prepis, čo je rozhodnutie, ako písať dátumy. Vaše zmeny platia od nasledujúceho súhrnu. Nová verzia aplikácie súbor aktualizuje, iba ak ste ho neupravili. Show prompt v karte Summary ukáže celý text, ktorý model dostane."
+          }
+        }
+      }
+    },
     "The selected screen is not available. Select another screen." : {
       "localizations" : {
         "sk" : {
@@ -2766,12 +2833,12 @@
         }
       }
     },
-    "The summary rules are the same for all models. The app keeps them in ~/Library/Application Support/OfflineMeetingSummary/prompts/meeting-summary.md. Your changes apply from the next summary. A new app version updates the file only when you did not edit it." : {
+    "The summary sends the transcript and the selected screen frames to the provider of the model. With a local model (for example Ollama or LM Studio in OpenCode), nothing leaves the Mac. A cloud provider (for example Anthropic, OpenAI or Google) gets the data, also when you use it through OpenCode. Use a cloud model only for meetings that are not sensitive." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pravidlá zápisu sú rovnaké pre všetky modely. Aplikácia ich má v ~/Library/Application Support/OfflineMeetingSummary/prompts/meeting-summary.md. Vaše zmeny platia od nasledujúceho zápisu. Nová verzia aplikácie súbor aktualizuje, len keď ste ho neupravili."
+            "value" : "Súhrn pošle prepis a vybrané snímky obrazovky poskytovateľovi modelu. S lokálnym modelom (napríklad Ollama alebo LM Studio v OpenCode) nič neopustí Mac. Cloudový poskytovateľ (napríklad Anthropic, OpenAI alebo Google) údaje dostane, aj keď ho používate cez OpenCode. Cloudový model používajte iba pre stretnutia, ktoré nie sú citlivé."
           }
         }
       }
@@ -3152,16 +3219,6 @@
         }
       }
     },
-    "Video frames" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Snímky z videa"
-          }
-        }
-      }
-    },
     "Waiting for another transcription…" : {
       "localizations" : {
         "sk" : {
@@ -3178,6 +3235,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Novinky"
+          }
+        }
+      }
+    },
+    "When the speech depends on the screen, the model can cut a frame from the video at that time. The app needs ffmpeg for it. Sessions without video have no frames." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keď reč závisí od obrazovky, model môže vystrihnúť snímku z videa v danom čase. Aplikácia na to potrebuje ffmpeg. Sedenia bez videa snímky nemajú."
+          }
+        }
+      }
+    },
+    "Where the data goes" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kam idú údaje"
           }
         }
       }
@@ -3232,16 +3309,6 @@
         }
       }
     },
-    "You can change them for each summary. The model list comes from the opencode models command." : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pri každom zápise ich môžete zmeniť. Zoznam modelov je z príkazu opencode models."
-          }
-        }
-      }
-    },
     "You can continue the same session." : {
       "localizations" : {
         "sk" : {
@@ -3288,6 +3355,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "automaticky"
+          }
+        }
+      }
+    },
+    "ffmpeg" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ffmpeg"
           }
         }
       }
