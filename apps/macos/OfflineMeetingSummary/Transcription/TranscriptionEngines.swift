@@ -12,6 +12,7 @@ protocol TranscriptionEngine: Sendable {
 
 enum TranscriptionError: LocalizedError {
     case modelMissing(String)
+    case modelDamaged(String, String)
     case missingApiKey
     case badURL
     case server(Int, String)
@@ -19,6 +20,7 @@ enum TranscriptionError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .modelMissing(let model): String(localized: "Model \(model) is not downloaded. Download it in Settings → Transcription.")
+        case .modelDamaged(let model, let detail): String(localized: "Model \(model) cannot load. Its files are incomplete or damaged. Download it again in Settings → Transcription. Details: \(detail)")
         case .missingApiKey: String(localized: "The API key for the transcription server is missing. Enter it in Settings → Transcription.")
         case .badURL: String(localized: "The transcription server URL is not valid.")
         case .server(let code, let body): String(localized: "The transcription server returned error \(code): \(String(body.prefix(300)))")
@@ -48,14 +50,31 @@ actor WhisperKitEngine: TranscriptionEngine {
         downloadBase.appending(path: "models/argmaxinc/whisperkit-coreml/\(model)")
     }
 
+    /// The files that WhisperKit needs to load a model. An interrupted download can leave
+    /// the `.mlmodelc` folders without some of these files.
+    private nonisolated static let requiredFiles = ["MelSpectrogram", "AudioEncoder", "TextDecoder"].flatMap { name in
+        ["coremldata.bin", "model.mil", "weights/weight.bin"].map { "\(name).mlmodelc/\($0)" }
+    }
+
     nonisolated static func isDownloaded(_ model: String) -> Bool {
         let folder = modelFolder(model)
-        return FileManager.default.fileExists(atPath: folder.appending(path: "AudioEncoder.mlmodelc").path)
-            && FileManager.default.fileExists(atPath: folder.appending(path: "TextDecoder.mlmodelc").path)
+        return requiredFiles.allSatisfy { file in
+            let size = (try? FileManager.default.attributesOfItem(atPath: folder.appending(path: file).path)[.size]) as? Int
+            return (size ?? 0) > 0
+        }
     }
 
     /// Downloads the model from Hugging Face and loads it once (this also caches the tokenizer).
+    /// The download starts from an empty folder, because the downloader skips files that it
+    /// recorded as done, also when they are damaged.
     func download(_ model: String, progress: @escaping @Sendable (Double) -> Void) async throws {
+        if loading?.model == model { loading = nil }
+        let folder = Self.modelFolder(model)
+        if FileManager.default.fileExists(atPath: folder.path) {
+            try FileManager.default.removeItem(at: folder)
+        }
+        let metadata = Self.downloadBase.appending(path: "models/argmaxinc/whisperkit-coreml/.cache/huggingface/download/\(model)")
+        try? FileManager.default.removeItem(at: metadata)
         _ = try await WhisperKit.download(variant: model, downloadBase: Self.downloadBase) { value in
             progress(value.fractionCompleted)
         }
@@ -67,7 +86,14 @@ actor WhisperKitEngine: TranscriptionEngine {
         let model = AppSettings.current.whisperModel
         guard Self.isDownloaded(model) else { throw TranscriptionError.modelMissing(model) }
         progress(String(localized: "Loading model…"))
-        let kit = try await kit(for: model)
+        let kit: WhisperKit
+        do {
+            kit = try await self.kit(for: model)
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            throw TranscriptionError.modelDamaged(model, error.localizedDescription)
+        }
 
         let options = DecodingOptions(
             verbose: false,
