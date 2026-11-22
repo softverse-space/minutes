@@ -7,6 +7,29 @@
     <description>Updates of Minutes</description>
     <language>en</language>
     <item>
+      <title>Minutes 1.3.1</title>
+      <pubDate>Sun, 22 Nov 2026 20:46:50 GMT</pubDate>
+      <sparkle:version>5</sparkle:version>
+      <sparkle:shortVersionString>1.3.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>https://github.com/softverse-space/minutes/releases/tag/v1.3.1</sparkle:fullReleaseNotesLink>
+      <description><![CDATA[
+<h3>Changed</h3>
+<ul>
+<li><strong>Session detail:</strong> your summaries are on top. <strong>New summary…</strong> opens the options for another summary. The title is the topic of the meeting.</li>
+<li><strong>Outputs:</strong> each summary shows its topic and time instead of the long file name.</li>
+<li><strong>Sessions list:</strong> a session without a summary shows its time, for example "Meeting at 15:30".</li>
+<li><strong>Recording:</strong> Stop recording is red, the same as Start recording. The level meter is larger.</li>
+<li><strong>New session:</strong> long microphone names are no longer cut.</li>
+</ul>
+<h3>Reliability</h3>
+<ul>
+<li><strong>Transcription model:</strong> the app finds an incomplete WhisperKit download. Click <strong>Download again</strong> in Settings → Transcription.</li>
+</ul>
+      ]]></description>
+      <enclosure url="https://github.com/softverse-space/minutes/releases/download/v1.3.1/Minutes-1.3.1.dmg" length="6396154" type="application/x-apple-diskimage" sparkle:edSignature="CXzmLH92HndFSwceOnpuuULWbtMLnOZpsTR84AXsYMy09bhVmZwRTtZeZP2lu3xiMo+vdvTLe4qe4tqUWvqZBQ=="/>
+    </item>
+    <item>
       <title>Minutes 1.3.0</title>
       <pubDate>Thu, 19 Nov 2026 19:56:55 GMT</pubDate>
       <sparkle:version>4</sparkle:version>
