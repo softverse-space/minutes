@@ -21,6 +21,7 @@ Follow every step in sequence. Do not skip a check. Decisions: ADR-0011, ADR-002
 1. `git switch main && git pull`. The working tree must be clean.
 2. `gh release list -L 3` – find the last released version.
 3. Read `apps/macos/CHANGELOG.md`. The section `## Unreleased` must exist and describe all changes since the last release. Compare it with `git log v<last>..main --oneline`. Add missing user-visible changes (English, STE style).
+   The CHANGELOG is for users. Write one short line for each change, with what the user can do and where. Do not add links to ADRs or code, file paths or internal names. Leave out small UI details. The same text goes to the GitHub release and to the update dialog of the app.
 4. Choose the version (semantic versioning). New features: minor. Only fixes: patch. Ask the user to confirm the version.
 5. Run the tests and the Debug build:
    ```

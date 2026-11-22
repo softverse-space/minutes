@@ -39,12 +39,15 @@ struct TranscriptionSettings: View {
                     }
                     let downloaded = downloadedTick >= 0 && WhisperKitEngine.isDownloaded(whisperModel)
                     LabeledContent("Status") {
-                        if downloaded {
-                            StatusLabel(text: "Downloaded", ok: true)
-                        } else if let progress = downloadProgress {
+                        if let progress = downloadProgress {
                             HStack {
                                 ProgressView(value: progress).frame(width: 120)
                                 Text(verbatim: "\(Int(progress * 100)) %").monospacedDigit().foregroundStyle(.secondary)
+                            }
+                        } else if downloaded {
+                            HStack {
+                                StatusLabel(text: "Downloaded", ok: true)
+                                Button("Download again") { download() }
                             }
                         } else {
                             Button("Download model") { download() }

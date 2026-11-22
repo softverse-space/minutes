@@ -1021,6 +1021,16 @@
         }
       }
     },
+    "Download again" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiahnuť znova"
+          }
+        }
+      }
+    },
     "Download model" : {
       "localizations" : {
         "sk" : {
@@ -1613,6 +1623,16 @@
     },
     "Model" : {
       "shouldTranslate" : false
+    },
+    "Model %@ cannot load. Its files are incomplete or damaged. Download it again in Settings → Transcription. Details: %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model %1$@ sa nedá načítať. Jeho súbory sú neúplné alebo poškodené. Stiahnite ho znova v Nastaveniach → Prepis. Podrobnosti: %2$@"
+          }
+        }
+      }
     },
     "Model %@ is not downloaded. Download it in Settings → Transcription." : {
       "localizations" : {
