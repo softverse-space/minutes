@@ -293,3 +293,8 @@
 - App: the Continue recording button shows only its icon when a long translation does not fit. Two Slovak texts in Settings → Summary are corrected.
 - Changed: apps/macos/README.md (Website screenshots), the release skill (step 5).
 
+
+## [2026-11-22] release | Minutes 1.3.1
+- Changed: session detail with the summaries on top (ADR-0036), short output names, session time in the list, red Stop recording, larger level meter.
+- Fixed: an incomplete WhisperKit model download is found. Settings → Transcription has **Download again**.
+- Version 1.3.1, build 5. Update through Sparkle from 1.3.0.
