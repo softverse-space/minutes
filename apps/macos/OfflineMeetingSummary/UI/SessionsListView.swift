@@ -12,6 +12,8 @@ struct SessionsListView: View {
         let filtered = items.filter { $0.matches(query) }
         let reclaimable = items.filter(\.hasSourceMedia)
         let reclaimableSize = reclaimable.reduce(0) { $0 + $1.mediaSize }
+        // The screen name helps only when the sessions use more than one screen.
+        let showsDisplay = Set(items.compactMap { $0.metadata?.displayName }.filter { !$0.isEmpty }).count > 1
 
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
@@ -64,7 +66,7 @@ struct SessionsListView: View {
                         ForEach(SessionItem.groupedByDay(filtered), id: \.day) { group in
                             Section {
                                 ForEach(group.items) { item in
-                                    SessionRow(item: item)
+                                    SessionRow(item: item, showsDisplay: showsDisplay)
                                 }
                             } header: {
                                 Text(group.title)
@@ -78,6 +80,9 @@ struct SessionsListView: View {
                     }
                 }
                 .scrollBounceBehavior(.basedOnSize)
+                // The classic scroll bar (mouse or "always show") is heavy in the small popover.
+                // The cut last row shows that the list scrolls.
+                .scrollIndicators(.never)
                 .frame(maxHeight: 380)
                 .fixedSize(horizontal: false, vertical: true)
             }
@@ -101,6 +106,7 @@ struct SessionsListView: View {
 struct SessionRow: View {
     @Environment(AppModel.self) private var model
     let item: SessionItem
+    var showsDisplay = true
     @State private var hovering = false
 
     var body: some View {
@@ -109,7 +115,7 @@ struct SessionRow: View {
             HStack(spacing: 10) {
                 statusIcon.frame(width: 20)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(item.topic ?? String(localized: "No summary"))
+                    Text(item.title)
                         .font(.callout.weight(.medium))
                         .foregroundStyle(item.topic == nil ? .secondary : .primary)
                         .lineLimit(1)
@@ -122,12 +128,14 @@ struct SessionRow: View {
             }
             .padding(.vertical, 7)
             .padding(.horizontal, 10)
-            .background(hovering ? Color.primary.opacity(0.08) : Color.primary.opacity(0.04),
-                        in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .background(hovering ? Color.primary.opacity(0.08) : Color.cardFill,
+                        in: RoundedRectangle(cornerRadius: Metrics.smallRadius, style: .continuous))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .onHover { hovering = $0 }
+        // VoiceOver reads the state as text, not only as the color of the icon.
+        .accessibilityLabel(Text(verbatim: "\(item.title), \(statusText), \(subtitle)"))
         .contextMenu {
             Button("Open") { model.focusedSession = session }
             Button("Open folder") { model.openFolder(session.url) }
@@ -150,26 +158,49 @@ struct SessionRow: View {
         if let duration = item.metadata?.duration { parts.append(SessionFormat.duration(duration)) }
         if let count = item.metadata?.parts.count, count > 1 { parts.append(String(localized: "\(count) parts")) }
         if item.metadata?.isImported == true { parts.append(String(localized: "Imported")) }
-        if let display = item.metadata?.displayName, !display.isEmpty { parts.append(display) }
+        if showsDisplay, let display = item.metadata?.displayName, !display.isEmpty { parts.append(display) }
         return parts.joined(separator: " · ")
+    }
+
+    private enum Status {
+        case working, summarized, transcribed, interrupted, failed, recorded
+    }
+
+    private var status: Status {
+        let session = item.session
+        if model.transcriptionJobs[session.url]?.isRunning == true || model.summaryJobs[session.url]?.isRunning == true {
+            return .working
+        }
+        if item.hasOutputs { return .summarized }
+        if item.hasTranscript { return .transcribed }
+        if item.metadata?.isInterrupted == true { return .interrupted }
+        if item.metadata?.transcription == .failed { return .failed }
+        return .recorded
+    }
+
+    private var statusText: String {
+        switch status {
+        case .working: String(localized: "Working…")
+        case .summarized: String(localized: "The summary is done")
+        case .transcribed: String(localized: "The transcript is done, the summary is not")
+        case .interrupted: String(localized: "The recording was interrupted")
+        case .failed: String(localized: "Transcription failed")
+        case .recorded: String(localized: "Recording only")
+        }
     }
 
     @ViewBuilder
     private var statusIcon: some View {
-        let session = item.session
-        if model.transcriptionJobs[session.url]?.isRunning == true || model.summaryJobs[session.url]?.isRunning == true {
-            ProgressView().controlSize(.small)
-        } else if item.hasOutputs {
-            Image(systemName: "doc.text.fill").foregroundStyle(.green).help("The summary is done")
-        } else if item.hasTranscript {
-            Image(systemName: "text.bubble.fill").foregroundStyle(.blue).help("The transcript is done, the summary is not")
-        } else if item.metadata?.isInterrupted == true {
-            Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
-                .help("The recording was interrupted")
-        } else if item.metadata?.transcription == .failed {
-            Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange).help("Transcription failed")
-        } else {
-            Image(systemName: "waveform").foregroundStyle(.secondary).help("Recording only")
+        Group {
+            switch status {
+            case .working: ProgressView().controlSize(.small)
+            case .summarized: Image(systemName: "doc.text.fill").foregroundStyle(.green)
+            case .transcribed: Image(systemName: "text.bubble.fill").foregroundStyle(.blue)
+            case .interrupted: Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
+            case .failed: Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+            case .recorded: Image(systemName: "waveform").foregroundStyle(.secondary)
+            }
         }
+        .help(statusText)
     }
 }

@@ -45,6 +45,23 @@ struct SectionTitle: View {
     }
 }
 
+/// Shared sizes, so every container in the popover has the same corners.
+enum Metrics {
+    /// Small elements: rows, tiles, fields.
+    static let smallRadius: CGFloat = 8
+    /// Containers: cards, banners, panels.
+    static let cardRadius: CGFloat = 12
+}
+
+extension Color {
+    /// Card fill that stands out from the popover material in light and dark mode.
+    static let cardFill = Color(nsColor: NSColor(name: "cardFill") { appearance in
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            ? NSColor.white.withAlphaComponent(0.07)
+            : NSColor.white.withAlphaComponent(0.62)
+    })
+}
+
 /// A rounded container that groups related controls, like a grouped Form section.
 struct Card<Content: View>: View {
     @ViewBuilder var content: Content
@@ -52,8 +69,41 @@ struct Card<Content: View>: View {
         VStack(alignment: .leading, spacing: 10) { content }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .overlay { RoundedRectangle(cornerRadius: 10, style: .continuous).strokeBorder(.separator.opacity(0.6), lineWidth: 0.5) }
+            .background(Color.cardFill, in: RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
+                    .strokeBorder(.separator.opacity(0.6), lineWidth: 0.5)
+            }
+    }
+}
+
+/// The tone of a banner: a note, a question that needs attention, or a destructive confirmation.
+enum BannerTone {
+    case info, warning, danger
+
+    var color: Color {
+        switch self {
+        case .info: .accentColor
+        case .warning: .orange
+        case .danger: .red
+        }
+    }
+}
+
+/// One style for every banner and inline panel in the popover.
+struct Banner<Content: View>: View {
+    var tone: BannerTone = .info
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        content
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(tone.color.opacity(0.1), in: RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
+                    .strokeBorder(tone.color.opacity(0.25), lineWidth: 0.5)
+            }
     }
 }
 
@@ -67,7 +117,7 @@ struct LevelMeter: View {
                     .frame(width: proxy.size.width * CGFloat(min(1, sqrt(level))))
             }
         }
-        .frame(width: 60, height: 6)
+        .frame(width: 90, height: 8)
         .animation(.linear(duration: 0.15), value: level)
     }
 }
@@ -97,7 +147,7 @@ struct SearchField: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 5)
-        .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+        .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: Metrics.smallRadius, style: .continuous))
     }
 }
 
@@ -125,22 +175,20 @@ struct ConfirmPanel: View {
     let onConfirm: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label(text, systemImage: destructive ? "trash" : "exclamationmark.triangle")
-                .font(.callout.weight(.medium))
-                .fixedSize(horizontal: false, vertical: true)
-            HStack {
-                Spacer()
-                Button("Cancel", action: onCancel)
-                    .keyboardShortcut(.cancelAction)
-                Button(destructive ? "Delete" : "Yes", action: onConfirm)
-                    .buttonStyle(.borderedProminent)
-                    .tint(destructive ? .red : .accentColor)
+        Banner(tone: destructive ? .danger : .warning) {
+            VStack(alignment: .leading, spacing: 8) {
+                Label(text, systemImage: destructive ? "trash" : "exclamationmark.triangle")
+                    .font(.callout.weight(.medium))
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack {
+                    Spacer()
+                    Button("Cancel", action: onCancel)
+                        .keyboardShortcut(.cancelAction)
+                    Button(destructive ? "Delete" : "Yes", action: onConfirm)
+                        .buttonStyle(.borderedProminent)
+                        .tint(destructive ? .red : .accentColor)
+                }
             }
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background((destructive ? Color.red : Color.orange).opacity(0.1),
-                    in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }

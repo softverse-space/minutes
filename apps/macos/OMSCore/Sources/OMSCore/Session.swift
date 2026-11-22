@@ -260,6 +260,14 @@ public enum SessionNaming {
         return name
     }
 
+    /// The version suffix of a summary file name: `…_llm_wiki_v2.md` → 2. Returns nil for the first version.
+    public static func version(fromSummaryFileName fileName: String) -> Int? {
+        let stem = (fileName as NSString).deletingPathExtension
+        guard stem.contains("_meetingsummary_"),
+              let range = stem.range(of: #"_v\d+$"#, options: .regularExpression) else { return nil }
+        return Int(stem[range].dropFirst(2))
+    }
+
     /// Readable topic from a summary file name: `2026-11-13_meetingsummary_llm_wiki_v2.md` → `llm wiki`.
     /// Returns nil when the name does not follow `summaryFileName`.
     public static func topic(fromSummaryFileName fileName: String) -> String? {

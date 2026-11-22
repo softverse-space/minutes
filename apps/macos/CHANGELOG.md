@@ -2,6 +2,15 @@
 
 What changed for you in each version. Short and for users: no internal details, no links to decisions or code.
 
+## Unreleased
+
+### Changed
+- **Session detail:** your summaries are on top. **New summary…** opens the options for another summary. The title is the topic of the meeting.
+- **Outputs:** each summary shows its topic and time instead of the long file name.
+- **Sessions list:** a session without a summary shows its time, for example "Meeting at 15:30".
+- **Recording:** Stop recording is red, the same as Start recording. The level meter is larger.
+- **New session:** long microphone names are no longer cut.
+
 ## 1.3.0 – 2026-11-19
 
 ### New

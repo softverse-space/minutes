@@ -6,6 +6,8 @@ struct SessionView: View {
     let session: SessionFolder
 
     @State private var pending: SessionAction?
+    /// The summary form is open when the session has no summary yet, or after "New summary".
+    @State private var showsSummaryForm = false
 
     var body: some View {
         let item = model.item(for: session)
@@ -34,23 +36,47 @@ struct SessionView: View {
                         EmptyView()
                     }
 
-                    TranscriptCard(item: item)
-                    SummaryCard(item: item)
-
+                    // The result comes first: when summaries exist, they are above the form.
                     if item.hasOutputs {
-                        OutputsCard(outputs: item.outputs, stale: item.staleOutputs)
+                        OutputsCard(item: item)
+                    }
+
+                    TranscriptCard(item: item)
+                    SummaryCard(item: item, isExpanded: summaryFormOpen(item)) {
+                        setSummaryForm(!showsSummaryForm)
                     }
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
+            // The popover is small: the classic scroll bar (mouse or "always show") is heavy here.
+            .scrollIndicators(.never)
             .frame(maxHeight: 620)
             .fixedSize(horizontal: false, vertical: true)
 
             footer(item)
         }
         .animation(.smooth(duration: 0.2), value: pending)
+        // A new summary closes the form again: the result is now on top.
+        .onChange(of: item.outputs.count) { setSummaryForm(false) }
         .onAppear(perform: takePendingAction)
         .onChange(of: model.pendingSessionAction) { takePendingAction() }
+    }
+
+    /// Opens or closes the form in one step. An animation would resize the popover frame by frame:
+    /// the whole popover flickers and the scroll bar flashes.
+    private func setSummaryForm(_ open: Bool) {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) { showsSummaryForm = open }
+    }
+
+    /// The form is always open without a summary and while a summary job runs or after it fails.
+    private func summaryFormOpen(_ item: SessionItem) -> Bool {
+        if !item.hasOutputs || showsSummaryForm { return true }
+        switch model.summaryJobs[session.url] {
+        case .running, .failed: return true
+        default: return false
+        }
     }
 
     /// A confirmation requested from the sessions list (context menu).
@@ -110,9 +136,15 @@ struct SessionView: View {
             }
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(item.metadata.map { $0.startedAt.formatted(date: .abbreviated, time: .shortened) } ?? session.name)
+                // The same title as in the sessions list: the topic, else the time.
+                Text(item.topic ?? item.metadata.map { $0.startedAt.formatted(date: .abbreviated, time: .shortened) } ?? session.name)
                     .font(.title3.weight(.semibold))
+                    .lineLimit(2)
                 HStack(spacing: 10) {
+                    if item.topic != nil, let date = item.date {
+                        Label(date.formatted(date: .abbreviated, time: .shortened), systemImage: "calendar")
+                            .lineLimit(1)
+                    }
                     if let duration = item.metadata?.duration {
                         Label(SessionFormat.duration(duration), systemImage: "clock")
                     }
@@ -239,10 +271,31 @@ private struct SummaryCard: View {
     @AppStorage(SettingsKey.claudeEnabled) private var claudeEnabled = false
     @AppStorage(SettingsKey.codexEnabled) private var codexEnabled = false
     let item: SessionItem
+    let isExpanded: Bool
+    let toggle: () -> Void
 
     private var anyEngineEnabled: Bool { opencodeEnabled || claudeEnabled || codexEnabled }
 
     var body: some View {
+        if isExpanded {
+            form
+        } else {
+            Card {
+                HStack {
+                    StepTitle(title: "Summary", subtitle: nil) {
+                        Image(systemName: "doc.text").foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button("New summary…", systemImage: "sparkles", action: toggle)
+                        .disabled(model.isBusy(item.session))
+                        .help("Make another summary with a different template, detail level or model")
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var form: some View {
         @Bindable var model = model
         let session = item.session
         let transcribed = item.hasTranscript
@@ -250,8 +303,18 @@ private struct SummaryCard: View {
         let transcribing = model.transcriptionJobs[session.url]?.isRunning == true
 
         Card {
-            StepTitle(title: "Summary", subtitle: nil) {
-                Image(systemName: "doc.text").foregroundStyle(.secondary)
+            HStack {
+                StepTitle(title: "Summary", subtitle: nil) {
+                    Image(systemName: "doc.text").foregroundStyle(.secondary)
+                }
+                Spacer()
+                if item.hasOutputs, job?.isRunning != true {
+                    Button("Close", systemImage: "chevron.up", action: toggle)
+                        .labelStyle(.iconOnly)
+                        .buttonStyle(.borderless)
+                        .foregroundStyle(.secondary)
+                        .help("Hide the summary options")
+                }
             }
 
             Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 10, verticalSpacing: 10) {
@@ -286,7 +349,7 @@ private struct SummaryCard: View {
                             .scrollContentBackground(.hidden)
                             .padding(4)
                             .frame(height: 110)
-                            .background(.background, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                            .background(.background, in: RoundedRectangle(cornerRadius: Metrics.smallRadius, style: .continuous))
                             .overlay(alignment: .topLeading) {
                                 if model.formCustomInstruction.isEmpty {
                                     Text("For example: “Only a list of tasks with deadlines.”")
@@ -295,7 +358,7 @@ private struct SummaryCard: View {
                                         .allowsHitTesting(false)
                                 }
                             }
-                            .overlay { RoundedRectangle(cornerRadius: 6, style: .continuous).strokeBorder(.separator) }
+                            .overlay { RoundedRectangle(cornerRadius: Metrics.smallRadius, style: .continuous).strokeBorder(.separator) }
                     }
                 }
 
@@ -395,8 +458,9 @@ private struct SummaryCard: View {
 
 private struct OutputsCard: View {
     @Environment(AppModel.self) private var model
-    let outputs: [URL]
-    let stale: Set<URL>
+    let item: SessionItem
+    private var outputs: [URL] { item.outputs }
+    private var stale: Set<URL> { item.staleOutputs }
 
     var body: some View {
         Card {
@@ -405,7 +469,7 @@ private struct OutputsCard: View {
             }
             VStack(spacing: 2) {
                 ForEach(outputs, id: \.self) { url in
-                    OutputRow(url: url, stale: stale.contains(url))
+                    OutputRow(url: url, date: item.outputDates[url], stale: stale.contains(url))
                 }
             }
             if !stale.isEmpty {
@@ -421,9 +485,17 @@ private struct OutputsCard: View {
 private struct OutputRow: View {
     @Environment(AppModel.self) private var model
     let url: URL
+    var date: Date?
+    var stale = false
     @State private var hovering = false
 
-    var stale = false
+    /// The topic from the file name, with the version: "sprint planning (2)". Else the file name.
+    private var title: String {
+        let name = url.lastPathComponent
+        guard let topic = SessionNaming.topic(fromSummaryFileName: name) else { return url.deletingPathExtension().lastPathComponent }
+        if let version = SessionNaming.version(fromSummaryFileName: name) { return "\(topic) (\(version))" }
+        return topic
+    }
 
     var body: some View {
         HStack(spacing: 4) {
@@ -431,10 +503,17 @@ private struct OutputRow: View {
                 HStack(spacing: 8) {
                     Image(systemName: stale ? "clock.arrow.circlepath" : "doc.richtext")
                         .foregroundStyle(stale ? Color.secondary : Color.accentColor)
-                    Text(url.lastPathComponent)
-                        .font(.callout)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(title)
+                            .font(.callout)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                        if let date {
+                            Text(date.formatted(date: .abbreviated, time: .shortened))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                     Spacer(minLength: 8)
                     Image(systemName: "arrow.up.forward.square")
                         .foregroundStyle(hovering ? .primary : .tertiary)
@@ -452,7 +531,7 @@ private struct OutputRow: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
         .background(hovering ? Color.primary.opacity(0.06) : .clear,
-                    in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    in: RoundedRectangle(cornerRadius: Metrics.smallRadius, style: .continuous))
         .onHover { hovering = $0 }
         // Drag the file to Mail, Slack or Finder.
         .onDrag { NSItemProvider(contentsOf: url) ?? NSItemProvider() }
@@ -546,45 +625,44 @@ private struct MergePanel: View {
         let problem = model.mergeProblem(item)
         let gap = previous?.metadata.flatMap { target in item.metadata.flatMap { SessionMerge.gap(target: target, source: $0) } }
 
-        VStack(alignment: .leading, spacing: 8) {
-            Label("Merge with previous session", systemImage: "arrow.triangle.merge")
-                .font(.callout.weight(.semibold))
-            if let previous {
-                row(previous)
-                row(item)
-            }
-            if let gap {
-                Text("Break between the sessions: \(SessionFormat.duration(gap))")
-                    .font(.caption).foregroundStyle(.secondary)
-                if gap > 3600 {
-                    Label("The break is longer than 60 minutes. Check that it is the same meeting.", systemImage: "exclamationmark.triangle")
-                        .font(.caption).foregroundStyle(.orange)
+        Banner(tone: .info) {
+            VStack(alignment: .leading, spacing: 8) {
+                Label("Merge with previous session", systemImage: "arrow.triangle.merge")
+                    .font(.callout.weight(.semibold))
+                if let previous {
+                    row(previous)
+                    row(item)
+                }
+                if let gap {
+                    Text("Break between the sessions: \(SessionFormat.duration(gap))")
+                        .font(.caption).foregroundStyle(.secondary)
+                    if gap > 3600 {
+                        Label("The break is longer than 60 minutes. Check that it is the same meeting.", systemImage: "exclamationmark.triangle")
+                            .font(.caption).foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                if let problem {
+                    Label(problem, systemImage: "xmark.octagon").font(.caption).foregroundStyle(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    Text("You cannot split the sessions again in the app. Older summaries stay in the session.")
+                        .font(.caption).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-            }
-            if let problem {
-                Label(problem, systemImage: "xmark.octagon").font(.caption).foregroundStyle(.red)
-                    .fixedSize(horizontal: false, vertical: true)
-            } else {
-                Text("You cannot split the sessions again in the app. Older summaries stay in the session.")
-                    .font(.caption).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            HStack {
-                Spacer()
-                Button("Cancel", action: onClose)
-                    .keyboardShortcut(.cancelAction)
-                Button("Merge") {
-                    onClose()
-                    Task { await model.mergeWithPrevious(item.session) }
+                HStack {
+                    Spacer()
+                    Button("Cancel", action: onClose)
+                        .keyboardShortcut(.cancelAction)
+                    Button("Merge") {
+                        onClose()
+                        Task { await model.mergeWithPrevious(item.session) }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(problem != nil)
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(problem != nil)
             }
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 
     private func row(_ item: SessionItem) -> some View {

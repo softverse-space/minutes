@@ -1,8 +1,8 @@
 # App controls
 
-Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md), [app updates](../../docs/specs/app-updates.md), [import request](../raw/2026-11-18-import-recordings.md) · Updated: 2026-11-19
+Sources: brief (kept locally), feedback from Henrich (2026-11-13), [continue and merge request](../raw/2026-11-17-continue-and-merge-sessions.md), [app updates](../../docs/specs/app-updates.md), [import request](../raw/2026-11-18-import-recordings.md), UI review (2026-11-22) · Updated: 2026-11-22
 
-Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md), [ADR-0032](../../docs/adr/0032-audio-only-recording.md), [ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md), [ADR-0034](../../docs/adr/0034-import-existing-recordings.md), [ADR-0035](../../docs/adr/0035-settings-tabs-and-model-data-note.md).
+Decisions: [ADR-0012](../../docs/adr/0012-menu-bar-ui-and-settings.md), [ADR-0014](../../docs/adr/0014-sessions-tab-cleanup-editor.md), [ADR-0029](../../docs/adr/0029-session-parts-continue-and-merge.md), [ADR-0030](../../docs/adr/0030-crash-resilient-recording.md), [ADR-0032](../../docs/adr/0032-audio-only-recording.md), [ADR-0033](../../docs/adr/0033-menu-bar-icon-context-menu.md), [ADR-0034](../../docs/adr/0034-import-existing-recordings.md), [ADR-0035](../../docs/adr/0035-settings-tabs-and-model-data-note.md), [ADR-0036](../../docs/adr/0036-session-detail-result-first-and-shared-styles.md).
 
 The popover has two tabs: **New session** and **Sessions**. The recent sessions are no longer below the Start button.
 
@@ -63,6 +63,27 @@ You can repeat each step without a new recording. "Transcribed" does not mean "c
 - The confirmation is directly in the popover. An alert would close the popover.
 - Right-click also has **Continue recording** and **Merge with previous session…**. The merge panel shows both sessions and the break.
 - An interrupted session (crash or restart during the recording) has an orange icon.
+- The row title is the topic of the summary. Without a summary it is "Meeting at 15:30".
+- The row shows the screen name only when the sessions use more than one screen.
+- VoiceOver reads the state of the session as text, not only as the color of the icon.
+
+## Session detail
+
+Decision: [ADR-0036](../../docs/adr/0036-session-detail-result-first-and-shared-styles.md).
+
+- The title is the topic, the same as in the list. The date is below it.
+- The result comes first: the Outputs card is above the Transcript and Summary cards.
+- Each output row shows the topic, the version and the time. The file name is in the tooltip.
+- With a summary, the Summary card is one row with **New summary…**. The form opens without a summary, while a summary job runs, after a failure, or after a click on **New summary…**. A new summary closes the form again.
+
+## Popover styles
+
+- Cards use `Card` with `Color.cardFill`. Banners and inline panels use `Banner` (info, warning, danger).
+- Two corner radii: 8 pt for rows, tiles and fields, 12 pt for cards and banners (`Metrics`).
+- Start recording and Stop recording are red. The blinking dot of the recording stays on with Reduce Motion.
+- The microphone picker has its own row. **Import a recording…** is a small button below Start recording.
+- The scroll views in the popover hide the scroll bar. The classic scroll bar (mouse, or "always show") is too heavy there.
+- The summary form opens and closes without an animation. An animation resizes the popover frame by frame, and the popover flickers.
 
 ## Continue and merge
 

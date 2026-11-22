@@ -54,16 +54,17 @@ struct IdleView: View {
                     SourceToggleRow(icon: "speaker.wave.2", title: "System audio",
                                     subtitle: "Teams, Meet, Zoom…", isOn: $model.captureSystemAudio)
                     Divider()
-                    SourceToggleRow(icon: "mic", title: "Microphone", isOn: $model.captureMicrophone) {
-                        Picker("Microphone", selection: $model.selectedMicrophoneID) {
-                            ForEach(model.microphones) { mic in
-                                Text(mic.name).tag(Optional(mic.id))
-                            }
+                    SourceToggleRow(icon: "mic", title: "Microphone", isOn: $model.captureMicrophone)
+                    // On its own row, so a long device name is not cut.
+                    Picker("Microphone", selection: $model.selectedMicrophoneID) {
+                        ForEach(model.microphones) { mic in
+                            Text(mic.name).tag(Optional(mic.id))
                         }
-                        .labelsHidden()
-                        .frame(maxWidth: 190)
-                        .disabled(!model.captureMicrophone)
                     }
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 30)
+                    .disabled(!model.captureMicrophone)
                     if model.microphoneDenied {
                         Button("Microphone has no permission – open settings") { SourceCatalog.openMicrophoneSettings() }
                             .buttonStyle(.link)
@@ -91,13 +92,14 @@ struct IdleView: View {
             .controlSize(.large)
             .disabled(!model.canStart)
 
+            // A secondary action: smaller than Start recording, so it does not compete with it.
             Button {
                 model.chooseFilesToImport()
             } label: {
                 Label("Import a recording…", systemImage: "square.and.arrow.down")
-                    .frame(maxWidth: .infinity)
             }
-            .controlSize(.large)
+            .buttonStyle(.borderless)
+            .frame(maxWidth: .infinity)
             .disabled(model.isImporting)
             .help("Make a session from an audio or video file. You can also drop files here.")
         }
@@ -110,32 +112,32 @@ struct ImportChoiceBanner: View {
     let files: [URL]
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: "square.and.arrow.down.on.square")
-                .foregroundStyle(Color.accentColor)
-                .font(.title3)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Import \(files.count) files as one session?").font(.callout.weight(.medium))
-                Text("One session makes one transcript and one summary. The files are its parts, in the order of their names.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                HStack {
-                    Button("One session") { model.startImport(files, asOneSession: true) }
-                        .buttonStyle(.borderedProminent)
-                    Button("Separate sessions") { model.startImport(files, asOneSession: false) }
-                        .buttonStyle(.bordered)
+        Banner(tone: .info) {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: "square.and.arrow.down.on.square")
+                    .foregroundStyle(Color.accentColor)
+                    .font(.title3)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Import \(files.count) files as one session?").font(.callout.weight(.medium))
+                    Text("One session makes one transcript and one summary. The files are its parts, in the order of their names.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    HStack {
+                        Button("One session") { model.startImport(files, asOneSession: true) }
+                            .buttonStyle(.borderedProminent)
+                        Button("Separate sessions") { model.startImport(files, asOneSession: false) }
+                            .buttonStyle(.bordered)
+                    }
                 }
+                Spacer(minLength: 0)
+                Button("Close", systemImage: "xmark") { model.pendingImport = nil }
+                    .labelStyle(.iconOnly)
+                    .buttonStyle(.borderless)
+                    .foregroundStyle(.secondary)
             }
-            Spacer(minLength: 0)
-            Button("Close", systemImage: "xmark") { model.pendingImport = nil }
-                .labelStyle(.iconOnly)
-                .buttonStyle(.borderless)
-                .foregroundStyle(.secondary)
         }
-        .padding(12)
-        .background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }
 
@@ -168,26 +170,25 @@ struct ContinueBanner: View {
     let interrupted: Bool
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: interrupted ? "exclamationmark.circle.fill" : "arrow.clockwise.circle")
-                .foregroundStyle(interrupted ? .orange : Color.accentColor)
-                .font(.title3)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 6) {
-                Text(message).font(.callout).fixedSize(horizontal: false, vertical: true)
-                Button("Continue") { Task { await model.continueSession(item.session) } }
-                    .buttonStyle(.bordered)
-                    .disabled(!model.hasRecordingSources)
+        Banner(tone: interrupted ? .warning : .info) {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: interrupted ? "exclamationmark.circle.fill" : "arrow.clockwise.circle")
+                    .foregroundStyle(interrupted ? .orange : Color.accentColor)
+                    .font(.title3)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(message).font(.callout).fixedSize(horizontal: false, vertical: true)
+                    Button("Continue") { Task { await model.continueSession(item.session) } }
+                        .buttonStyle(.bordered)
+                        .disabled(!model.hasRecordingSources)
+                }
+                Spacer(minLength: 0)
+                Button("Close", systemImage: "xmark") { model.dismissedContinueOffers.insert(item.id) }
+                    .labelStyle(.iconOnly)
+                    .buttonStyle(.borderless)
+                    .foregroundStyle(.secondary)
             }
-            Spacer(minLength: 0)
-            Button("Close", systemImage: "xmark") { model.dismissedContinueOffers.insert(item.id) }
-                .labelStyle(.iconOnly)
-                .buttonStyle(.borderless)
-                .foregroundStyle(.secondary)
         }
-        .padding(12)
-        .background((interrupted ? Color.orange : Color.accentColor).opacity(0.1),
-                    in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 
     private var message: String {
@@ -238,20 +239,20 @@ struct PermissionBanner: View {
     @Environment(AppModel.self) private var model
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("The app has no permission to record the screen.", systemImage: "lock.shield")
-                .font(.callout.weight(.medium))
-            Text("Allow it in System Settings → Privacy & Security → Screen & System Audio Recording. Then restart the app.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            HStack {
-                Button("Allow") { model.requestScreenPermission() }
-                Button("Check again") { Task { await model.refreshSources() } }
+        Banner(tone: .warning) {
+            VStack(alignment: .leading, spacing: 8) {
+                Label("The app has no permission to record the screen.", systemImage: "lock.shield")
+                    .font(.callout.weight(.medium))
+                Text("Allow it in System Settings → Privacy & Security → Screen & System Audio Recording. Then restart the app.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack {
+                    Button("Allow") { model.requestScreenPermission() }
+                    Button("Check again") { Task { await model.refreshSources() } }
+                }
             }
         }
-        .padding(12)
-        .background(.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
@@ -262,7 +263,7 @@ struct DisplayTile: View {
     var body: some View {
         VStack(spacing: 6) {
             ZStack {
-                RoundedRectangle(cornerRadius: 8, style: .continuous).fill(.quaternary)
+                RoundedRectangle(cornerRadius: Metrics.smallRadius, style: .continuous).fill(.quaternary)
                 if let image = display.thumbnail {
                     Image(nsImage: image).resizable().aspectRatio(contentMode: .fit)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -273,7 +274,7 @@ struct DisplayTile: View {
             }
             .frame(height: 96)
             .overlay {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                RoundedRectangle(cornerRadius: Metrics.smallRadius, style: .continuous)
                     .strokeBorder(selected ? Color.accentColor : Color.clear, lineWidth: 2.5)
             }
             .overlay(alignment: .topTrailing) {
