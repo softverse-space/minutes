@@ -248,7 +248,7 @@ final class AppModel {
         if selectedMicrophoneID == nil || !microphones.contains(where: { $0.id == selectedMicrophoneID }) {
             selectedMicrophoneID = SourceCatalog.defaultMicrophoneID ?? microphones.first?.id
         }
-        guard hasScreenPermission, phase == .idle else { return }
+        guard hasScreenPermission, phase == .idle, !ScreenshotMode.isOn else { return }
         do {
             displays = try await SourceCatalog.displays(withThumbnails: true)
             if selectedDisplayID == nil || !displays.contains(where: { $0.id == selectedDisplayID }) {

@@ -83,6 +83,17 @@ xcrun xcstringstool sync OfflineMeetingSummary/Resources/Localizable.xcstrings "
 
 The default signature is ad-hoc. For stable permissions, copy `Config/Signing.xcconfig.example` to `Config/Signing.xcconfig`.
 
+### Website screenshots
+
+`scripts/site-screenshots.sh` makes the screenshots of the popover and of all Settings tabs in English and Slovak (`apps/site/images`, Slovak files end with `-sk`).
+
+1. Build the Debug app as described above.
+2. Make sure that the Minutes icon is visible in the menu bar. A menu bar manager must not hide it.
+3. Run `apps/macos/scripts/site-screenshots.sh` (or `… en` / `… sk` for one language).
+4. Look at every image before you commit it.
+
+The script starts the Debug app with `-screenshotMode YES` (Debug builds only, `Support/ScreenshotMode.swift`): the app acts as if it had the Screen Recording permission, so the installed app keeps its permission. The New session tab shows the Screen switch off. The popover shows invented sessions from `scripts/site_samples.py`. Terminal needs Accessibility and Screen Recording permissions.
+
 ## Phase 0 – quick start
 
 1. Install the tools as described in [docs/install.md](docs/install.md).

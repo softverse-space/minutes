@@ -52,15 +52,18 @@ struct GeneralSettings: View {
 
             Section {
                 @Bindable var updates = updates
-                Toggle("Check for updates automatically", isOn: $updates.automaticallyChecks)
-                    .disabled(!updates.isEnabled)
-                Toggle("Download and install updates automatically", isOn: $updates.automaticallyDownloads)
-                    .disabled(!updates.isEnabled || !updates.automaticallyChecks)
+                // Screenshots show the switches of the released app (ScreenshotMode).
+                Toggle("Check for updates automatically",
+                       isOn: ScreenshotMode.isOn ? .constant(true) : $updates.automaticallyChecks)
+                    .disabled(!updates.isEnabled && !ScreenshotMode.isOn)
+                Toggle("Download and install updates automatically",
+                       isOn: ScreenshotMode.isOn ? .constant(false) : $updates.automaticallyDownloads)
+                    .disabled((!updates.isEnabled || !updates.automaticallyChecks) && !ScreenshotMode.isOn)
             } header: {
                 Text("Updates")
             } footer: {
                 Group {
-                    if updates.isEnabled {
+                    if updates.isEnabled || ScreenshotMode.isOn {
                         Text("The app checks once a day. It never restarts for an update during a recording or a job.")
                     } else {
                         Text("This build does not check for updates. Only the released app from GitHub updates itself.")

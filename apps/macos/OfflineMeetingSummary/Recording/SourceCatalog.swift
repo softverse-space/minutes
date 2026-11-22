@@ -20,7 +20,7 @@ struct MicrophoneInfo: Identifiable, Hashable {
 }
 
 enum SourceCatalog {
-    static var hasScreenRecordingPermission: Bool { CGPreflightScreenCaptureAccess() }
+    static var hasScreenRecordingPermission: Bool { ScreenshotMode.isOn || CGPreflightScreenCaptureAccess() }
 
     /// Shows the system prompt the first time. Later the user must allow it in System Settings.
     static func requestScreenRecordingPermission() {

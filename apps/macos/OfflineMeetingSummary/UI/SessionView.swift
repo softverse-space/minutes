@@ -99,14 +99,11 @@ struct SessionView: View {
                 Spacer()
 
                 if model.canContinue(item) {
-                    Button { Task { await model.continueSession(session) } } label: {
-                        Label("Continue recording", systemImage: "record.circle")
+                    // A long translation does not fit next to Open folder: then only the icon shows.
+                    ViewThatFits(in: .horizontal) {
+                        continueButton.labelStyle(.titleAndIcon)
+                        continueButton.labelStyle(.iconOnly)
                     }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .tint(.red)
-                    .disabled(!model.hasRecordingSources)
-                    .help("Record a new part into this session")
                 }
 
                 Button { model.openFolder(session.url) } label: {
@@ -170,6 +167,18 @@ struct SessionView: View {
                 .labelStyle(CompactLabelStyle())
             }
         }
+    }
+
+    private var continueButton: some View {
+        Button { Task { await model.continueSession(session) } } label: {
+            Label("Continue recording", systemImage: "record.circle")
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .tint(.red)
+        .fixedSize()
+        .disabled(!model.hasRecordingSources)
+        .help("Record a new part into this session")
     }
 
     // MARK: Footer

@@ -89,6 +89,7 @@ Do not change the website or the README version yet. The website must not name a
 2. `apps/macos/scripts/sync-site-version.sh` – changes the version in `apps/site/index.html` (English and Slovak) and in `README.md`: hero, download button, install step, closing section, footer, badge.
 3. Read the list of remaining old version numbers that the script prints. Change a place only if it names the current version. Sentences about history ("From version 1.1.0, …") stay.
 4. Check the website for other texts that the release makes wrong: new features in the guide, FAQ, screenshots, requirements. Change every text in English and in the Slovak `SK` dictionary.
+   When the UI changed, make the screenshots again with `apps/macos/scripts/site-screenshots.sh` (see `apps/macos/README.md`) and check every image.
 5. Commit `apps/site/appcast.xml`, `apps/site/index.html`, `README.md`. Push, `gh pr create`, link the PR. Ask the user to merge it. The appcast and the website go public together.
 
 ## Step 6 – Checks after publication
