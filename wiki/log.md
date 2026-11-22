@@ -285,3 +285,11 @@
 - Changed: pages/ui.md
 - Later the same day: the summary form opens without an animation (the popover flickered), the popover scroll views hide the scroll bar.
 - Open: new screenshots of the popover and Settings in English and Slovak.
+
+## [2026-11-22] update | New website screenshots, screenshot script
+- Source: feedback from the user. The Settings screenshots were old (no Models tab) and the edge mask cut them.
+- New: 18 screenshots (popover and the 6 Settings tabs, English and Slovak) as window captures with a transparent background and the macOS shadow. The website shows the Slovak files in Slovak (`data-src-sk`), has the Models tab and Slovak tab names. The edge mask is removed.
+- New: `apps/macos/scripts/site-screenshots.sh` and `site_samples.py` (invented sessions), `-screenshotMode YES` for Debug builds (no Screen Recording permission necessary; update controls as in the released app).
+- App: the Continue recording button shows only its icon when a long translation does not fit. Two Slovak texts in Settings → Summary are corrected.
+- Changed: apps/macos/README.md (Website screenshots), the release skill (step 5).
+

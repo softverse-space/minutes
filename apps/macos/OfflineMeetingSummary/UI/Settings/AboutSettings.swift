@@ -44,7 +44,7 @@ struct AboutSettings: View {
                     }
                     Spacer()
                     Button("Check for Updates…") { updates.checkForUpdates() }
-                        .disabled(!updates.isEnabled || !updates.canCheckForUpdates)
+                        .disabled((!updates.isEnabled || !updates.canCheckForUpdates) && !ScreenshotMode.isOn)
                         .help(updates.isEnabled ? "" : String(localized: "This build does not check for updates. Only the released app from GitHub updates itself."))
                 }
                 .padding(.vertical, 4)

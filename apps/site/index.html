@@ -189,14 +189,13 @@
   /* The "!" is decoration: screen readers skip it (the alternative text after "/" is empty). */
   .note::before { content: "!"; content: "!" / ""; flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; background: var(--amber); color: #15173d; font: 800 13px var(--display); }
 
-  /* A screenshot sits on a slice of wallpaper, as it does on a real Mac. */
-  .shot { margin: 0; position: relative; border-radius: var(--radius); background: var(--wall); padding: clamp(24px, 5vw, 56px) clamp(24px, 5vw, 56px) 0; overflow: hidden; }
-  .shot img { width: min(100%, 400px); margin: 0 auto; border-radius: 18px 18px 0 0; box-shadow: 0 30px 60px -20px rgba(10, 12, 40, .6); transition: transform .6s var(--ease-out); }
-  /* The screenshots have their own wallpaper at the sides. The edges fade, so no seam shows on the page wallpaper. */
-  .shot img { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%); box-shadow: none; }
+  /* A screenshot sits on a slice of wallpaper, as it does on a real Mac.
+     The images are window captures with a transparent background and the macOS window shadow,
+     so they need no frame, mask or shadow of their own. */
+  .shot { margin: 0; position: relative; border-radius: var(--radius); background: var(--wall); padding: clamp(36px, 5vw, 56px) clamp(12px, 4vw, 48px) clamp(16px, 3vw, 36px); overflow: hidden; }
+  .shot img { width: min(100%, 446px); margin: 0 auto; transition: transform .6s var(--ease-out); }
   @media (hover: hover) and (prefers-reduced-motion: no-preference) { .shot:hover img { transform: translateY(-6px); } }
   .shot figcaption { position: absolute; left: 18px; top: 16px; font: 600 12px var(--mono); color: rgba(255, 255, 255, .9); }
-  .shot.tall img { max-height: 620px; object-fit: cover; object-position: top; }
 
   .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0; max-width: 54ch; }
   @media (max-width: 520px) { .levels { grid-template-columns: 1fr; } }
@@ -251,7 +250,8 @@
   .panes { display: grid; gap: 16px; }
   .js .panes figure:not(.on) { display: none; }
   .tabs:not(.ready) { display: none; }
-  .panes .shot img { width: min(100%, 540px); }
+  .panes .shot { padding: clamp(28px, 4vw, 40px) clamp(8px, 1.5vw, 16px) clamp(8px, 1.5vw, 16px); }
+  .panes .shot img { width: min(100%, 640px); }
 
   /* ---------- Install ---------- */
   ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; max-width: 58ch; }
@@ -408,8 +408,8 @@
         <p class="note" data-i18n="rec.note">Before you record, tell the participants that you record the meeting. Use headphones, or the microphone also picks up the speakers.</p>
       </div>
       <figure class="shot">
-        <img src="images/popover-new-session.png" data-i18n-alt="alt.new" alt="New session popover: screen selection, System audio and Microphone switches, Start recording button" width="1032" height="1058" loading="lazy">
-        <figcaption>New session</figcaption>
+        <img src="images/popover-new-session.png" data-src-sk="images/popover-new-session-sk.png" data-i18n-alt="alt.new" alt="New session popover: Screen switch, System audio and Microphone switches, Start recording button" width="892" height="990" loading="lazy">
+        <figcaption data-i18n="cap.new">New session</figcaption>
       </figure>
     </div>
   </section>
@@ -450,8 +450,8 @@
         <p data-i18n="sum.p2">Templates are Markdown files: standard minutes, your own templates (for example your company's format) or a one-off instruction. When the model needs to see the screen, it cuts a frame from the video at that time.</p>
         <p data-i18n="sum.p3">Each summary is a new file in the session folder. The old one stays. The copy button puts the summary on the clipboard: Mail, Teams and Word paste formatted text. <b>Show prompt</b> opens the full text that the model gets.</p>
       </div>
-      <figure class="shot tall">
-        <img src="images/popover-session.png" data-i18n-alt="alt.session" alt="Session detail: Transcript card, Summary card with options and the Create summary button, Outputs card" width="1032" height="1518" loading="lazy">
+      <figure class="shot">
+        <img src="images/popover-session.png" data-src-sk="images/popover-session-sk.png" data-i18n-alt="alt.session" alt="Session detail: Outputs with two summaries, Transcript card, Summary card with options and the Create summary button" width="892" height="1540" loading="lazy">
         <figcaption data-i18n="cap.session">Session detail</figcaption>
       </figure>
     </div>
@@ -471,7 +471,7 @@
 └── outputs/2026-11-13_meetingsummary_&lt;topic&gt;.md</pre>
       </div>
       <figure class="shot">
-        <img src="images/popover-sessions.png" data-i18n-alt="alt.sessions" alt="Sessions tab with a list of recordings and search" width="1032" height="972" loading="lazy">
+        <img src="images/popover-sessions.png" data-src-sk="images/popover-sessions-sk.png" data-i18n-alt="alt.sessions" alt="Sessions tab with a list of recordings and search" width="892" height="1184" loading="lazy">
         <figcaption>Sessions</figcaption>
       </figure>
     </div>
@@ -522,22 +522,24 @@
         <div class="prose">
           <div class="stamp" data-i18n="st.stamp">settings</div>
           <h2 data-i18n="st.title">Sensible defaults. You can change everything.</h2>
-          <p data-i18n="st.p1">App language (English or Slovak), sessions folder, video quality, transcription model, default template and model for minutes.</p>
+          <p data-i18n="st.p1">App language (English or Slovak), sessions folder, video quality, transcription model and default template. In <b>Models</b>, you turn on OpenCode, Claude or Codex and select the default model for minutes.</p>
           <p data-i18n="st.p2">The app updates itself. It checks for a new version once a day and installs it with one click, never during a recording or a job. Turn the checks off in General. About links to the source code, the release notes and a problem report.</p>
           <div class="tabs" role="tablist" data-i18n-aria="st.tabs" aria-label="Settings tabs">
-            <button type="button" role="tab" aria-selected="true" aria-controls="set-general" id="tab-general">General</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="set-recording" id="tab-recording">Recording</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="set-transcription" id="tab-transcription">Transcription</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="set-summary" id="tab-summary">Summary</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="set-about" id="tab-about">About</button>
+            <button type="button" role="tab" aria-selected="true" aria-controls="set-general" id="tab-general" data-i18n="st.tab.general">General</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="set-recording" id="tab-recording" data-i18n="st.tab.recording">Recording</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="set-transcription" id="tab-transcription" data-i18n="st.tab.transcription">Transcription</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="set-summary" id="tab-summary" data-i18n="st.tab.summary">Summary</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="set-models" id="tab-models" data-i18n="st.tab.models">Models</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="set-about" id="tab-about" data-i18n="st.tab.about">About</button>
           </div>
         </div>
         <div class="panes">
-          <figure class="shot on" id="set-general" role="tabpanel" aria-labelledby="tab-general"><img src="images/settings-general.png" data-i18n-alt="alt.general" alt="Settings, General tab" width="1080" height="1056" loading="lazy"><figcaption>General</figcaption></figure>
-          <figure class="shot" id="set-recording" role="tabpanel" aria-labelledby="tab-recording"><img src="images/settings-recording.png" data-i18n-alt="alt.recording" alt="Settings, Recording tab" width="1080" height="1056" loading="lazy"><figcaption>Recording</figcaption></figure>
-          <figure class="shot" id="set-transcription" role="tabpanel" aria-labelledby="tab-transcription"><img src="images/settings-transcription.png" data-i18n-alt="alt.transcription" alt="Settings, Transcription tab" width="1080" height="1056" loading="lazy"><figcaption>Transcription</figcaption></figure>
-          <figure class="shot" id="set-summary" role="tabpanel" aria-labelledby="tab-summary"><img src="images/settings-summary.png" data-i18n-alt="alt.summary" alt="Settings, Summary tab" width="1080" height="1056" loading="lazy"><figcaption>Summary</figcaption></figure>
-          <figure class="shot" id="set-about" role="tabpanel" aria-labelledby="tab-about"><img src="images/settings-about.png" data-i18n-alt="alt.about" alt="Settings, About tab" width="1080" height="1056" loading="lazy"><figcaption>About</figcaption></figure>
+          <figure class="shot on" id="set-general" role="tabpanel" aria-labelledby="tab-general"><img src="images/settings-general.png" data-src-sk="images/settings-general-sk.png" data-i18n-alt="alt.general" alt="Settings, General tab" width="1504" height="1600" loading="lazy"></figure>
+          <figure class="shot" id="set-recording" role="tabpanel" aria-labelledby="tab-recording"><img src="images/settings-recording.png" data-src-sk="images/settings-recording-sk.png" data-i18n-alt="alt.recording" alt="Settings, Recording tab" width="1504" height="1600" loading="lazy"></figure>
+          <figure class="shot" id="set-transcription" role="tabpanel" aria-labelledby="tab-transcription"><img src="images/settings-transcription.png" data-src-sk="images/settings-transcription-sk.png" data-i18n-alt="alt.transcription" alt="Settings, Transcription tab" width="1504" height="1600" loading="lazy"></figure>
+          <figure class="shot" id="set-summary" role="tabpanel" aria-labelledby="tab-summary"><img src="images/settings-summary.png" data-src-sk="images/settings-summary-sk.png" data-i18n-alt="alt.summary" alt="Settings, Summary tab" width="1504" height="1600" loading="lazy"></figure>
+          <figure class="shot" id="set-models" role="tabpanel" aria-labelledby="tab-models"><img src="images/settings-models.png" data-src-sk="images/settings-models-sk.png" data-i18n-alt="alt.models" alt="Settings, Models tab" width="1504" height="1600" loading="lazy"></figure>
+          <figure class="shot" id="set-about" role="tabpanel" aria-labelledby="tab-about"><img src="images/settings-about.png" data-src-sk="images/settings-about-sk.png" data-i18n-alt="alt.about" alt="Settings, About tab" width="1504" height="1600" loading="lazy"></figure>
         </div>
       </div>
     </div>
@@ -804,7 +806,8 @@
     'rec.list': '<li><b>Systémový zvuk</b> nahrá ostatných účastníkov z Teams, Meet alebo Zoom.</li><li><b>Mikrofón</b> nahrá vás. V prepise ste „ja“, ostatní sú „ostatní“.</li><li>Počas nahrávania vidíte úroveň zvuku. Každý zdroj môžete stlmiť.</li>',
     'rec.p2': 'Môžete tiež nahrávať iba zvuk alebo importovať nahrávku, ktorú už máte. Pozrite si <a href="#faq">otázky</a> nižšie.',
     'rec.note': 'Pred nahrávaním oznámte účastníkom, že stretnutie nahrávate. Použite slúchadlá, inak mikrofón zachytí aj reproduktory.',
-    'alt.new': 'Popover Nová session: výber obrazovky, prepínače Systémový zvuk a Mikrofón, tlačidlo Začať nahrávanie',
+    'alt.new': 'Popover Nová session: prepínač Obrazovka, prepínače Systémový zvuk a Mikrofón, tlačidlo Začať nahrávanie',
+    'cap.new': 'Nová session',
     'tr.stamp': '<time>00:46</time> prepis',
     'tr.title': 'Prepis vznikne na vašom lokálnom počítači.',
     'tr.p1': 'Po zastavení nahrávania sa prepis spustí sám. Lokálny model prepíše každú zvukovú stopu zvlášť a pridá časy. Zvládne slovenčinu, češtinu, angličtinu aj ich mix.',
@@ -816,7 +819,7 @@
     'sum.levels': '<div><b>Stručná</b>Rozhodnutia, úlohy, otvorené otázky. Pol strany.</div><div><b>Stredná</b>2–5 bodov ku každej téme. Asi strana.</div><div><b>Detailná</b>Argumenty, čísla a dôvody rozhodnutí.</div>',
     'sum.p2': 'Šablóny sú Markdown súbory: štandardný zápis, vlastné šablóny (napríklad firemný formát) alebo jednorazový pokyn. Ak model potrebuje vidieť obrazovku, vyreže si snímku z videa v danom čase.',
     'sum.p3': 'Každý zápis je nový súbor v priečinku session. Starý zostane. Tlačidlo kopírovania dá zápis do schránky: Mail, Teams a Word vložia formátovaný text. <b>Zobraziť prompt</b> otvorí celý text, ktorý dostane model.',
-    'alt.session': 'Detail session: karta Prepis, karta Zápis s voľbami a tlačidlom Vytvoriť zápis, karta Výstupy',
+    'alt.session': 'Detail session: Výstupy s dvoma zápismi, karta Prepis, karta Zápis s voľbami a tlačidlom Vytvoriť zápis',
     'cap.session': 'Detail session',
     'ses.stamp': '<time>neskôr</time> sessions',
     'ses.title': 'Každé stretnutie má svoj priečinok.',
@@ -845,12 +848,14 @@
     'ic.update.name': 'Nová verzia', 'ic.update.text': 'Modrá bodka. V menu kliknite na Aktualizovať.',
     'st.stamp': 'nastavenia',
     'st.title': 'Rozumné predvoľby, všetko sa dá zmeniť.',
-    'st.p1': 'Jazyk aplikácie (English alebo Slovenčina), priečinok sessions, kvalita videa, model na prepis, predvolená šablóna a model pre zápis.',
+    'st.p1': 'Jazyk aplikácie (English alebo Slovenčina), priečinok sessions, kvalita videa, model na prepis a predvolená šablóna. V záložke <b>Modely</b> zapnete OpenCode, Claude alebo Codex a vyberiete predvolený model pre zápis.',
     'st.p2': 'Aplikácia sa aktualizuje sama. Raz denne skontroluje novú verziu a nainštaluje ju jedným kliknutím, nikdy nie počas nahrávania ani počas úlohy. Kontrolu vypnete vo Všeobecných. O aplikácii obsahuje odkazy na zdrojový kód, poznámky k vydaniu a hlásenie problému.',
     'st.tabs': 'Záložky nastavení',
     'alt.general': 'Nastavenia, záložka Všeobecné', 'alt.recording': 'Nastavenia, záložka Nahrávanie',
     'alt.transcription': 'Nastavenia, záložka Prepis',
-    'alt.summary': 'Nastavenia, záložka Zápis', 'alt.about': 'Nastavenia, záložka O aplikácii',
+    'alt.summary': 'Nastavenia, záložka Zápis', 'alt.models': 'Nastavenia, záložka Modely', 'alt.about': 'Nastavenia, záložka O aplikácii',
+    'st.tab.general': 'Všeobecné', 'st.tab.recording': 'Nahrávanie', 'st.tab.transcription': 'Prepis',
+    'st.tab.summary': 'Zápis', 'st.tab.models': 'Modely', 'st.tab.about': 'O aplikácii',
     'in.stamp': 'inštalácia',
     'in.title': 'Päť krokov k prvému zápisu.',
     'in.steps': '<li>Stiahnite <a href="https://github.com/softverse-space/minutes/releases/latest"><code>Minutes-1.3.0.dmg</code></a> z GitHubu. Otvorte ho a presuňte Minutes do Applications.</li><li>Spustite Minutes. Ikona sa ukáže v menu bare.</li><li>Kliknite na ikonu a na <b>Povoliť</b>. Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording. Aplikáciu reštartujte.</li><li>V Nastaveniach → Prepis kliknite na <b>Stiahnuť model</b>. Stiahne sa raz.</li><li>Nainštalujte OpenCode a nastavte model: lokálny (napríklad Ollama), firemný server alebo cloud:<pre>brew install opencode ffmpeg</pre></li>',

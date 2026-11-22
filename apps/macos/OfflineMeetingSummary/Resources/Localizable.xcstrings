@@ -2718,7 +2718,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Karta Summary v sedení začína s týmito hodnotami. Pri každom súhrne ich môžete zmeniť. Predvolený model je na karte Models."
+            "value" : "Karta Zápis v session začína s týmito hodnotami. Pri každom zápise ich môžete zmeniť. Predvolený model je na karte Modely."
           }
         }
       }
@@ -3058,7 +3058,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pravidlá pre všetky súhrny a všetky modely: ako vyčistiť prepis, čo je rozhodnutie, ako písať dátumy. Vaše zmeny platia od nasledujúceho súhrnu. Nová verzia aplikácie súbor aktualizuje, iba ak ste ho neupravili. Show prompt v karte Summary ukáže celý text, ktorý model dostane."
+            "value" : "Pravidlá pre všetky zápisy a všetky modely: ako vyčistiť prepis, čo je rozhodnutie, ako písať dátumy. Vaše zmeny platia od nasledujúceho zápisu. Nová verzia aplikácie súbor aktualizuje, iba ak ste ho neupravili. Zobraziť prompt v karte Zápis ukáže celý text, ktorý model dostane."
           }
         }
       }
