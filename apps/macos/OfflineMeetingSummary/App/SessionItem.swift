@@ -24,12 +24,25 @@ struct SessionItem: Identifiable, Sendable {
     var hasSourceMedia: Bool { mediaSize > 0 }
     var date: Date? { metadata?.startedAt }
 
+    /// The topic from the summary. Without a summary: "Meeting at 15:30".
+    var title: String {
+        if let topic { return topic }
+        guard let date else { return String(localized: "No summary") }
+        return String(localized: "Meeting at \(date.formatted(date: .omitted, time: .shortened))")
+    }
+
+    /// When each output file was last changed. Read here, so the views do not read files while they render.
+    let outputDates: [URL: Date]
+
     /// Reads the folder. With `measuringStorage` it walks all files: call it off the main actor.
     /// Without it, it reads only `session.json` and the list of outputs.
     init(_ session: SessionFolder, measuringStorage: Bool = true) {
         self.session = session
         metadata = try? session.loadMetadata()
         outputs = session.outputFiles()
+        outputDates = Dictionary(uniqueKeysWithValues: outputs.compactMap { url in
+            (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate.map { (url, $0) }
+        })
         topic = outputs.lazy.compactMap { SessionNaming.topic(fromSummaryFileName: $0.lastPathComponent) }.first
         hasTranscript = FileManager.default.fileExists(atPath: session.transcriptURL("md").path)
         if let metadata, metadata.parts.count > 1 {

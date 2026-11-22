@@ -100,9 +100,9 @@ struct PopoverView: View {
 /// Shows where dropped files go.
 private struct DropOverlay: View {
     var body: some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
+        RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
             .strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
-            .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
             .overlay {
                 Label("Drop to import", systemImage: "square.and.arrow.down")
                     .font(.headline)

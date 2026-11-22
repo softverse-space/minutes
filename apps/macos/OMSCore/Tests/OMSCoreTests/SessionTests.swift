@@ -20,6 +20,16 @@ struct SessionNamingTests {
     func topicFromSummaryFileName(fileName: String, expected: String?) {
         #expect(SessionNaming.topic(fromSummaryFileName: fileName) == expected)
     }
+
+    @Test(arguments: [
+        ("2026-11-13_meetingsummary_retro_v2.md", 2),
+        ("2026-11-13_meetingsummary_retro_v12.md", 12),
+        ("2026-11-13_meetingsummary_retro.md", nil),
+        ("notes_v2.md", nil),
+    ] as [(String, Int?)])
+    func versionFromSummaryFileName(fileName: String, expected: Int?) {
+        #expect(SessionNaming.version(fromSummaryFileName: fileName) == expected)
+    }
 }
 
 struct SessionFolderTests {

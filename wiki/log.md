@@ -272,3 +272,13 @@
 - New: import of existing recordings (ADR-0034), copy and drag of outputs, **Show prompt**, regrouped Settings (ADR-0035).
 - Version 1.3.0, build 4. Update through Sparkle from 1.2.0.
 - Fixed: a compiler warning (`nonisolated(unsafe)` on a `Sendable` constant in `MarkdownHTML.swift`).
+
+## [2026-11-22] decision | UI review: session detail with the result first, shared styles, website
+- Source: a UI review of the app and the website by the user with Claude (skill ui-ux-pro-max).
+- App: Outputs first in the session detail, the summary form on request, the topic as the title, readable output rows, `Card`/`Banner`/`Metrics`, red Stop recording, Reduce Motion for the recording dot, VoiceOver text for the session state, the microphone picker on its own row.
+- Website: Slovak names of app controls in the SK texts, `data-src-sk` for Slovak screenshots, faded screenshot edges, a shorter hero animation, a shorter recording chapter (two items moved to the FAQ), a "notarized" line, the "!" of notes hidden from screen readers.
+- ADR: new 0036 (proposed).
+- Changed: pages/ui.md
+- Later the same day: the summary form opens without an animation (the popover flickered), the popover scroll views hide the scroll bar.
+- Open: new screenshots of the popover and Settings in English and Slovak.
+

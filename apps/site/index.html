@@ -186,11 +186,14 @@
   .prose ul li { position: relative; padding-left: 26px; }
   .prose ul li::before { content: ""; position: absolute; left: 2px; top: .6em; width: 10px; height: 10px; border-radius: 50%; border: 2.5px solid var(--coral); }
   .note { display: flex; gap: 12px; background: var(--surface); border-radius: 16px; padding: 14px 18px; font-size: 15.5px; margin: 22px 0 0; max-width: 54ch; box-shadow: var(--shadow); }
-  .note::before { content: "!"; flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; background: var(--amber); color: #15173d; font: 800 13px var(--display); }
+  /* The "!" is decoration: screen readers skip it (the alternative text after "/" is empty). */
+  .note::before { content: "!"; content: "!" / ""; flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; background: var(--amber); color: #15173d; font: 800 13px var(--display); }
 
   /* A screenshot sits on a slice of wallpaper, as it does on a real Mac. */
   .shot { margin: 0; position: relative; border-radius: var(--radius); background: var(--wall); padding: clamp(24px, 5vw, 56px) clamp(24px, 5vw, 56px) 0; overflow: hidden; }
   .shot img { width: min(100%, 400px); margin: 0 auto; border-radius: 18px 18px 0 0; box-shadow: 0 30px 60px -20px rgba(10, 12, 40, .6); transition: transform .6s var(--ease-out); }
+  /* The screenshots have their own wallpaper at the sides. The edges fade, so no seam shows on the page wallpaper. */
+  .shot img { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%); box-shadow: none; }
   @media (hover: hover) and (prefers-reduced-motion: no-preference) { .shot:hover img { transform: translateY(-6px); } }
   .shot figcaption { position: absolute; left: 18px; top: 16px; font: 600 12px var(--mono); color: rgba(255, 255, 255, .9); }
   .shot.tall img { max-height: 620px; object-fit: cover; object-position: top; }
@@ -262,6 +265,8 @@
   td, th { text-align: left; padding: 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { color: var(--muted); font-weight: 500; width: 34%; padding-right: 12px; }
   .req .btn { width: 100%; }
+  .trust { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 0; font: 13px var(--mono); color: var(--muted); text-align: center; }
+  .trust::before { content: ""; flex: none; width: 14px; height: 14px; border-radius: 50%; background: #34c759; box-shadow: inset 0 0 0 4px var(--surface); outline: 1.5px solid #34c759; }
   .install-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 80px); margin-top: 18px; }
   @media (max-width: 900px) { .install-grid { grid-template-columns: minmax(0, 1fr); } }
 
@@ -398,10 +403,8 @@
           <li><b>System audio</b> records the other participants from Teams, Meet or Zoom.</li>
           <li><b>Microphone</b> records you. In the transcript you are “me”, the others are “others”.</li>
           <li>During the recording you see the audio level. You can mute each source.</li>
-          <li>Turn off the <b>Screen</b> switch to record only audio. The file is then much smaller.</li>
-          <li>Right-click the menu bar icon to start or stop a recording, stop a transcription or quit the app.</li>
-          <li>Do you already have a recording? Click <b>Import a recording…</b> or drop audio or video files on the popover. The original files stay where they are.</li>
         </ul>
+        <p data-i18n="rec.p2">You can also record only audio or import a recording that you already have. See <a href="#faq">the questions</a> below.</p>
         <p class="note" data-i18n="rec.note">Before you record, tell the participants that you record the meeting. Use headphones, or the microphone also picks up the speakers.</p>
       </div>
       <figure class="shot">
@@ -438,7 +441,7 @@
       <div class="prose">
         <div class="stamp" data-i18n="sum.stamp"><time>00:49</time> minutes</div>
         <h2 data-i18n="sum.title">Minutes from a template, not from the model's <em>mood</em>.</h2>
-        <p data-i18n="sum.p1">In the session detail, select a template, a detail level, a model and a language. In <b>Extra</b>, write what to focus on. Click <b>Create summary</b>.</p>
+        <p data-i18n="sum.p1">In the session detail, select a template, a detail level, a model and a language. In <b>Extra</b>, write what to focus on. Click <b>Create summary</b>. The finished summaries are at the top of the detail. <b>New summary…</b> opens the options again.</p>
         <div class="levels" data-i18n="sum.levels">
           <div><b>Brief</b>Decisions, tasks, open questions. Half a page.</div>
           <div><b>Medium</b>2–5 points for each topic. About a page.</div>
@@ -567,6 +570,7 @@
             <tr><th>Tools</th><td>OpenCode; optionally Claude Code, Codex and ffmpeg</td></tr>
           </table>
           <a class="btn primary" href="https://github.com/softverse-space/minutes/releases/latest"><span data-i18n="cta.download">Download Minutes 1.3.0</span> <span class="arr" aria-hidden="true">↓</span></a>
+          <p class="trust" data-i18n="in.trust">Signed and notarized by Apple</p>
         </div>
       </div>
       <div class="build" id="build">
@@ -602,8 +606,9 @@
         <details><summary>How do I switch the app to Slovak?</summary><p>Settings → General → App language → Slovenčina. Then click Restart now.</p></details>
         <details><summary>How do I add my own template?</summary><p>Copy <code>standard.md</code> and change <code>id</code>, the name and the instruction. Save it in the templates folder from Settings → Summary.</p></details>
         <details><summary>The transcript is in the wrong language.</summary><p>In Settings → Transcription, set the speech language manually and transcribe again.</p></details>
-        <details><summary>Can I record only audio?</summary><p>Yes. On the New session tab, turn off the Screen switch. The app records system audio and the microphone without a video. The app still needs the screen recording permission, because macOS gives system audio only with it.</p></details>
-        <details><summary>Can I make minutes from a recording of another app?</summary><p>Yes. Click Import a recording… on the New session tab, or drop the files on the popover. Minutes reads m4a, mp3, wav, mp4, mov and other common formats. For mkv, webm, ogg and opus it needs ffmpeg. The app copies the file and starts the transcription at once. When you import more files, the app asks: one session or separate sessions.</p></details>
+        <details><summary>What is in the menu of the menu bar icon?</summary><p>Right-click the Minutes icon. You can start or stop a recording, import a recording, stop a transcription or quit the app.</p></details>
+        <details><summary>Can I record only audio?</summary><p>Yes. On the New session tab, turn off the Screen switch. The app records system audio and the microphone without a video. The file is then much smaller. The app still needs the screen recording permission, because macOS gives system audio only with it.</p></details>
+        <details><summary>Can I make minutes from a recording of another app?</summary><p>Yes. Click Import a recording… on the New session tab, or drop the files on the popover. The original files stay where they are. Minutes reads m4a, mp3, wav, mp4, mov and other common formats. For mkv, webm, ogg and opus it needs ffmpeg. The app copies the file and starts the transcription at once. When you import more files, the app asks: one session or separate sessions.</p></details>
         <details><summary>How do I free up disk space?</summary><p>In the session detail, click Free up. The app can also delete old videos by itself (Settings → Recording).</p></details>
         <details><summary>The app says it has no permission to record the screen.</summary><p>Allow Minutes in System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording, then restart the app.</p></details>
         <details><summary>How do I update Minutes?</summary><p>From version 1.1.0, Minutes checks for updates once a day. A blue dot next to the menu bar icon tells you about a new version. Click Update in the menu. You can also click Check for Updates… in Settings → About. The app does not restart during a recording or a job. From version 1.0.0, download the new <code>.dmg</code> one time.</p></details>
@@ -723,16 +728,16 @@
     rec();
     timer = setInterval(() => { secs += 1; rec(); }, 90);
     const at = (ms, fn) => setTimeout(fn, ms);
-    at(500, () => feed[0].classList.add('on'));
-    at(1300, () => feed[1].classList.add('on'));
-    at(2100, () => feed[2].classList.add('on'));
-    at(2900, () => {
+    at(300, () => feed[0].classList.add('on'));
+    at(800, () => feed[1].classList.add('on'));
+    at(1300, () => feed[2].classList.add('on'));
+    at(1800, () => {
       clearInterval(timer);
       let p = 0;
       const fill = setInterval(() => { p += .08; deskStatus.innerHTML = icon('transcribe', p); if (p >= 1) clearInterval(fill); }, 50);
     });
-    at(3700, () => deskStatus.innerHTML = icon('summary'));
-    at(4700, () => { feed[3].classList.add('on'); deskStatus.innerHTML = icon('done'); });
+    at(2500, () => deskStatus.innerHTML = icon('summary'));
+    at(3200, () => { feed[3].classList.add('on'); deskStatus.innerHTML = icon('done'); });
   }
 
   // ---------- Sections settle in once ----------
@@ -795,10 +800,11 @@
     'facts': '<li><b>Na vašom Macu</b><span>Video a zvuk zostanú lokálne.</span></li><li><b>Slovenčina, čeština, angličtina</b><span>Aj ich mix v jednom stretnutí.</span></li><li><b>Vaša šablóna</b><span>Štandardný zápis alebo firemný formát.</span></li><li><b>Open source</b><span>Bez účtu. Bez telemetrie.</span></li>',
     'rec.stamp': '<time>00:00</time> nahrávanie',
     'rec.title': 'Jedno kliknutie v menu bare.',
-    'rec.p1': 'Kliknite na ikonu Minutes. Vyberte obrazovku a zdroje zvuku. Potom kliknite na <b>Start recording</b>.',
-    'rec.list': '<li><b>System audio</b> nahrá ostatných účastníkov z Teams, Meet alebo Zoom.</li><li><b>Microphone</b> nahrá vás. V prepise ste „ja“, ostatní sú „ostatní“.</li><li>Počas nahrávania vidíte úroveň zvuku. Každý zdroj môžete stlmiť.</li><li>Ak vypnete prepínač <b>Screen</b>, aplikácia nahrá iba zvuk. Súbor je potom oveľa menší.</li><li>Pravým tlačidlom na ikone v menu bare spustíte alebo zastavíte nahrávanie, zastavíte prepis alebo ukončíte aplikáciu.</li><li>Máte už nahrávku? Kliknite na <b>Import a recording…</b> alebo pustite zvukové či video súbory na popover. Pôvodné súbory zostanú na svojom mieste.</li>',
+    'rec.p1': 'Kliknite na ikonu Minutes. Vyberte obrazovku a zdroje zvuku. Potom kliknite na <b>Začať nahrávanie</b>.',
+    'rec.list': '<li><b>Systémový zvuk</b> nahrá ostatných účastníkov z Teams, Meet alebo Zoom.</li><li><b>Mikrofón</b> nahrá vás. V prepise ste „ja“, ostatní sú „ostatní“.</li><li>Počas nahrávania vidíte úroveň zvuku. Každý zdroj môžete stlmiť.</li>',
+    'rec.p2': 'Môžete tiež nahrávať iba zvuk alebo importovať nahrávku, ktorú už máte. Pozrite si <a href="#faq">otázky</a> nižšie.',
     'rec.note': 'Pred nahrávaním oznámte účastníkom, že stretnutie nahrávate. Použite slúchadlá, inak mikrofón zachytí aj reproduktory.',
-    'alt.new': 'Popover New session: výber obrazovky, prepínače System audio a Microphone, tlačidlo Start recording',
+    'alt.new': 'Popover Nová session: výber obrazovky, prepínače Systémový zvuk a Mikrofón, tlačidlo Začať nahrávanie',
     'tr.stamp': '<time>00:46</time> prepis',
     'tr.title': 'Prepis vznikne na vašom lokálnom počítači.',
     'tr.p1': 'Po zastavení nahrávania sa prepis spustí sám. Lokálny model prepíše každú zvukovú stopu zvlášť a pridá časy. Zvládne slovenčinu, češtinu, angličtinu aj ich mix.',
@@ -806,17 +812,17 @@
     'tr.doc': '<p><time>00:00:04</time><span><span class="who">ostatní</span>Dobré ráno. Počujete ma všetci?</span></p><p><time>00:00:09</time><span><span class="who">ja</span>Áno. Začnime releasom.</span></p><p><time>00:03:12</time><span><span class="who">ostatní</span>Release posunieme na štvrtok.</span></p><p><time>00:03:20</time><span><span class="who">ja</span>Dobre, testy dokončíme do stredy.</span></p>',
     'sum.stamp': '<time>00:49</time> zápis',
     'sum.title': 'Zápis podľa šablóny, nie podľa <em>nálady</em> modelu.',
-    'sum.p1': 'V detaile session vyberte šablónu, úroveň detailu, model a jazyk. Do poľa <b>Extra</b> napíšte, na čo sa zamerať. Kliknite na <b>Create summary</b>.',
-    'sum.levels': '<div><b>Brief</b>Rozhodnutia, úlohy, otvorené otázky. Pol strany.</div><div><b>Medium</b>2–5 bodov ku každej téme. Asi strana.</div><div><b>Detailed</b>Argumenty, čísla a dôvody rozhodnutí.</div>',
+    'sum.p1': 'V detaile session vyberte šablónu, úroveň detailu, model a jazyk. Do poľa <b>Doplnenie</b> napíšte, na čo sa zamerať. Kliknite na <b>Vytvoriť zápis</b>. Hotové zápisy sú hore v detaile. <b>Nový zápis…</b> znova otvorí voľby.',
+    'sum.levels': '<div><b>Stručná</b>Rozhodnutia, úlohy, otvorené otázky. Pol strany.</div><div><b>Stredná</b>2–5 bodov ku každej téme. Asi strana.</div><div><b>Detailná</b>Argumenty, čísla a dôvody rozhodnutí.</div>',
     'sum.p2': 'Šablóny sú Markdown súbory: štandardný zápis, vlastné šablóny (napríklad firemný formát) alebo jednorazový pokyn. Ak model potrebuje vidieť obrazovku, vyreže si snímku z videa v danom čase.',
-    'sum.p3': 'Každý zápis je nový súbor v priečinku session. Starý zostane. Tlačidlo kopírovania dá zápis do schránky: Mail, Teams a Word vložia formátovaný text. <b>Show prompt</b> otvorí celý text, ktorý dostane model.',
-    'alt.session': 'Detail session: karta Transcript, karta Summary s voľbami a tlačidlom Create summary, karta Outputs',
+    'sum.p3': 'Každý zápis je nový súbor v priečinku session. Starý zostane. Tlačidlo kopírovania dá zápis do schránky: Mail, Teams a Word vložia formátovaný text. <b>Zobraziť prompt</b> otvorí celý text, ktorý dostane model.',
+    'alt.session': 'Detail session: karta Prepis, karta Zápis s voľbami a tlačidlom Vytvoriť zápis, karta Výstupy',
     'cap.session': 'Detail session',
     'ses.stamp': '<time>neskôr</time> sessions',
     'ses.title': 'Každé stretnutie má svoj priečinok.',
     'ses.p1': 'Záložka <b>Sessions</b> ukazuje nahrávky podľa dní. Názov session je téma zo zápisu. Hľadajte podľa témy, dátumu alebo obrazovky.',
-    'ses.p2': '<b>Free up space</b> zmaže video, zvuk a snímky. Prepis a zápisy zostanú. <b>Delete session</b> presunie priečinok do Koša.',
-    'ses.p3': 'Zastavili ste nahrávanie omylom, alebo sa Mac reštartoval? Kliknite na <b>Continue recording</b>: nová nahrávka bude ďalšou časťou tej istej session. Dve samostatné sessions spojíte cez <b>Merge with previous session</b>. Pre celé stretnutie dostanete jeden prepis a jeden zápis.',
+    'ses.p2': '<b>Uvoľniť miesto</b> zmaže video, zvuk a snímky. Prepis a zápisy zostanú. <b>Vymazať session</b> presunie priečinok do Koša.',
+    'ses.p3': 'Zastavili ste nahrávanie omylom, alebo sa Mac reštartoval? Kliknite na <b>Pokračovať v nahrávaní</b>: nová nahrávka bude ďalšou časťou tej istej session. Dve samostatné sessions spojíte cez <b>Zlúčiť s predchádzajúcou session</b>. Pre celé stretnutie dostanete jeden prepis a jeden zápis.',
     'alt.sessions': 'Záložka Sessions so zoznamom nahrávok a vyhľadávaním',
     'pr.stamp': 'súkromie',
     'pr.title': 'Čo zostane na vašom <em>lokálnom počítači</em> a čo nie.',
@@ -825,7 +831,7 @@
     'pr.arrow': '<b>→</b>text prepisu<br>a vybrané snímky',
     'pr.internal': 'Váš model v OpenCode<small>lokálny, vlastný server alebo cloud – vyberiete si</small>',
     'pr.cloud': 'Claude alebo Codex (cloud)<small>iba ak ich zapnete a vyberiete</small>',
-    'pr.note': 'Video nikdy neopustí váš lokálny počítač. Zvuk ide na server na prepis iba vtedy, ak ho vyberiete v Settings → Transcription. S lokálnym modelom v OpenCode neopustí váš lokálny počítač nič. Aplikácia neposiela telemetriu. Kontrola aktualizácií len stiahne verejný zoznam verzií z GitHubu.',
+    'pr.note': 'Video nikdy neopustí váš lokálny počítač. Zvuk ide na server na prepis iba vtedy, ak ho vyberiete v Nastaveniach → Prepis. S lokálnym modelom v OpenCode neopustí váš lokálny počítač nič. Aplikácia neposiela telemetriu. Kontrola aktualizácií len stiahne verejný zoznam verzií z GitHubu.',
     'ic.stamp': 'menu bar',
     'ic.title': 'Ikona hovorí, čo sa deje.',
     'ic.p1': 'Pozrite sa hore na menu bar tejto stránky. Jeho ikona sa menila, kým ste čítali.',
@@ -836,20 +842,21 @@
     'ic.summary.name': 'Píše zápis', 'ic.summary.text': 'Oblúk sa točí, kým model píše.',
     'ic.done.name': 'Zápis je hotový', 'ic.done.text': 'Bodka počká, kým otvoríte popover.',
     'ic.busy.name': 'Spúšťa alebo ukladá', 'ic.busy.text': 'Oblúk sa na chvíľu točí.',
-    'ic.update.name': 'Nová verzia', 'ic.update.text': 'Modrá bodka. V menu kliknite na Update.',
+    'ic.update.name': 'Nová verzia', 'ic.update.text': 'Modrá bodka. V menu kliknite na Aktualizovať.',
     'st.stamp': 'nastavenia',
     'st.title': 'Rozumné predvoľby, všetko sa dá zmeniť.',
     'st.p1': 'Jazyk aplikácie (English alebo Slovenčina), priečinok sessions, kvalita videa, model na prepis, predvolená šablóna a model pre zápis.',
-    'st.p2': 'Aplikácia sa aktualizuje sama. Raz denne skontroluje novú verziu a nainštaluje ju jedným kliknutím, nikdy nie počas nahrávania ani počas úlohy. Kontrolu vypnete v General. About obsahuje odkazy na zdrojový kód, poznámky k vydaniu a hlásenie problému.',
+    'st.p2': 'Aplikácia sa aktualizuje sama. Raz denne skontroluje novú verziu a nainštaluje ju jedným kliknutím, nikdy nie počas nahrávania ani počas úlohy. Kontrolu vypnete vo Všeobecných. O aplikácii obsahuje odkazy na zdrojový kód, poznámky k vydaniu a hlásenie problému.',
     'st.tabs': 'Záložky nastavení',
-    'alt.general': 'Nastavenia, záložka General', 'alt.recording': 'Nastavenia, záložka Recording',
-    'alt.transcription': 'Nastavenia, záložka Transcription',
-    'alt.summary': 'Nastavenia, záložka Summary', 'alt.about': 'Nastavenia, záložka About',
+    'alt.general': 'Nastavenia, záložka Všeobecné', 'alt.recording': 'Nastavenia, záložka Nahrávanie',
+    'alt.transcription': 'Nastavenia, záložka Prepis',
+    'alt.summary': 'Nastavenia, záložka Zápis', 'alt.about': 'Nastavenia, záložka O aplikácii',
     'in.stamp': 'inštalácia',
     'in.title': 'Päť krokov k prvému zápisu.',
-    'in.steps': '<li>Stiahnite <a href="https://github.com/softverse-space/minutes/releases/latest"><code>Minutes-1.3.0.dmg</code></a> z GitHubu. Otvorte ho a presuňte Minutes do Applications.</li><li>Spustite Minutes. Ikona sa ukáže v menu bare.</li><li>Kliknite na ikonu a na <b>Allow</b>. Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording. Aplikáciu reštartujte.</li><li>V Settings → Transcription kliknite na <b>Download model</b>. Stiahne sa raz.</li><li>Nainštalujte OpenCode a nastavte model: lokálny (napríklad Ollama), firemný server alebo cloud:<pre>brew install opencode ffmpeg</pre></li>',
+    'in.steps': '<li>Stiahnite <a href="https://github.com/softverse-space/minutes/releases/latest"><code>Minutes-1.3.0.dmg</code></a> z GitHubu. Otvorte ho a presuňte Minutes do Applications.</li><li>Spustite Minutes. Ikona sa ukáže v menu bare.</li><li>Kliknite na ikonu a na <b>Povoliť</b>. Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording. Aplikáciu reštartujte.</li><li>V Nastaveniach → Prepis kliknite na <b>Stiahnuť model</b>. Stiahne sa raz.</li><li>Nainštalujte OpenCode a nastavte model: lokálny (napríklad Ollama), firemný server alebo cloud:<pre>brew install opencode ffmpeg</pre></li>',
     'in.req.title': 'Čo potrebujete',
     'in.dl': 'Stiahnite si aplikáciu',
+    'in.trust': 'Podpísané a notarizované spoločnosťou Apple',
     'in.update': 'Aplikáciu nainštalujete raz. Od verzie 1.1.0 sa Minutes aktualizuje sama: modrá bodka vedľa ikony v menu bare oznámi novú verziu.',
     'bd.title': 'Alebo si ju zostavte sami.',
     'bd.p1': 'Minutes je open source. Naklonujte repozitár a zostavte aplikáciu v Xcode. Potrebujete <b>Xcode 26</b> alebo novší a <b>XcodeGen</b>.',
@@ -860,7 +867,7 @@
     'in.req': '<tr><th>Mac</th><td>Apple Silicon (M1 a novší)</td></tr><tr><th>Systém</th><td>macOS 15 Sequoia a novší</td></tr><tr><th>Miesto</th><td>asi 3 GB a nahrávky</td></tr><tr><th>Sieť</th><td>pri lokálnom modeli žiadna; inak podľa modelu</td></tr><tr><th>Nástroje</th><td>OpenCode; voliteľne Claude Code, Codex a ffmpeg</td></tr>',
     'faq.stamp': 'otázky',
     'faq.title': 'Časté otázky',
-    'faq.items': '<details><summary>Funguje to bez internetu?</summary><p>Nahrávanie a lokálny prepis áno. Zápis tiež, s lokálnym modelom v OpenCode (napríklad Ollama).</p></details><details><summary>Ako prepnem aplikáciu do slovenčiny?</summary><p>Settings → General → App language → Slovenčina. Potom kliknite na Restart now.</p></details><details><summary>Ako pridám vlastnú šablónu?</summary><p>Skopírujte <code>standard.md</code>, zmeňte <code>id</code>, názov a pokyn. Uložte ju do priečinka šablón z Settings → Summary.</p></details><details><summary>Prepis je v zlom jazyku.</summary><p>V Settings → Transcription nastavte jazyk reči ručne a spustite prepis znova.</p></details><details><summary>Môžem nahrávať iba zvuk?</summary><p>Áno. Na karte New session vypnite prepínač Screen. Aplikácia nahrá systémový zvuk a mikrofón bez videa. Povolenie nahrávať obrazovku je stále potrebné, lebo macOS dá systémový zvuk iba s ním.</p></details><details><summary>Môžem urobiť zápis z nahrávky inej aplikácie?</summary><p>Áno. Na karte New session kliknite na Import a recording…, alebo pustite súbory na popover. Minutes číta m4a, mp3, wav, mp4, mov a ďalšie bežné formáty. Pre mkv, webm, ogg a opus potrebuje ffmpeg. Aplikácia súbor skopíruje a hneď spustí prepis. Ak importujete viac súborov, aplikácia sa opýta: jedna session, alebo samostatné sessions.</p></details><details><summary>Ako uvoľním miesto na disku?</summary><p>V detaile session kliknite na Free up. Staré videá môže aplikácia mazať sama (Settings → Recording).</p></details><details><summary>Aplikácia hlási, že nemá povolenie nahrávať obrazovku.</summary><p>Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording a aplikáciu reštartujte.</p></details><details><summary>Ako aktualizujem Minutes?</summary><p>Od verzie 1.1.0 Minutes raz denne skontroluje aktualizácie. Modrá bodka vedľa ikony v menu bare oznámi novú verziu. V menu kliknite na Update. Môžete tiež kliknúť na Check for Updates… v Settings → About. Počas nahrávania ani počas úlohy sa aplikácia nereštartuje. Z verzie 1.0.0 si nový <code>.dmg</code> stiahnite raz ručne.</p></details><details><summary>Ako nahlásim problém?</summary><p>V Settings → About kliknite na Report a problem on GitHub. Hlásenie dostane verziu aplikácie a macOS. Nepripájajte nahrávky, prepisy, zápisy ani snímky obrazovky zo skutočných stretnutí.</p></details>',
+    'faq.items': '<details><summary>Funguje to bez internetu?</summary><p>Nahrávanie a lokálny prepis áno. Zápis tiež, s lokálnym modelom v OpenCode (napríklad Ollama).</p></details><details><summary>Ako prepnem aplikáciu do slovenčiny?</summary><p>Settings → General → App language → Slovenčina. Potom kliknite na Restart now.</p></details><details><summary>Ako pridám vlastnú šablónu?</summary><p>Skopírujte <code>standard.md</code>, zmeňte <code>id</code>, názov a pokyn. Uložte ju do priečinka šablón z Nastavenia → Zápis.</p></details><details><summary>Prepis je v zlom jazyku.</summary><p>V Nastaveniach → Prepis nastavte jazyk reči ručne a spustite prepis znova.</p></details><details><summary>Čo je v menu ikony v menu bare?</summary><p>Kliknite pravým tlačidlom na ikonu Minutes. Spustíte alebo zastavíte nahrávanie, importujete nahrávku, zastavíte prepis alebo ukončíte aplikáciu.</p></details><details><summary>Môžem nahrávať iba zvuk?</summary><p>Áno. Na karte Nová session vypnite prepínač Obrazovka. Aplikácia nahrá systémový zvuk a mikrofón bez videa. Súbor je potom oveľa menší. Povolenie nahrávať obrazovku je stále potrebné, lebo macOS dá systémový zvuk iba s ním.</p></details><details><summary>Môžem urobiť zápis z nahrávky inej aplikácie?</summary><p>Áno. Na karte Nová session kliknite na Importovať nahrávku…, alebo pustite súbory na popover. Pôvodné súbory zostanú na svojom mieste. Minutes číta m4a, mp3, wav, mp4, mov a ďalšie bežné formáty. Pre mkv, webm, ogg a opus potrebuje ffmpeg. Aplikácia súbor skopíruje a hneď spustí prepis. Ak importujete viac súborov, aplikácia sa opýta: jedna session, alebo samostatné sessions.</p></details><details><summary>Ako uvoľním miesto na disku?</summary><p>V detaile session kliknite na Uvoľniť. Staré videá môže aplikácia mazať sama (Nastavenia → Nahrávanie).</p></details><details><summary>Aplikácia hlási, že nemá povolenie nahrávať obrazovku.</summary><p>Povoľte Minutes v System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording a aplikáciu reštartujte.</p></details><details><summary>Ako aktualizujem Minutes?</summary><p>Od verzie 1.1.0 Minutes raz denne skontroluje aktualizácie. Modrá bodka vedľa ikony v menu bare oznámi novú verziu. V menu kliknite na Aktualizovať. Môžete tiež kliknúť na Skontrolovať aktualizácie… v Nastaveniach → O aplikácii. Počas nahrávania ani počas úlohy sa aplikácia nereštartuje. Z verzie 1.0.0 si nový <code>.dmg</code> stiahnite raz ručne.</p></details><details><summary>Ako nahlásim problém?</summary><p>V Nastaveniach → O aplikácii kliknite na Nahlásiť problém na GitHube. Hlásenie dostane verziu aplikácie a macOS. Nepripájajte nahrávky, prepisy, zápisy ani snímky obrazovky zo skutočných stretnutí.</p></details>',
     'cl.stamp': 'zápis z tejto stránky',
     'cl.items': '<dt>rozhodnutie</dt><dd>Stretnutia zapisuje Minutes. Dáta zostávajú na vašom lokálnom počítači.</dd><dt>úloha</dt><dd>Nainštalovať Minutes – vy – pred ďalšou poradou.</dd><dt>otvorené</dt><dd>Ktorú šablónu použijete prvú?</dd>',
     'ft.version': 'open source · verzia 1.3.0',
@@ -868,6 +875,8 @@
   };
 
   const nodes = [...document.querySelectorAll('[data-i18n], [data-i18n-alt], [data-i18n-aria]')];
+  // Screenshots of the Slovak app: add data-src-sk="images/<name>-sk.png" to an image when the file exists.
+  const shots = [...document.querySelectorAll('img[data-src-sk]')].map(img => ({ img, en: img.getAttribute('src') }));
   const EN = new Map(nodes.map(el => [el, { html: el.innerHTML, alt: el.getAttribute('alt'), aria: el.getAttribute('aria-label') }]));
   const EN_DOC = { title: document.title, description: document.querySelector('meta[name=description]').content };
 
@@ -880,6 +889,7 @@
       if (el.dataset.i18nAlt) el.setAttribute('alt', sk ? SK[el.dataset.i18nAlt] ?? en.alt : en.alt);
       if (el.dataset.i18nAria) el.setAttribute('aria-label', sk ? SK[el.dataset.i18nAria] ?? en.aria : en.aria);
     }
+    for (const { img, en } of shots) img.setAttribute('src', sk ? img.dataset.srcSk : en);
     document.title = sk ? SK['doc.title'] : EN_DOC.title;
     document.querySelector('meta[name=description]').content = sk ? SK['doc.description'] : EN_DOC.description;
     document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));

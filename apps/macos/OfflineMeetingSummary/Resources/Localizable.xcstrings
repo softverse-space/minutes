@@ -1271,6 +1271,16 @@
         }
       }
     },
+    "Hide the summary options" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skryť možnosti zápisu"
+          }
+        }
+      }
+    },
     "How it works" : {
       "localizations" : {
         "sk" : {
@@ -1471,6 +1481,16 @@
         }
       }
     },
+    "Make another summary with a different template, detail level or model" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vytvoriť ďalší zápis s inou šablónou, úrovňou detailu alebo modelom"
+          }
+        }
+      }
+    },
     "Max. video width" : {
       "localizations" : {
         "sk" : {
@@ -1487,6 +1507,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stredná"
+          }
+        }
+      }
+    },
+    "Meeting at %@" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stretnutie o %@"
           }
         }
       }
@@ -1640,6 +1670,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nová session"
+          }
+        }
+      }
+    },
+    "New summary…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nový zápis…"
           }
         }
       }
@@ -3515,6 +3555,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "S videom môže zápisnica použiť obrázky obrazovky. Bez neho zaberá session menej miesta na disku. Pôvodný súbor zostane na svojom mieste."
+          }
+        }
+      }
+    },
+    "Working…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pracuje sa…"
           }
         }
       }

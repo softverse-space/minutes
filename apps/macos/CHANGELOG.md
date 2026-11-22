@@ -1,5 +1,15 @@
 # Changes – Minutes
 
+## Unreleased
+
+### Changed
+- **Session detail:** the summaries are on top. With a summary, the options are behind **New summary…**. The title is the topic of the meeting, the same as in the list ([ADR-0036](../../docs/adr/0036-session-detail-result-first-and-shared-styles.md)).
+- **Outputs:** each summary shows its topic, version and time instead of the long file name.
+- **Sessions list:** a session without a summary is "Meeting at 15:30". The screen name shows only when you use more than one screen. VoiceOver reads the state of each session.
+- **Recording:** Stop recording is red, the same as Start recording. The audio sources are in a card with a larger level meter. With Reduce Motion, the red dot does not blink.
+- **New session:** the microphone picker has its own row, so long names are not cut. **Import a recording…** is a smaller button.
+- Cards and banners have one style and stand out better from the popover.
+
 ## 1.3.0 – 2026-11-19
 
 ### New
