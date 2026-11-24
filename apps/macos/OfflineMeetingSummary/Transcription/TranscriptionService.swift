@@ -83,6 +83,8 @@ enum TranscriptionService {
             } fraction: { value in
                 fraction((Double(position) + min(1, max(0, value))) / count)
             }
+            // An engine can return a partial result after a cancel. It must not become the transcript.
+            try Task.checkCancellation()
             detected = detected ?? result.language
             tracks.append((useSpeakers ? track.speaker : nil, track.offset, result.segments))
         }

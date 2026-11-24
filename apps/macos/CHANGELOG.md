@@ -2,6 +2,17 @@
 
 What changed for you in each version. Short and for users: no internal details, no links to decisions or code.
 
+## Unreleased
+
+### New
+- **Setup guide:** at the first launch, a window shows the steps before the first minutes: permissions, the transcription model and the summary tool. Open it again from the menu of the menu bar icon (**Setup guide…**).
+
+### Changed
+- **Import a recording:** the progress bar shows the percent done. Files that need ffmpeg (for example MKV, WebM or OGG) also show the real progress.
+
+### Fixed
+- **Transcription:** when you cancel a transcription, the session no longer shows "The transcript contains no speech".
+
 ## 1.3.1 – 2026-11-22
 
 ### Changed

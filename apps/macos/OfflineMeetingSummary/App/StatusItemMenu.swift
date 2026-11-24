@@ -9,6 +9,8 @@ final class StatusItemMenu {
     private var monitor: Any?
     /// Set by the menu bar label, because only a SwiftUI view can open the Settings window.
     var openSettings: (() -> Void)?
+    /// Set by the menu bar label, because only a SwiftUI view can open a window (ADR-0037).
+    var openSetupGuide: (() -> Void)?
 
     init(model: AppModel) {
         self.model = model
@@ -78,6 +80,9 @@ final class StatusItemMenu {
         menu.addItem(ActionMenuItem(String(localized: "Settings…"), symbol: "gearshape", key: ",") { [weak self] in
             NSApp.activate()
             self?.openSettings?()
+        })
+        menu.addItem(ActionMenuItem(String(localized: "Setup guide…"), symbol: "checklist") { [weak self] in
+            self?.openSetupGuide?()
         })
         menu.addItem(.separator())
         // A running recording stops correctly before the app quits (ADR-0030).

@@ -73,12 +73,22 @@ struct OfflineMeetingSummaryApp: App {
                 .environment(model)
                 .environment(updates)
         }
+
+        // Setup guide for new users (ADR-0037). The menu bar label opens it at the first launch.
+        Window("Welcome to Minutes", id: SetupGuide.windowID) {
+            SetupGuideView()
+                .environment(model)
+        }
+        .windowResizability(.contentSize)
+        .defaultLaunchBehavior(.suppressed)
+        .restorationBehavior(.disabled)
     }
 }
 
 struct MenuBarLabel: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openSettings) private var openSettings
+    @Environment(\.openWindow) private var openWindow
     @Environment(UpdateController.self) private var updates
 
     var body: some View {
@@ -103,6 +113,19 @@ struct MenuBarLabel: View {
         .onAppear {
             let openSettings = openSettings
             AppDelegate.statusMenu?.openSettings = { openSettings() }
+            let openWindow = openWindow
+            let openGuide = {
+                openWindow(id: SetupGuide.windowID)
+                SetupGuide.bringToFront()
+            }
+            AppDelegate.statusMenu?.openSetupGuide = openGuide
+            // At launch the app is not active yet. Without the short wait the window stays behind other apps.
+            if SetupGuide.takeLaunchTurn() {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(300))
+                    openGuide()
+                }
+            }
         }
     }
 

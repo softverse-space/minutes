@@ -117,6 +117,8 @@ actor WhisperKitEngine: TranscriptionEngine {
         }
         defer { poller.cancel() }
         let results = try await kit.transcribe(audioPath: audio.path, decodeOptions: options)
+        // A cancel does not throw in WhisperKit: it returns the segments up to the cancel, often none.
+        try Task.checkCancellation()
         fraction(1)
         let segments = results.flatMap(\.segments).map {
             TranscriptSegment(start: Double($0.start), end: Double($0.end), text: Self.clean($0.text))

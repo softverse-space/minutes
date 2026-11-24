@@ -140,3 +140,23 @@ struct MediaImportTests {
         #expect(session.videoURL(try session.loadMetadata()) == video)
     }
 }
+
+struct FFmpegProgressTests {
+    @Test func readsTheOutputTimeAcrossChunks() {
+        var progress = MediaImport.FFmpegProgress(duration: 100)
+        #expect(progress.consume("frame=0\nout_time_us=25000") == nil)
+        #expect(progress.consume("000\nprogress=continue\n") == 0.25)
+        #expect(progress.consume("out_time_ms=50000000\nout_time_us=60000000\n") == 0.6)
+    }
+
+    @Test func endAndOverrunGiveOne() {
+        var progress = MediaImport.FFmpegProgress(duration: 10)
+        #expect(progress.consume("out_time_us=12000000\n") == 1)
+        #expect(progress.consume("out_time_us=N/A\nprogress=end\n") == 1)
+    }
+
+    @Test func ignoresUnknownValues() {
+        var progress = MediaImport.FFmpegProgress(duration: 10)
+        #expect(progress.consume("out_time_us=N/A\nbitrate=N/A\n") == nil)
+    }
+}

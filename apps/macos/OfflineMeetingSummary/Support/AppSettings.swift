@@ -46,6 +46,8 @@ enum SettingsKey {
     // General
     static let editorAppPath = "editorAppPath"
     static let appLanguage = "appLanguage"
+    /// The setup guide opened one time by itself (ADR-0037).
+    static let setupGuideShown = "setupGuideShown"
     // Summary
     /// Digest of the default system prompt that the app wrote to the user's copy last time (ADR-0025).
     static let systemPromptDefaultDigest = "systemPromptDefaultDigest"
