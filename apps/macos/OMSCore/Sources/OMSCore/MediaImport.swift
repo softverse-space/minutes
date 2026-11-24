@@ -123,6 +123,42 @@ public enum MediaImport {
         return metadata
     }
 
+    // MARK: ffmpeg progress
+
+    /// Reads the output of `ffmpeg -progress pipe:1` and gives the done part (0…1) of a file with a known duration.
+    /// ffmpeg writes `key=value` lines. `out_time_us` is the time of the written output in microseconds.
+    public struct FFmpegProgress: Sendable {
+        public let duration: TimeInterval
+        private var pending = ""
+
+        public init(duration: TimeInterval) { self.duration = duration }
+
+        /// Adds a chunk of output. Returns the newest done part in the chunk, or `nil` when the chunk has none.
+        public mutating func consume(_ chunk: String) -> Double? {
+            pending += chunk
+            var lines = pending.split(separator: "\n", omittingEmptySubsequences: false)
+            pending = String(lines.removeLast())
+            var fraction: Double?
+            for line in lines {
+                let parts = line.split(separator: "=", maxSplits: 1)
+                guard parts.count == 2 else { continue }
+                let value = parts[1].trimmingCharacters(in: .whitespaces)
+                switch parts[0] {
+                case "out_time_us", "out_time_ms":
+                    // Both keys hold microseconds.
+                    if let micros = Double(value), micros >= 0, duration > 0 {
+                        fraction = min(1, micros / 1_000_000 / duration)
+                    }
+                case "progress" where value == "end":
+                    fraction = 1
+                default:
+                    break
+                }
+            }
+            return fraction
+        }
+    }
+
     /// Order of the files in one session: by file name, as Finder sorts them.
     public static func ordered(_ urls: [URL]) -> [URL] {
         urls.sorted { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending }

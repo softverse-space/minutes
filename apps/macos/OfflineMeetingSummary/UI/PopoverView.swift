@@ -127,7 +127,14 @@ private struct ImportStatusRow: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(message).font(.callout).lineLimit(2).fixedSize(horizontal: false, vertical: true)
                     if let progress {
-                        ProgressView(value: progress).controlSize(.small)
+                        HStack(spacing: 6) {
+                            ProgressView(value: progress).controlSize(.small)
+                            Text(progress, format: .percent.precision(.fractionLength(0)))
+                                .font(.caption)
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                                .frame(minWidth: 32, alignment: .trailing)
+                        }
                     } else {
                         ProgressView().progressViewStyle(.linear).controlSize(.small)
                     }

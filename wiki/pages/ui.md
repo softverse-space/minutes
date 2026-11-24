@@ -39,12 +39,20 @@ The **Screen** section of the New session tab has a switch. When you turn it off
 - The session has no `recording.mov`. The summary then has no frame tool.
 - The app keeps the switch for the next sessions. Continue recording also uses it.
 
+## Setup guide (ADR-0037)
+
+- The window "Welcome to Minutes" opens one time, at the first launch of a new user. A user with a downloaded transcription model does not get it.
+- One page with steps: Screen & System Audio Recording, Microphone, Transcription model, Tool for the summary. Optional: ffmpeg.
+- Each step shows a number or a green check mark, a short help text and one action (**Allow**, **Download**, switches of the tools).
+- The states update when the app becomes active again, for example after System Settings.
+- **Setup guide…** in the menu of the menu bar icon opens the window again.
+
 ## Import a recording
 
 - **Import a recording…** below Start recording on the New session tab, and in the menu of the menu bar icon, opens a file dialog.
 - A drop of files on the popover also starts an import. The popover shows a dashed frame while you drag.
 - More files: the app asks **One session** or **Separate sessions**. After a drop, the question is a panel on the New session tab. After the file dialog, it is an alert, because the popover is closed.
-- A row above the bottom bar shows the running import with progress and **Cancel**.
+- A row above the bottom bar shows the running import with a progress bar, the percent done and **Cancel**. For ffmpeg files, the app gets the duration from ffprobe and reads `ffmpeg -progress`. Without ffprobe, the bar shows no percent.
 - The list shows "Imported" for an imported session. The detail shows the name of the imported file. Continue recording is not available.
 - Settings → Recording → **Keep the video of imported files** (default on).
 
@@ -130,7 +138,7 @@ A left click opens the popover. A right click or a Control-click opens a menu ([
 - **Start recording** with the sources from the New session tab, or **Stop recording**.
 - **Stop transcription** cancels the running transcription and the waiting ones.
 - **Stop writing minutes** cancels all running summaries.
-- **Settings…** and **Quit Minutes**. A running recording stops correctly before the app quits.
+- **Settings…**, **Setup guide…** (ADR-0037) and **Quit Minutes**. A running recording stops correctly before the app quits.
 
 When a start from the menu fails, the app posts a notification, because the popover is closed.
 

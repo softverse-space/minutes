@@ -40,3 +40,4 @@ Each decision is a separate file. [ADR-0001](0001-record-decisions-in-adr.md) gi
 | [0034](0034-import-existing-recordings.md) | Import of existing recordings | Proposed |
 | [0035](0035-settings-tabs-and-model-data-note.md) | Settings tabs and one data note for all models | Proposed |
 | [0036](0036-session-detail-result-first-and-shared-styles.md) | Session detail with the result first, and shared popover styles | Proposed |
+| [0037](0037-setup-guide-at-first-launch.md) | Setup guide at the first launch | Proposed |

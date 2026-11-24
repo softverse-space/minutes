@@ -708,6 +708,16 @@
         }
       }
     },
+    "Claude and Codex send the transcript to the cloud of their provider. OpenCode with a local model keeps all data on the Mac." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude a Codex posielajú prepis do cloudu svojho poskytovateľa. OpenCode s lokálnym modelom nechá všetky dáta v Macu."
+          }
+        }
+      }
+    },
     "Clear search" : {
       "localizations" : {
         "sk" : {
@@ -991,12 +1001,42 @@
         }
       }
     },
+    "Do these steps once. Then you can record a meeting and get the minutes. You can change everything later in Settings." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tieto kroky urobte raz. Potom môžete nahrať stretnutie a dostať zápisnicu. Všetko neskôr zmeníte v Nastaveniach."
+          }
+        }
+      }
+    },
     "Done" : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hotový"
+          }
+        }
+      }
+    },
+    "Download" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiahnuť"
+          }
+        }
+      }
+    },
+    "Download again" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiahnuť znova"
           }
         }
       }
@@ -1017,16 +1057,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stiahnutie zlyhalo: %@"
-          }
-        }
-      }
-    },
-    "Download again" : {
-      "localizations" : {
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiahnuť znova"
           }
         }
       }
@@ -1361,6 +1391,26 @@
         }
       }
     },
+    "Installed. Local or cloud model, as you set it in OpenCode." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nainštalovaný. Lokálny alebo cloudový model podľa nastavenia v OpenCode."
+          }
+        }
+      }
+    },
+    "Installed. Sends data to %@." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nainštalovaný. Posiela dáta do %@."
+          }
+        }
+      }
+    },
     "Instruction" : {
       "localizations" : {
         "sk" : {
@@ -1622,7 +1672,14 @@
       }
     },
     "Model" : {
-      "shouldTranslate" : false
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model"
+          }
+        }
+      }
     },
     "Model %@ cannot load. Its files are incomplete or damaged. Download it again in Settings → Transcription. Details: %@" : {
       "localizations" : {
@@ -1744,6 +1801,16 @@
         }
       }
     },
+    "Not done" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neurobené"
+          }
+        }
+      }
+    },
     "Not done yet" : {
       "localizations" : {
         "sk" : {
@@ -1760,6 +1827,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nenájdený"
+          }
+        }
+      }
+    },
+    "Not installed" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenainštalovaný"
           }
         }
       }
@@ -1840,6 +1917,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Otvorte Minutes a vyberte, čo chcete nahrávať."
+          }
+        }
+      }
+    },
+    "Open Settings" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť Nastavenia"
           }
         }
       }
@@ -1967,6 +2054,16 @@
         }
       }
     },
+    "Optional" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voliteľné"
+          }
+        }
+      }
+    },
     "Optional: what to focus on, what to leave out, who the summary is for…" : {
       "localizations" : {
         "sk" : {
@@ -2033,6 +2130,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Časť %lld nemá zvuk ani prepis."
+          }
+        }
+      }
+    },
+    "Pictures of the screen in the minutes, and import of more file types." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obrázky obrazovky v zápisnici a import ďalších typov súborov."
           }
         }
       }
@@ -2337,6 +2444,16 @@
         }
       }
     },
+    "Screen & System Audio Recording" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahrávanie obrazovky a systémového zvuku"
+          }
+        }
+      }
+    },
     "Screen frames" : {
       "localizations" : {
         "sk" : {
@@ -2430,6 +2547,16 @@
         }
       }
     },
+    "Setup guide…" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprievodca nastavením…"
+          }
+        }
+      }
+    },
     "Share…" : {
       "localizations" : {
         "sk" : {
@@ -2516,6 +2643,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prvú spustíte na záložke Nová session."
+          }
+        }
+      }
+    },
+    "Start using Minutes" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Začať používať Minutes"
           }
         }
       }
@@ -2763,6 +2900,16 @@
         }
       }
     },
+    "The app downloads the model once. Then transcription runs without internet and the audio stays on the Mac." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia stiahne model raz. Potom prepis beží bez internetu a zvuk zostane v Macu."
+          }
+        }
+      }
+    },
     "The app has no permission to record the screen." : {
       "localizations" : {
         "sk" : {
@@ -2783,12 +2930,42 @@
         }
       }
     },
+    "The app needs it for the screen and for the sound of the call. After you allow it, restart the app." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia ho potrebuje pre obrazovku a pre zvuk hovoru. Po povolení aplikáciu reštartujte."
+          }
+        }
+      }
+    },
     "The app records no video. The minutes cannot use pictures of the screen." : {
       "localizations" : {
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aplikácia nenahráva video. Zápis nemôže použiť obrázky z obrazovky."
+          }
+        }
+      }
+    },
+    "The app records your voice from the microphone." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia nahráva váš hlas z mikrofónu."
+          }
+        }
+      }
+    },
+    "The app sends the audio to the transcription server from Settings → Transcription." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia posiela zvuk na server na prepis z Nastavenia → Prepis."
           }
         }
       }
@@ -3283,6 +3460,16 @@
         }
       }
     },
+    "Tool for the summary" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nástroj na zhrnutie"
+          }
+        }
+      }
+    },
     "Track %lld/%lld (%@): %@" : {
       "localizations" : {
         "sk" : {
@@ -3383,6 +3570,16 @@
         }
       }
     },
+    "Transcription model" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model na prepis"
+          }
+        }
+      }
+    },
     "Transcription server" : {
       "localizations" : {
         "sk" : {
@@ -3429,6 +3626,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skúste hľadať podľa témy, dátumu alebo obrazovky."
+          }
+        }
+      }
+    },
+    "Turn on at least one installed tool. The app uses your own login and configuration of the tool." : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapnite aspoň jeden nainštalovaný nástroj. Aplikácia použije vaše prihlásenie a nastavenie nástroja."
           }
         }
       }
@@ -3535,6 +3742,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Čaká na iný prepis…"
+          }
+        }
+      }
+    },
+    "Welcome to Minutes" : {
+      "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vitajte v Minutes"
           }
         }
       }

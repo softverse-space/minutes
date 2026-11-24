@@ -52,13 +52,15 @@ public enum ProcessRunner {
 
     /// Runs a process in its own process group and collects stdout and stderr.
     /// `input` is written to stdin; without it stdin is empty.
+    /// `onStdout` gets each chunk of stdout when it arrives, for example progress lines.
     ///
     /// Cancelling the task, the `timeout` and a too large output stop the whole process group:
     /// SIGTERM first, SIGKILL after `terminationGrace`. A cancelled run throws `CancellationError`.
     public static func run(_ executable: URL, arguments: [String], currentDirectory: URL? = nil, input: Data? = nil,
                            timeout: Duration? = nil,
-                           stdout: OutputCapture = .limited(bytes: defaultStdoutLimit)) async throws -> ProcessResult {
-        let process = SpawnedProcess(stdout: stdout, timeout: timeout)
+                           stdout: OutputCapture = .limited(bytes: defaultStdoutLimit),
+                           onStdout: (@Sendable (Data) -> Void)? = nil) async throws -> ProcessResult {
+        let process = SpawnedProcess(stdout: stdout, timeout: timeout, onStdout: onStdout)
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<ProcessResult, Error>) in
                 do {
@@ -88,10 +90,12 @@ private final class SpawnedProcess: @unchecked Sendable {
     private var reason: StopReason?
     private let collector: OutputCollector
     private let timeout: Duration?
+    private let onStdout: (@Sendable (Data) -> Void)?
 
-    init(stdout: OutputCapture, timeout: Duration?) {
+    init(stdout: OutputCapture, timeout: Duration?, onStdout: (@Sendable (Data) -> Void)?) {
         collector = OutputCollector(stdout: stdout)
         self.timeout = timeout
+        self.onStdout = onStdout
     }
 
     func launch(executable: URL, arguments: [String], currentDirectory: URL?, input: Data?,
@@ -202,8 +206,9 @@ private final class SpawnedProcess: @unchecked Sendable {
                 openStreams -= 1
                 streams.broadcast()
                 streams.unlock()
-            } else if !collector.append(data, error: isError) {
-                stop(.outputTooLarge)
+            } else {
+                if !isError { onStdout?(data) }
+                if !collector.append(data, error: isError) { stop(.outputTooLarge) }
             }
         }
     }

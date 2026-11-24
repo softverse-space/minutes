@@ -298,3 +298,9 @@
 - Changed: session detail with the summaries on top (ADR-0036), short output names, session time in the list, red Stop recording, larger level meter.
 - Fixed: an incomplete WhisperKit model download is found. Settings → Transcription has **Download again**.
 - Version 1.3.1, build 5. Update through Sparkle from 1.3.0.
+
+## [2026-11-24] update | Import progress
+- ui: the import row shows the percent done. ffmpeg imports show the real progress (ffprobe duration and `ffmpeg -progress`).
+
+## [2026-11-24] update | Setup guide
+- ui: new section "Setup guide" (ADR-0037). First-launch window with the setup steps, and **Setup guide…** in the menu of the menu bar icon.
