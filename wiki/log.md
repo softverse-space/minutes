@@ -304,3 +304,9 @@
 
 ## [2026-11-24] update | Setup guide
 - ui: new section "Setup guide" (ADR-0037). First-launch window with the setup steps, and **Setup guide…** in the menu of the menu bar icon.
+
+## [2026-11-24] release | Minutes 1.4.0
+- New: setup guide at the first launch (ADR-0037), also from **Setup guide…** in the menu of the menu bar icon.
+- Changed: the import shows the percent done, also for ffmpeg files.
+- Fixed: a cancelled transcription no longer shows "The transcript contains no speech".
+- Version 1.4.0, build 6. Update through Sparkle from 1.3.1.

@@ -2,7 +2,7 @@
 
 What changed for you in each version. Short and for users: no internal details, no links to decisions or code.
 
-## Unreleased
+## 1.4.0 – 2026-11-24
 
 ### New
 - **Setup guide:** at the first launch, a window shows the steps before the first minutes: permissions, the transcription model and the summary tool. Open it again from the menu of the menu bar icon (**Setup guide…**).
